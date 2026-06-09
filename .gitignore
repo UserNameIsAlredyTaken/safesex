@@ -1,0 +1,12 @@
+# dependencies
+node_modules/
+
+# build output (GitHub Actions builds & deploys; don't commit dist)
+dist/
+
+# local Claude Code settings (personal, machine-specific)
+.claude/settings.local.json
+
+# logs & editor cruft
+*.log
+.DS_Store
