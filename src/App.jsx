@@ -25,9 +25,11 @@ const STIS = [
     treat: "Неизлечимо — пожизненная АРТ", cons: "Без лечения — СПИД, иммунный отказ", acc: "высокая",
     src: "Передача/акт: Patel 2014 (CDC) — рецепт. вагинальный 8 на 10 000. Презерватив ~80%: Cochrane (Weller & Davis). Анальный ~в 17 раз опаснее. Точность: высокая." },
   { key: "hpv", label: "ВПЧ", color: "#ff4d6d", sev: 4, p: 0.25, beta: 0.40, e: 0.40, grounded: false,
+    vax: { ve: 0.85, label: "ВПЧ-вакцина", note: "Эффективнее всего до начала половой жизни; закрывает ~90% онкогенных типов, но не все. Оценка эффекта." },
     treat: "Нет лекарства от вируса; онкогенен", cons: "Рак (шейка, горло, анус), кондиломы", acc: "низкая",
     src: "Передача/акт — грубая оценка (точных данных нет); ВПЧ очень заразен, пожизненная распространённость ~80%. Презерватив ~40% (CDC: значимой защиты мало, кожа-к-коже). Защищает прививка. Точность: низкая." },
   { key: "hbv", label: "Гепатит B", color: "#94d82d", sev: 4, p: 0.003, beta: 0.03, e: 0.90, grounded: false,
+    vax: { ve: 0.95, label: "HBV-вакцина", note: "При состоявшемся иммунном ответе защита ~95% — сексуальное заражение почти исключено. Оценка эффекта." },
     treat: "Хронический неизлечим; есть прививка", cons: "Цирроз, рак печени при хронизации", acc: "низкая",
     src: "Сексуальная передача/акт — грубая оценка (HBV заразнее ВИЧ, но точных per-act чисел нет). Презерватив ~90%. Сильно зависит от прививочного статуса. Точность: низкая." },
   { key: "hcv", label: "Гепатит C", color: "#748ffc", sev: 3, p: 0.005, beta: 0.0002, e: 0.70, grounded: false,
@@ -66,8 +68,8 @@ const pctAct = (v) => {
   return parseFloat(x.toFixed(digits)).toString().replace(".", ",") + "%";
 };
 
-function annualSurvival(s, phi, N, actsPerYear) {
-  const betaEff = s.beta * (1 - phi * s.e);
+function annualSurvival(s, phi, N, actsPerYear, veMul = 1) {
+  const betaEff = s.beta * (1 - phi * s.e) * veMul;
   const k = N > 0 ? actsPerYear / N : 0;
   const transmit = 1 - Math.pow(1 - betaEff, Math.max(k, 0));
   return Math.pow(1 - s.p * transmit, N);
@@ -130,9 +132,10 @@ function Step({ n, title, gloss, formula, result, rc }) {
   );
 }
 
-function Breakdown({ s, phi, partners, actsPerYear, condom, years }) {
+function Breakdown({ s, phi, partners, actsPerYear, condom, years, veMul = 1 }) {
   const A = actsPerYear, N = partners;
-  const betaEff = s.beta * (1 - phi * s.e);
+  const betaEff = s.beta * (1 - phi * s.e) * veMul;
+  const vaxOn = veMul < 1, vePct = Math.round((1 - veMul) * 100);
   const k = N > 0 ? A / N : 0;
   const kR = Math.max(1, Math.round(k));
   const transmit = 1 - Math.pow(1 - betaEff, k);
@@ -142,7 +145,7 @@ function Breakdown({ s, phi, partners, actsPerYear, condom, years }) {
   const fmtP = (v) => pctVal(v * 100);
   const yWord = years === 1 ? "год" : years < 5 ? "года" : "лет";
   const calc = (phiX) => {
-    const be = s.beta * (1 - phiX * s.e);
+    const be = s.beta * (1 - phiX * s.e) * veMul;
     const tr = 1 - Math.pow(1 - be, k);
     const an = 1 - Math.pow(1 - s.p * tr, N);
     const ho = 1 - Math.pow(1 - an, years);
@@ -205,8 +208,8 @@ function Breakdown({ s, phi, partners, actsPerYear, condom, years }) {
         gloss="Вероятность, что случайный новый партнёр уже носит эту инфекцию (распространённость в популяции)."
         formula="распространённость p" result={fmtP(s.p)} />
       <Step n={2} title="Риск за один акт, если партнёр заразен"
-        gloss={phi > 0 ? `Базовый риск за акт, срезанный презервативом (он на ${condom}% актов убирает ${Math.round(s.e * 100)}% риска).` : "Презерватив выключен — риск за акт не уменьшается."}
-        formula={phi > 0 ? `${pctAct(s.beta)} × (1 − ${condom}% × ${Math.round(s.e * 100)}%)` : `${pctAct(s.beta)}`}
+        gloss={`${phi > 0 ? `Базовый риск за акт, срезанный презервативом (он на ${condom}% актов убирает ${Math.round(s.e * 100)}% риска).` : "Презерватив выключен — риск за акт не уменьшается."}${vaxOn ? ` Прививка убирает ещё ~${vePct}% (оценка).` : ""}`}
+        formula={`${pctAct(s.beta)}${phi > 0 ? ` × (1 − ${condom}% × ${Math.round(s.e * 100)}%)` : ""}${vaxOn ? ` × (1 − ${vePct}%)` : ""}`}
         result={pctAct(betaEff)} />
       <Step n={3} title="Сколько актов с одним партнёром"
         gloss={`${Math.round(A)} актов в год делим на ${N} ${N === 1 ? "партнёра" : "партнёров"}.`}
@@ -329,6 +332,8 @@ export default function App() {
   const [selected, setSelected] = useState("chl");
   const [dur, setDur] = useState(6);
   const [primary, setPrimary] = useState(false);
+  const [vaxHpv, setVaxHpv] = useState(false);
+  const [vaxHbv, setVaxHbv] = useState(false);
   const [activePreset, setActivePreset] = useState(null);
   const clearPreset = () => setActivePreset(null);
   const applyPreset = (pr) => {
@@ -346,9 +351,13 @@ export default function App() {
 
   const survivals = useMemo(() => {
     const m = {};
-    STIS.forEach((s) => { m[s.key] = annualSurvival(s, phi, partners, actsPerYear); });
+    STIS.forEach((s) => {
+      const vaccinated = (s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv);
+      const veMul = s.vax && vaccinated ? (1 - s.vax.ve) : 1;
+      m[s.key] = annualSurvival(s, phi, partners, actsPerYear, veMul);
+    });
     return m;
-  }, [phi, partners, actsPerYear]);
+  }, [phi, partners, actsPerYear, vaxHpv, vaxHbv]);
 
   const riskAt = (key, t) => (1 - Math.pow(survivals[key], t / 12)) * 100;
 
@@ -382,6 +391,9 @@ export default function App() {
     .sort((a, b) => (1 - survivals[a.key]) - (1 - survivals[b.key])).reverse()[0];
 
   const toggle = (k) => setHidden((h) => ({ ...h, [k]: !h[k] }));
+
+  const selSti = STIS.find((x) => x.key === selected);
+  const selVeMul = selSti?.vax && ((selected === "hpv" && vaxHpv) || (selected === "hbv" && vaxHbv)) ? (1 - selSti.vax.ve) : 1;
 
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.hi, fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif", padding: "28px 18px 48px" }}>
@@ -451,6 +463,22 @@ export default function App() {
               Постоянный партнёр
             </button>
             <span style={{ color: C.dim, fontSize: 12 }}>добавляет одну долгую связь на весь период (считается проверенным — в риск не входит)</span>
+          </div>
+
+          <div style={{ borderTop: `1px dashed ${C.border}`, margin: "18px 0 0" }} />
+          <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, margin: "14px 0 10px" }}>Защита и иммунитет</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+            {[{ k: "hpv", on: vaxHpv, set: setVaxHpv, lab: "Привит от ВПЧ" }, { k: "hbv", on: vaxHbv, set: setVaxHbv, lab: "Привит от гепатита B" }].map((v) => {
+              const st = STIS.find((x) => x.key === v.k);
+              return (
+                <button key={v.k} onClick={() => v.set((x) => !x)} title={st.vax.note}
+                  style={{ display: "inline-flex", alignItems: "center", gap: 8, background: v.on ? `${C.accent}22` : "transparent", border: `1px solid ${v.on ? C.accent : C.border}`, color: v.on ? C.hi : C.mid, padding: "8px 14px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
+                  <span style={{ width: 16, height: 16, borderRadius: 4, border: `1px solid ${v.on ? C.accent : C.dim}`, background: v.on ? C.accent : "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", color: C.bg, fontSize: 11, fontWeight: 700 }}>{v.on ? "✓" : ""}</span>
+                  {v.lab}
+                </button>
+              );
+            })}
+            <span style={{ color: C.dim, fontSize: 12 }}>режет риск ВПЧ / гепатита B (оценка — вакцина не 100% и работает до контакта)</span>
           </div>
         </div>
         {/* Partnership structure */}
@@ -542,6 +570,9 @@ export default function App() {
                     <td><input className="chk" type="checkbox" checked={!hidden[s.key]} onChange={() => toggle(s.key)} style={{ accentColor: s.color }} /></td>
                     <td onClick={() => setSelected(s.key)} title="показать разбор расчёта" style={{ whiteSpace: "nowrap", cursor: "pointer" }}>
                       <span style={{ color: s.color, marginRight: 7 }}>{s.grounded ? "●" : "◌"}</span>{s.label}
+                      {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && (
+                        <span title={s.vax.note} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>привит</span>
+                      )}
                     </td>
                     <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskAt(s.key, horizonM))}</td>
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>
@@ -592,7 +623,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <Breakdown s={STIS.find((x) => x.key === selected)} phi={phi} partners={partners} actsPerYear={actsPerYear} condom={condom} years={years} />
+          <Breakdown s={selSti} phi={phi} partners={partners} actsPerYear={actsPerYear} condom={condom} years={years} veMul={selVeMul} />
         </details>
 
         {/* Methodology */}
@@ -604,6 +635,9 @@ export default function App() {
             </p>
             <p>
               <b style={{ color: C.hi }}>Распространённость (p)</b> — оценка для общей популяции молодых взрослых в Европе. В группах высокого риска и при анальном сексе цифры другие (рецептивный анальный по ВИЧ ~в 17 раз опаснее вагинального). <b style={{ color: C.hi }}>Гепатит B</b> сильно зависит от прививки; <b style={{ color: C.hi }}>гепатит C</b> передаётся в основном через кровь, поэтому его сексуальная кривая здесь — нижняя грубая оценка.
+            </p>
+            <p>
+              <b style={{ color: C.hi }}>Прививки.</b> «Привит от ВПЧ / гепатита B» — множитель, снижающий передачу за акт (ВПЧ ~85%, HBV ~95%). Это оценка эффекта: вакцина покрывает не все типы и наиболее эффективна до начала половой жизни. На остальные инфекции не влияет.
             </p>
             <p style={{ marginBottom: 0 }}>
               <b style={{ color: C.hi }}>Формула:</b> на акт β_eff = β·(1 − доля_презерватива·e); с одним заражённым партнёром за k актов риск = 1 − (1 − β_eff)^k; умножается на распространённость, складывается по числу партнёров за год и разворачивается во времени (постоянный риск). «Хотя бы одна» — в предположении независимости инфекций (грубая верхняя оценка).
