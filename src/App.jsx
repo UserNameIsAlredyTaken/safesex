@@ -410,6 +410,12 @@ export default function App() {
         table.inf th { color:${C.dim}; font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
         .num { font-variant-numeric:tabular-nums; }
         .chk { width:17px; height:17px; cursor:pointer; }
+        .studio { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; margin-bottom:14px; }
+        @media (min-width:880px) {
+          .studio { grid-template-columns:340px minmax(0,1fr); }
+          .studio-controls { grid-column:1; grid-row:1; }
+          .studio-chart { grid-column:2; grid-row:1; position:sticky; top:16px; }
+        }
         .src { position:relative; display:inline-flex; align-items:center; gap:7px; cursor:help; }
         .src .ic { width:16px; height:16px; border-radius:50%; border:1px solid ${C.dim}; color:${C.dim}; font-size:11px; display:inline-flex; align-items:center; justify-content:center; }
         .src .box { display:none; position:absolute; right:0; bottom:140%; width:280px; background:${C.panel2}; border:1px solid ${C.border}; border-radius:8px; padding:10px 12px; font-size:12px; line-height:1.5; color:${C.mid}; z-index:20; box-shadow:0 8px 24px rgba(0,0,0,.4); text-transform:none; letter-spacing:0; font-weight:400; }
@@ -438,8 +444,9 @@ export default function App() {
           </div>
         </div>
 
+        <div className="studio">
         {/* Behavior controls */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22, marginBottom: 14 }}>
+        <div className="studio-controls" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22 }}>
           <div style={{ fontSize: 11, color: C.dim, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6 }}>Пресет поведения</div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
             {PRESETS.map((pr) => (
@@ -481,29 +488,8 @@ export default function App() {
             <span style={{ color: C.dim, fontSize: 12 }}>режет риск ВПЧ / гепатита B (оценка — вакцина не 100% и работает до контакта)</span>
           </div>
         </div>
-        {/* Partnership structure */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 18px 14px", marginBottom: 14 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Структура партнёрств во времени</h2>
-            <div style={{ fontSize: 12, color: C.mid }}>
-              одновременно: в среднем <b style={{ color: C.hi }}>{avgConc.toFixed(1).replace(".", ",")}</b> · пик <b style={{ color: C.hi }}>{packed.lanes}</b> · всего за {years} {years < 5 ? "года" : "лет"}: <b style={{ color: C.hi }}>{packed.list.length}</b>
-            </div>
-          </div>
-          <p style={{ color: C.dim, fontSize: 12, margin: "0 0 14px", lineHeight: 1.5 }}>
-            Каждая полоса — связь от начала до конца. Наложение полос по вертикали = одновременные партнёры (concurrency). <span style={{ color: C.accent }}>● оранжевый</span> — постоянный партнёр, <span style={{ color: "#2ec4b6" }}>● бирюзовый</span> — новые.
-          </p>
-          {packed.list.length === 0 ? (
-            <div style={{ color: C.mid, fontSize: 13, padding: "20px 0", textAlign: "center" }}>Нет партнёров — включи постоянного или добавь новых.</div>
-          ) : (
-            <Timeline packed={packed} horizonM={horizonM} years={years} />
-          )}
-          <div style={{ marginTop: 12, padding: "10px 14px", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 12, color: C.dim, lineHeight: 1.5 }}>
-            На <b style={{ color: C.mid }}>кривую риска</b> сейчас влияют число новых партнёров, частота и презерватив. Длительность и одновременность показывают <b style={{ color: C.mid }}>структуру</b> сети — эпидемиологически concurrency важна, но её строгий учёт требует сетевой симуляции и в формулу здесь не заложен.
-          </div>
-        </div>
-
         {/* Chart panel */}
-        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px", marginBottom: 14 }}>
+        <div className="studio-chart" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
           {/* axis controls */}
           <div style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
             <Slider label="Горизонт времени" value={years} set={setYears} min={1} max={50} step={1}
@@ -546,6 +532,28 @@ export default function App() {
               {top ? <>За {years} {years < 5 ? "года" : "лет"} выше всего риск <span style={{ color: top.color, fontWeight: 600 }}>{top.label.toLowerCase()}</span> — около <span style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskAt(top.key, horizonM))}</span>.</> : "Включи хотя бы одну инфекцию в таблице ниже."}
             </div>
             <button className={`pill ${showAny ? "on" : ""}`} onClick={() => setShowAny((v) => !v)}>хотя бы одна из включённых</button>
+          </div>
+        </div>
+        </div>
+
+        {/* Partnership structure */}
+        <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 18px 14px", marginBottom: 14 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Структура партнёрств во времени</h2>
+            <div style={{ fontSize: 12, color: C.mid }}>
+              одновременно: в среднем <b style={{ color: C.hi }}>{avgConc.toFixed(1).replace(".", ",")}</b> · пик <b style={{ color: C.hi }}>{packed.lanes}</b> · всего за {years} {years < 5 ? "года" : "лет"}: <b style={{ color: C.hi }}>{packed.list.length}</b>
+            </div>
+          </div>
+          <p style={{ color: C.dim, fontSize: 12, margin: "0 0 14px", lineHeight: 1.5 }}>
+            Каждая полоса — связь от начала до конца. Наложение полос по вертикали = одновременные партнёры (concurrency). <span style={{ color: C.accent }}>● оранжевый</span> — постоянный партнёр, <span style={{ color: "#2ec4b6" }}>● бирюзовый</span> — новые.
+          </p>
+          {packed.list.length === 0 ? (
+            <div style={{ color: C.mid, fontSize: 13, padding: "20px 0", textAlign: "center" }}>Нет партнёров — включи постоянного или добавь новых.</div>
+          ) : (
+            <Timeline packed={packed} horizonM={horizonM} years={years} />
+          )}
+          <div style={{ marginTop: 12, padding: "10px 14px", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 12, color: C.dim, lineHeight: 1.5 }}>
+            На <b style={{ color: C.mid }}>кривую риска</b> сейчас влияют число новых партнёров, частота и презерватив. Длительность и одновременность показывают <b style={{ color: C.mid }}>структуру</b> сети — эпидемиологически concurrency важна, но её строгий учёт требует сетевой симуляции и в формулу здесь не заложен.
           </div>
         </div>
 
