@@ -5,9 +5,9 @@ import {
 
 /*
   ИЛЛЮСТРАТИВНАЯ МОДЕЛЬ кумулятивного риска ЗППП во времени. Не медицинский прогноз.
-  Модель (на одного нового партнёра, k актов с ним):
+  Модель (на одного нового партнёра, k актов с ним; k = частота_с_партнёром × длительность_связи):
     β_eff = β·(1 − φ·e);  риск с заражённым партнёром = 1 − (1 − β_eff)^k;
-    × распространённость p; складывается по N партнёрам в год; разворачивается во времени.
+    × распространённость p; перемножается по N новым партнёрам в год; разворачивается во времени.
   ✓ grounded=true  → опирается на данные (сплошная линия)
   ◌ grounded=false → грубая оценка (пунктир); надёжных per-act чисел нет
 */
@@ -68,9 +68,8 @@ const pctAct = (v) => {
   return parseFloat(x.toFixed(digits)).toString().replace(".", ",") + "%";
 };
 
-function annualSurvival(s, phi, N, actsPerYear, veMul = 1) {
+function annualSurvival(s, phi, N, k, veMul = 1) {
   const betaEff = s.beta * (1 - phi * s.e) * veMul;
-  const k = N > 0 ? actsPerYear / N : 0;
   const transmit = 1 - Math.pow(1 - betaEff, Math.max(k, 0));
   return Math.pow(1 - s.p * transmit, N);
 }
@@ -132,11 +131,11 @@ function Step({ n, title, gloss, formula, result, rc }) {
   );
 }
 
-function Breakdown({ s, phi, partners, actsPerYear, condom, years, veMul = 1 }) {
-  const A = actsPerYear, N = partners;
+function Breakdown({ s, phi, partners, perWeek, dur, condom, years, veMul = 1 }) {
+  const N = partners;
   const betaEff = s.beta * (1 - phi * s.e) * veMul;
   const vaxOn = veMul < 1, vePct = Math.round((1 - veMul) * 100);
-  const k = N > 0 ? A / N : 0;
+  const k = Math.max(1, perWeek * (52 / 12) * dur);
   const kR = Math.max(1, Math.round(k));
   const transmit = 1 - Math.pow(1 - betaEff, k);
   const perPartner = s.p * transmit;
@@ -212,8 +211,9 @@ function Breakdown({ s, phi, partners, actsPerYear, condom, years, veMul = 1 }) 
         formula={`${pctAct(s.beta)}${phi > 0 ? ` × (1 − ${condom}% × ${Math.round(s.e * 100)}%)` : ""}${vaxOn ? ` × (1 − ${vePct}%)` : ""}`}
         result={pctAct(betaEff)} />
       <Step n={3} title="Сколько актов с одним партнёром"
-        gloss={`${Math.round(A)} актов в год делим на ${N} ${N === 1 ? "партнёра" : "партнёров"}.`}
-        formula={`${Math.round(A)} ÷ ${N}`} result={`≈ ${kR} актов`} />
+        gloss={dur > 0 ? `Частота с партнёром × длительность связи (${fmtDur(dur)}). Чем дольше связь — тем больше актов с этим человеком, тем выше шанс заразиться именно от него.` : "Разовый контакт — считаем один акт."}
+        formula={dur > 0 ? `${perWeek.toFixed(1).replace(".", ",")}/нед × ${fmtDur(dur)}` : "разовый контакт"}
+        result={`≈ ${kR} ${kR === 1 ? "акт" : kR % 10 >= 2 && kR % 10 <= 4 && (kR < 10 || kR > 20) ? "акта" : "актов"}`} />
       <Step n={4} title="За эти акты — с заражённым партнёром"
         gloss="Берём шанс НЕ заразиться за один акт и повторяем его столько раз. Так риск накапливается за много контактов."
         formula={`1 − (1 − ${pctAct(betaEff)})^${kR}`} result={fmtP(transmit)} />
@@ -342,8 +342,11 @@ export default function App() {
   };
 
   const phi = condom / 100;
-  const actsPerYear = perWeek * 52;
   const horizonM = years * 12;
+  // Акты за одну связь = частота с партнёром × длительность (в неделях). Минимум 1 (разовый контакт).
+  const actsPerPartner = Math.max(1, perWeek * (52 / 12) * dur);
+  // Средний секс в неделю — производная величина (новые связи + постоянный партнёр, если включён).
+  const avgWeekTotal = (partners * actsPerPartner + (primary ? perWeek * 52 : 0)) / 52;
 
   const packed = useMemo(() => packLanes(buildPartners(primary, partners, dur, horizonM)), [primary, partners, dur, horizonM]);
   const activeMonths = packed.list.reduce((a, p) => a + (Math.min(p.end, horizonM) - Math.max(p.start, 0)), 0);
@@ -354,10 +357,10 @@ export default function App() {
     STIS.forEach((s) => {
       const vaccinated = (s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv);
       const veMul = s.vax && vaccinated ? (1 - s.vax.ve) : 1;
-      m[s.key] = annualSurvival(s, phi, partners, actsPerYear, veMul);
+      m[s.key] = annualSurvival(s, phi, partners, actsPerPartner, veMul);
     });
     return m;
-  }, [phi, partners, actsPerYear, vaxHpv, vaxHbv]);
+  }, [phi, partners, actsPerPartner, vaxHpv, vaxHbv]);
 
   const riskAt = (key, t) => (1 - Math.pow(survivals[key], t / 12)) * 100;
 
@@ -461,8 +464,8 @@ export default function App() {
               valueText={fmtRate(partners)} hint="темп появления новых партнёров" />
             <Slider label="Длительность связи" value={dur} set={(v) => { setDur(v); clearPreset(); }} min={0} max={120} step={1}
               valueText={fmtDur(dur)} hint="как долго длится связь с новым партнёром" />
-            <Slider label="Секс в неделю" value={perWeek} set={(v) => { setPerWeek(Math.round(v * 10) / 10); clearPreset(); }} min={0.1} max={14} step={0.1}
-              valueText={`${perWeek.toFixed(1).replace(".", ",")}×`} hint={`≈ ${Math.round(actsPerYear)} актов в год`} />
+            <Slider label="Секс с партнёром в неделю" value={perWeek} set={(v) => { setPerWeek(Math.round(v * 10) / 10); clearPreset(); }} min={0.1} max={14} step={0.1}
+              valueText={`${perWeek.toFixed(1).replace(".", ",")}×`} hint={dur > 0 ? `≈ ${Math.max(1, Math.round(perWeek * (52 / 12) * dur))} актов за одну связь` : "разовый контакт — 1 акт"} />
             <Slider label="Презерватив" value={condom} set={(v) => { setCondom(v); clearPreset(); }} min={0} max={100} step={1}
               valueText={`${condom}%`} hint="доля актов с презервативом" />
           </div>
@@ -546,7 +549,7 @@ export default function App() {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
             <h2 style={{ fontSize: 16, fontWeight: 600, margin: 0 }}>Структура партнёрств во времени</h2>
             <div style={{ fontSize: 12, color: C.mid }}>
-              одновременно: в среднем <b style={{ color: C.hi }}>{avgConc.toFixed(1).replace(".", ",")}</b> · пик <b style={{ color: C.hi }}>{packed.lanes}</b> · всего за {years} {years < 5 ? "года" : "лет"}: <b style={{ color: C.hi }}>{packed.list.length}</b>
+              одновременно: в среднем <b style={{ color: C.hi }}>{avgConc.toFixed(1).replace(".", ",")}</b> · пик <b style={{ color: C.hi }}>{packed.lanes}</b> · секс ≈ <b style={{ color: C.hi }}>{avgWeekTotal.toFixed(1).replace(".", ",")}×</b>/нед · всего за {years} {years < 5 ? "года" : "лет"}: <b style={{ color: C.hi }}>{packed.list.length}</b>
             </div>
           </div>
           <p style={{ color: C.dim, fontSize: 12, margin: "0 0 14px", lineHeight: 1.5 }}>
@@ -558,7 +561,7 @@ export default function App() {
             <Timeline packed={packed} horizonM={horizonM} years={years} />
           )}
           <div style={{ marginTop: 12, padding: "10px 14px", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 12, color: C.dim, lineHeight: 1.5 }}>
-            На <b style={{ color: C.mid }}>кривую риска</b> сейчас влияют число новых партнёров, частота и презерватив. Длительность и одновременность показывают <b style={{ color: C.mid }}>структуру</b> сети — эпидемиологически concurrency важна, но её строгий учёт требует сетевой симуляции и в формулу здесь не заложен.
+            На <b style={{ color: C.mid }}>кривую риска</b> влияют число новых партнёров, частота с партнёром, <b style={{ color: C.mid }}>длительность связи</b> (через число актов с партнёром) и презерватив. <b style={{ color: C.mid }}>Одновременность</b> (concurrency) показывает структуру сети — эпидемиологически она важна, но её строгий учёт требует сетевой симуляции и в формулу здесь не заложен.
           </div>
         </div>
 
@@ -636,7 +639,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <Breakdown s={selSti} phi={phi} partners={partners} actsPerYear={actsPerYear} condom={condom} years={years} veMul={selVeMul} />
+          <Breakdown s={selSti} phi={phi} partners={partners} perWeek={perWeek} dur={dur} condom={condom} years={years} veMul={selVeMul} />
         </details>
 
         {/* Methodology */}
@@ -653,7 +656,7 @@ export default function App() {
               <b style={{ color: C.hi }}>Прививки.</b> «Привит от ВПЧ / гепатита B» — множитель, снижающий передачу за акт (ВПЧ ~85%, HBV ~95%). Это оценка эффекта: вакцина покрывает не все типы и наиболее эффективна до начала половой жизни. На остальные инфекции не влияет.
             </p>
             <p style={{ marginBottom: 0 }}>
-              <b style={{ color: C.hi }}>Формула:</b> на акт β_eff = β·(1 − доля_презерватива·e); с одним заражённым партнёром за k актов риск = 1 − (1 − β_eff)^k; умножается на распространённость, складывается по числу партнёров за год и разворачивается во времени (постоянный риск). «Хотя бы одна» — в предположении независимости инфекций (грубая верхняя оценка).
+              <b style={{ color: C.hi }}>Формула:</b> на акт β_eff = β·(1 − доля_презерватива·e); число актов с одним партнёром k = частота с партнёром × длительность связи; риск от заражённого партнёра = 1 − (1 − β_eff)^k; умножается на распространённость, перемножается по числу новых партнёров за год и разворачивается во времени. Поэтому теперь и больше партнёров, и более долгие связи реально поднимают риск. Средний секс в неделю — производная величина (не вводится, а считается). «Хотя бы одна» — в предположении независимости инфекций (грубая верхняя оценка).
             </p>
           </div>
         </details>
