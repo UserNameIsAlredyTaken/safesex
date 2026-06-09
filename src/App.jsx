@@ -411,10 +411,13 @@ export default function App() {
         .num { font-variant-numeric:tabular-nums; }
         .chk { width:17px; height:17px; cursor:pointer; }
         .studio { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; margin-bottom:14px; }
+        .studio-chart { position:sticky; top:0; z-index:5; order:-1; box-shadow:0 8px 16px -6px rgba(0,0,0,.55); }
+        .chartbox { height:210px; }
         @media (min-width:880px) {
           .studio { grid-template-columns:340px minmax(0,1fr); }
           .studio-controls { grid-column:1; grid-row:1; }
-          .studio-chart { grid-column:2; grid-row:1; position:sticky; top:16px; }
+          .studio-chart { grid-column:2; grid-row:1; top:16px; order:0; box-shadow:none; }
+          .chartbox { height:380px; }
         }
         .src { position:relative; display:inline-flex; align-items:center; gap:7px; cursor:help; }
         .src .ic { width:16px; height:16px; border-radius:50%; border:1px solid ${C.dim}; color:${C.dim}; font-size:11px; display:inline-flex; align-items:center; justify-content:center; }
@@ -508,7 +511,8 @@ export default function App() {
             ))}
           </div>
 
-          <ResponsiveContainer width="100%" height={380}>
+          <div className="chartbox">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
               <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />
               <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0}
@@ -526,6 +530,7 @@ export default function App() {
               )}
             </LineChart>
           </ResponsiveContainer>
+          </div>
 
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
             <div style={{ color: C.mid, fontSize: 13 }}>
