@@ -1487,9 +1487,88 @@ function LangSwitch({ lang, setLang }) {
   );
 }
 
-// --- «Поделиться»: состояние ⇄ ссылка (хэш #c=base64url). Hash работает на любом подпути GitHub Pages и без перезагрузки. ---
+// --- «Поделиться»: КОМПАКТНАЯ сериализация состояния ⇄ ссылка (хэш #c=base64url) ---
+// Короткие ключи + пропуск дефолтов + битовые маски + индекс пресета вместо полного cfg.
+// Hash работает на любом подпути GitHub Pages без перезагрузки. Старый формат v:1 принимается как есть.
+const SHARE_TKEYS = ["steady", "casual", "hookup"];
+const STI_KEYS = STIS.map((s) => s.key);
+const PRESET_KEYS = PRESETS.map((p) => p.key);
+const PREG_PRESET_KEYS = PREG_PRESETS.map((p) => p.key);
+const STI_FIELDS = ["count", "condom", "perWeek", "dur", "tested"]; // poolMul — производное, не сериализуем
+const PREG_FIELDS = ["count", "perWeek", "dur", "age"];             // + meth отдельным слотом
+const actsToMask = (a) => ACT_KEYS.reduce((m, k, i) => m | (a && a[k] ? 1 << i : 0), 0);
+const maskToActs = (m) => { const o = {}; ACT_KEYS.forEach((k, i) => { o[k] = !!(m & (1 << i)); }); return o; };
+const DEF_ACTS_MASK = actsToMask({ vagR: true, oralR: true, oralI: true });
+const hiddenToMask = (h) => STI_KEYS.reduce((m, k, i) => m | (h && h[k] ? 1 << i : 0), 0);
+const maskToHidden = (m) => { const o = {}; STI_KEYS.forEach((k, i) => { if (m & (1 << i)) o[k] = true; }); return o; };
+const isDefMeth = (m) => !!m && Object.keys(m).length === 1 && m.condom_m === 100;
+const packStiCfg = (cfg) => SHARE_TKEYS.map((k) => (Math.round(cfg[k].count) > 0 ? STI_FIELDS.map((f) => cfg[k][f]) : 0));
+const unpackStiCfg = (arr) => {
+  const c = mkCfg(); // все count 0, остальное из BASE (incl. poolMul)
+  (arr || []).forEach((a, i) => { if (Array.isArray(a)) STI_FIELDS.forEach((f, j) => (c[SHARE_TKEYS[i]][f] = a[j])); });
+  return c;
+};
+const packPregCfg = (cfg) => SHARE_TKEYS.map((k) => { const t = cfg[k]; return t.count > 0 ? [...PREG_FIELDS.map((f) => t[f]), isDefMeth(t.meth) ? 0 : t.meth] : 0; });
+const unpackPregCfg = (arr) => {
+  const c = mkPregCfg();
+  (arr || []).forEach((a, i) => { if (Array.isArray(a)) { const t = c[SHARE_TKEYS[i]]; PREG_FIELDS.forEach((f, j) => (t[f] = a[j])); t.meth = a[4] ? a[4] : { condom_m: 100 }; } });
+  return c;
+};
+
+function buildShare(s) {
+  const o = { v: 2 };
+  if (s.lang !== "en") o.l = s.lang;
+  if (s.mode !== "sti") o.m = 1;
+  if (s.who !== "woman") o.g = 1;
+  if (s.years !== 10) o.y = s.years;
+  if (s.yMax !== 100) o.ym = s.yMax;
+  // ЗППП: «open» — дефолт (опускаем); другой пресет → индекс; кастом → компактный cfg.
+  // Любая ручная правка обнуляет activePreset, поэтому при наличии пресета cfg всегда = mkCfg(preset).
+  if (s.preset === "open") { /* дефолт */ }
+  else if (s.preset && PRESET_KEYS.indexOf(s.preset) >= 0) o.ps = PRESET_KEYS.indexOf(s.preset);
+  else o.c = packStiCfg(s.cfg);
+  const am = actsToMask(s.acts); if (am !== DEF_ACTS_MASK) o.a = am;
+  const hm = hiddenToMask(s.hidden); if (hm) o.h = hm;
+  if (s.vaxHpv) o.vh = 1;
+  if (s.vaxHbv) o.vb = 1;
+  if (s.selected !== "chl" && STI_KEYS.indexOf(s.selected) >= 0) o.s = STI_KEYS.indexOf(s.selected);
+  if (s.showAny) o.sa = 1;
+  // Беременность — девушка
+  if (s.w && s.w.age !== 26) o.wa = s.w.age;
+  if (s.w && s.w.perWeek !== 3) o.wf = s.w.perWeek;
+  if (!isDefMeth(s.meth)) o.wm = s.meth;
+  // Беременность — парень: «dating» — дефолт (опускаем)
+  if (s.preg === "dating") { /* дефолт */ }
+  else if (s.preg && PREG_PRESET_KEYS.indexOf(s.preg) >= 0) o.pp = PREG_PRESET_KEYS.indexOf(s.preg);
+  else o.mc = packPregCfg(s.mcfg);
+  if (s.manAge !== 28) o.ma = s.manAge;
+  return o;
+}
+
+function parseShare(o) {
+  if (!o || typeof o !== "object") return null;
+  if (o.v === 1) return o; // старый полный формат — уже в форме SHARE_INIT
+  if (o.v !== 2) return null;
+  const r = { lang: o.l || "en", mode: o.m ? "preg" : "sti", who: o.g ? "man" : "woman",
+    years: o.y ?? 10, yMax: o.ym ?? 100, preset: "open", preg: "dating" };
+  if (typeof o.ps === "number" && PRESETS[o.ps]) { r.preset = PRESET_KEYS[o.ps]; r.cfg = mkCfg(PRESETS[o.ps]); }
+  else if (o.c) { r.preset = null; r.cfg = unpackStiCfg(o.c); }
+  if (typeof o.a === "number") r.acts = maskToActs(o.a);
+  if (o.h) r.hidden = maskToHidden(o.h);
+  if (o.vh) r.vaxHpv = true;
+  if (o.vb) r.vaxHbv = true;
+  if (typeof o.s === "number" && STI_KEYS[o.s]) r.selected = STI_KEYS[o.s];
+  if (o.sa) r.showAny = true;
+  if (typeof o.wa === "number" || typeof o.wf === "number") r.w = { age: o.wa ?? 26, perWeek: o.wf ?? 3 };
+  if (o.wm) r.meth = o.wm;
+  if (typeof o.pp === "number" && PREG_PRESETS[o.pp]) { r.preg = PREG_PRESET_KEYS[o.pp]; r.mcfg = mkPregCfg(PREG_PRESETS[o.pp]); }
+  else if (o.mc) { r.preg = null; r.mcfg = unpackPregCfg(o.mc); }
+  if (typeof o.ma === "number") r.manAge = o.ma;
+  return r;
+}
+
 function encodeShare(snap) {
-  try { return btoa(unescape(encodeURIComponent(JSON.stringify(snap)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  try { return btoa(unescape(encodeURIComponent(JSON.stringify(buildShare(snap))))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
   catch { return ""; }
 }
 function decodeShare() {
@@ -1498,7 +1577,7 @@ function decodeShare() {
     const m = h.match(/[#&]c=([^&]+)/);
     if (!m) return null;
     let b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
-    return JSON.parse(decodeURIComponent(escape(atob(b))));
+    return parseShare(JSON.parse(decodeURIComponent(escape(atob(b)))));
   } catch { return null; }
 }
 // Накладываем сохранённый конфиг поверх дефолта по каждому типу партнёров (устойчиво к нехватке полей).
