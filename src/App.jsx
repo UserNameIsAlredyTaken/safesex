@@ -7,8 +7,10 @@ import {
   ИЛЛЮСТРАТИВНАЯ МОДЕЛЬ кумулятивного риска ЗППП во времени. Не медицинский прогноз.
   Поведение задаётся тремя типами партнёров (постоянные / приходящие / хукапы), у каждого
   своя частота, длительность, презерватив, проверенность и фон среды (ассортативность).
-  Вид секса (вагинальный/анальный/оральный × роль) — множитель к передаче за акт (опора на ВИЧ).
-  Для типа: βeff = β·actMul·(1 − φ·e)·прививка; риск с заражённым партнёром = 1 − (1 − βeff)^k;
+  Вид секса (вагинальный/анальный/оральный × роль) — множитель к β за акт (опора на ВИЧ), практики
+  складываются аддитивно: в каждом контакте присутствует каждая выбранная практика.
+  Для типа: выживаемость за контакт = ∏ практик (1 − β·множитель·(1 − φ·e)·прививка);
+  риск с заражённым партнёром = 1 − (выживаемость_за_контакт)^k;
   × p·фон·(1 − проверенность); вклады перемножаются по всем партнёрам; разворачивается во времени.
   ✓ grounded=true  → опирается на данные (сплошная линия)
   ◌ grounded=false → грубая оценка (пунктир); надёжных per-act чисел нет
@@ -148,31 +150,37 @@ const veMulOf = (s, vaxHpv, vaxHbv) => {
 // рец.анал 138, ввод.анал 11, оральный — очень низкий. Для не-ВИЧ — грубое приближение.
 const ACT_MUL = { vagR: 1, vagI: 0.5, analR: 17, analI: 1.4, oralR: 0.1, oralI: 0.02 };
 const ACT_KEYS = ["vagR", "vagI", "analR", "analI", "oralR", "oralI"];
-const actMulOf = (acts) => {
-  const sel = ACT_KEYS.filter((k) => acts[k]);
-  if (sel.length === 0) return 0;
-  return sel.reduce((a, k) => a + ACT_MUL[k], 0) / sel.length;
+const actSelOf = (acts) => ACT_KEYS.filter((k) => acts[k]).map((k) => ACT_MUL[k]);
+
+// Аддитивная модель видов секса: в каждом контакте практикуется каждая выбранная практика
+// (со своим множителем к β). Выживаемость за один контакт = произведение «не заразиться» по
+// всем практикам, поэтому добавление практики риск только повышает (или не меняет, если β·m≈0).
+// factor = (1 − презерватив·e)·прививка. Пустой набор → 1 (риск 0). Каждый βeff клампится.
+const encSurvOf = (s, actSel, factor) => {
+  let surv = 1;
+  for (let i = 0; i < actSel.length; i++) surv *= 1 - Math.min(0.999, s.beta * actSel[i] * factor);
+  return surv;
 };
 
-function survivalAt(s, t, cfg, veMul, actMul = 1) {
+function survivalAt(s, t, cfg, veMul, actSel = [1]) {
   let Srec = 1;
   ["casual", "hookup"].forEach((key) => {
     const T = cfg[key]; const cnt = Math.round(T.count);
     if (cnt <= 0) return;
-    const betaEff = Math.min(0.999, s.beta * actMul * (1 - (T.condom / 100) * s.e) * veMul);
+    const encSurv = encSurvOf(s, actSel, (1 - (T.condom / 100) * s.e) * veMul);
     const k = key === "hookup" ? 1 : Math.max(1, T.perWeek * (52 / 12) * T.dur);
     const pEff = Math.min(1, s.p * T.poolMul * (1 - T.tested / 100));
-    const transmit = 1 - Math.pow(1 - betaEff, k);
+    const transmit = 1 - Math.pow(encSurv, k);
     Srec *= Math.pow(1 - pEff * transmit, cnt);
   });
   const recCum = Math.pow(Srec, t / 12);
   let steadySurv = 1;
   const ST = cfg.steady; const sc = Math.round(ST.count);
   if (sc > 0) {
-    const betaEff = Math.min(0.999, s.beta * actMul * (1 - (ST.condom / 100) * s.e) * veMul);
+    const encSurv = encSurvOf(s, actSel, (1 - (ST.condom / 100) * s.e) * veMul);
     const k = Math.max(1, ST.perWeek * (52 / 12) * t);
     const pEff = Math.min(1, s.p * ST.poolMul * (1 - ST.tested / 100));
-    const transmit = 1 - Math.pow(1 - betaEff, k);
+    const transmit = 1 - Math.pow(encSurv, k);
     steadySurv = Math.pow(1 - pEff * transmit, sc);
   }
   return recCum * steadySurv;
@@ -339,37 +347,39 @@ function ChartTooltip({ active, payload, label, hidden, showAny }) {
   );
 }
 
-function Breakdown({ s, cfg, years, veMul, actMul = 1 }) {
+function Breakdown({ s, cfg, years, veMul, actSel = [1] }) {
   const horizonM = years * 12;
   const yWord = years === 1 ? "год" : years < 5 ? "года" : "лет";
   const fmtP = (v) => pctVal(v * 100);
   const active = TYPES.map((meta) => {
     const T = cfg[meta.key]; const cnt = Math.round(T.count);
     if (cnt <= 0) return null;
-    const betaEff = Math.min(0.999, s.beta * actMul * (1 - (T.condom / 100) * s.e) * veMul);
+    const encSurv = encSurvOf(s, actSel, (1 - (T.condom / 100) * s.e) * veMul);
+    const actEff = 1 - encSurv; // передача за один контакт (все практики), если партнёр заражён
     const k = meta.kind === "oneoff" ? 1 : meta.kind === "ongoing" ? Math.max(1, T.perWeek * (52 / 12) * horizonM) : Math.max(1, T.perWeek * (52 / 12) * T.dur);
     const pEff = Math.min(1, s.p * T.poolMul * (1 - T.tested / 100));
-    const transmit = 1 - Math.pow(1 - betaEff, k);
+    const transmit = 1 - Math.pow(encSurv, k);
     const perPartner = pEff * transmit;
     const toHorizon = meta.kind === "ongoing" ? 1 - Math.pow(1 - perPartner, cnt) : 1 - Math.pow(Math.pow(1 - perPartner, cnt), years);
-    return { meta, T, cnt, betaEff, k, pEff, toHorizon };
+    return { meta, T, cnt, actEff, k, pEff, toHorizon };
   }).filter(Boolean);
   if (active.length === 0) return <div style={{ color: C.mid, fontSize: 13, padding: "8px 0" }}>Нет активных партнёров — добавь кого-нибудь в карточках слева, чтобы увидеть разбор.</div>;
-  const totalRisk = 1 - survivalAt(s, horizonM, cfg, veMul, actMul);
+  const totalRisk = 1 - survivalAt(s, horizonM, cfg, veMul, actSel);
   const condAll = (pct) => ({ steady: { ...cfg.steady, condom: pct }, casual: { ...cfg.casual, condom: pct }, hookup: { ...cfg.hookup, condom: pct } });
-  const ho0 = 1 - survivalAt(s, horizonM, condAll(0), veMul, actMul);
-  const ho100 = 1 - survivalAt(s, horizonM, condAll(100), veMul, actMul);
-  const cutAct = Math.round(s.e * 100);
+  const ho0 = 1 - survivalAt(s, horizonM, condAll(0), veMul, actSel);
+  const ho100 = 1 - survivalAt(s, horizonM, condAll(100), veMul, actSel);
+  const bareAct = 1 - encSurvOf(s, actSel, 1);
+  const condAct = 1 - encSurvOf(s, actSel, 1 - s.e);
+  const cutAct = bareAct > 0 ? Math.round((1 - condAct / bareAct) * 100) : Math.round(s.e * 100);
   const cutHor = ho0 > 0 ? Math.round((1 - ho100 / ho0) * 100) : 0;
-  const bAct = Math.min(0.999, s.beta * actMul);
   const bars = [
-    { lab: "За 1 акт (если партнёр заражён)", a: bAct, b: bAct * (1 - s.e), fmt: pctAct },
+    { lab: "За 1 контакт (все практики, если партнёр заражён)", a: bareAct, b: condAct, fmt: pctAct },
     { lab: `За ${years} ${yWord}`, a: ho0, b: ho100, fmt: fmtP },
   ];
   return (
     <div>
       <div style={{ marginBottom: 18 }}>
-        <div style={{ color: C.hi, fontSize: 13.5, fontWeight: 600, marginBottom: 8 }}>Что даёт презерватив (если использовать на каждом акте со всеми)</div>
+        <div style={{ color: C.hi, fontSize: 13.5, fontWeight: 600, marginBottom: 8 }}>Что даёт презерватив (если использовать в каждом контакте со всеми)</div>
         <div style={{ display: "flex", gap: 16, fontSize: 12, color: C.mid, marginBottom: 12, flexWrap: "wrap" }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 11, height: 11, borderRadius: 3, background: "#ff7b73" }} />без презерватива</span>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ width: 11, height: 11, borderRadius: 3, background: "#4dd4ac" }} />с презервативом</span>
@@ -389,9 +399,9 @@ function Breakdown({ s, cfg, years, veMul, actMul = 1 }) {
         ); })}
         <div style={{ fontSize: 12.5, color: C.mid, lineHeight: 1.55, marginTop: 6 }}>
           {cutAct - cutHor >= 4 ? (
-            <>На <b style={{ color: C.hi }}>один акт</b> презерватив убирает <b style={{ color: "#4dd4ac" }}>{cutAct}%</b> риска. Но за <b style={{ color: C.hi }}>{years} {yWord}</b> с повторами — уже только <b style={{ color: "#ff7b73" }}>{cutHor}%</b>: при многих контактах риск «насыщается», и относительная защита падает.</>
+            <>За <b style={{ color: C.hi }}>один контакт</b> презерватив убирает <b style={{ color: "#4dd4ac" }}>{cutAct}%</b> риска. Но за <b style={{ color: C.hi }}>{years} {yWord}</b> с повторами — уже только <b style={{ color: "#ff7b73" }}>{cutHor}%</b>: при многих контактах риск «насыщается», и относительная защита падает.</>
           ) : (
-            <>И на <b style={{ color: C.hi }}>один акт</b>, и за <b style={{ color: C.hi }}>{years} {yWord}</b> презерватив убирает примерно одинаково (~<b style={{ color: "#4dd4ac" }}>{cutHor}%</b>). У редко передающихся инфекций риск не «насыщается», поэтому относительная защита со временем не падает.</>
+            <>И за <b style={{ color: C.hi }}>один контакт</b>, и за <b style={{ color: C.hi }}>{years} {yWord}</b> презерватив убирает примерно одинаково (~<b style={{ color: "#4dd4ac" }}>{cutHor}%</b>). У редко передающихся инфекций риск не «насыщается», поэтому относительная защита со временем не падает.</>
           )}
         </div>
       </div>
@@ -399,14 +409,14 @@ function Breakdown({ s, cfg, years, veMul, actMul = 1 }) {
       <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.6, marginBottom: 12 }}>Вклад каждого <b style={{ color: C.hi }}>типа партнёров</b> за {years} {yWord} (своя частота, длительность, презерватив, проверенность, фон), затем они объединяются:</div>
       <div style={{ overflowX: "auto" }}>
         <table className="inf" style={{ minWidth: 560 }}>
-          <thead><tr><th>Тип</th><th>Партнёров</th><th>Актов k</th><th>Передача за акт</th><th>Шанс партнёр заразен</th><th>Риск за {years} {yWord}</th></tr></thead>
+          <thead><tr><th>Тип</th><th>Партнёров</th><th>Контактов k</th><th>Передача за контакт</th><th>Шанс партнёр заразен</th><th>Риск за {years} {yWord}</th></tr></thead>
           <tbody>
             {active.map((r) => (
               <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}` }}>
                 <td style={{ whiteSpace: "nowrap", color: C.hi }}><span style={{ color: r.meta.color, marginRight: 6 }}>●</span>{r.meta.label}</td>
                 <td className="num">{r.cnt}{r.meta.kind !== "ongoing" ? "/год" : ""}</td>
                 <td className="num">{Math.round(r.k)}</td>
-                <td className="num">{pctAct(r.betaEff)}</td>
+                <td className="num">{pctAct(r.actEff)}</td>
                 <td className="num">{fmtP(r.pEff)}</td>
                 <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{fmtP(r.toHorizon)}</td>
               </tr>
@@ -415,7 +425,7 @@ function Breakdown({ s, cfg, years, veMul, actMul = 1 }) {
         </table>
       </div>
       <div style={{ marginTop: 12, padding: "12px 14px", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 13, color: C.mid, lineHeight: 1.55 }}>
-        «Шанс партнёр заразен» = распространённость p × фон среды × (1 − проверенность). «Передача за акт» уже учитывает вид секса, презерватив и прививку этого типа. Общий риск = 1 − произведение «не заразиться» по всем типам = <b style={{ color: s.color }}>{fmtP(totalRisk)}</b> — это и есть высота кривой «{s.label.toLowerCase()}» за {years} {yWord}.
+        «Шанс партнёр заразен» = распространённость p × фон среды × (1 − проверенность). «Передача за контакт» складывает выбранные виды секса и уже учитывает презерватив и прививку этого типа. Общий риск = 1 − произведение «не заразиться» по всем типам = <b style={{ color: s.color }}>{fmtP(totalRisk)}</b> — это и есть высота кривой «{s.label.toLowerCase()}» за {years} {yWord}.
       </div>
     </div>
   );
@@ -437,7 +447,7 @@ export default function App() {
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
 
-  const actMul = useMemo(() => actMulOf(acts), [acts]);
+  const actSel = useMemo(() => actSelOf(acts), [acts]);
 
   // Всплывашки .box у кнопок «i» не должны уезжать за край экрана.
   useEffect(() => {
@@ -465,7 +475,7 @@ export default function App() {
   const applyPreset = (pr) => { setCfg(mkCfg(pr)); setActivePreset(pr.key); };
   const toggle = (k) => setHidden((h) => ({ ...h, [k]: !h[k] }));
 
-  const riskPct = (s, t) => (1 - survivalAt(s, t, cfg, veMulOf(s, vaxHpv, vaxHbv), actMul)) * 100;
+  const riskPct = (s, t) => (1 - survivalAt(s, t, cfg, veMulOf(s, vaxHpv, vaxHbv), actSel)) * 100;
 
   const chartData = useMemo(() => {
     const st = Math.max(1, Math.ceil(horizonM / 170));
@@ -473,7 +483,7 @@ export default function App() {
     for (let t = 0; t <= horizonM; t += st) {
       const row = { t }; let anyS = 1;
       STIS.forEach((s) => {
-        const sv = survivalAt(s, t, cfg, veMulOf(s, vaxHpv, vaxHbv), actMul);
+        const sv = survivalAt(s, t, cfg, veMulOf(s, vaxHpv, vaxHbv), actSel);
         row[s.key] = (1 - sv) * 100;
         if (!hidden[s.key]) anyS *= sv;
       });
@@ -481,7 +491,7 @@ export default function App() {
       pts.push(row);
     }
     return pts;
-  }, [cfg, years, vaxHpv, vaxHbv, hidden, actMul]);
+  }, [cfg, years, vaxHpv, vaxHbv, hidden, actSel]);
 
   const built = useMemo(() => buildPartnersTyped(cfg, horizonM), [cfg, horizonM]);
   const packed = useMemo(() => packLanes(built.list), [built]);
@@ -557,9 +567,9 @@ export default function App() {
             </div>
 
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 18px" }}>
-              <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 10, display: "inline-flex", alignItems: "center" }}>Виды секса<Info text="Какими практиками ты занимаешься и в какой роли. Разные акты передают инфекцию по-разному: рецептивный анальный примерно в 17 раз рискованнее вагинального, вводящий — меньше, оральный — заметно ниже. Эти соотношения опираются на данные по ВИЧ (Patel 2014, CDC); для остальных инфекций это грубое приближение. Множитель к передаче за акт = среднее по выбранным практикам." /></div>
+              <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 10, display: "inline-flex", alignItems: "center" }}>Виды секса<Info text="Какими практиками ты занимаешься и в какой роли. Разные акты передают инфекцию по-разному: рецептивный анальный примерно в 17 раз рискованнее вагинального, вводящий — меньше, оральный — заметно ниже. Эти соотношения опираются на данные по ВИЧ (Patel 2014, CDC); для остальных инфекций это грубое приближение. Практики складываются: в каждом контакте учитывается каждая выбранная, поэтому добавление практики риск только повышает." /></div>
               <SexActs acts={acts} setActs={setActs} />
-              {actMul === 0 && <div style={{ color: "#ff922b", fontSize: 12, marginTop: 10 }}>Не выбрано ни одной практики — риск считается нулевым.</div>}
+              {actSel.length === 0 && <div style={{ color: "#ff922b", fontSize: 12, marginTop: 10 }}>Не выбрано ни одной практики — риск считается нулевым.</div>}
 
               <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, margin: "16px 0 10px" }}>Защита и иммунитет</div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -613,7 +623,7 @@ export default function App() {
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "6px 6px", marginBottom: 14 }}>
           <div className="tbl-wrap">
             <table className="inf">
-              <thead><tr><th style={{ width: 34 }}></th><th>Инфекция</th><th>Риск за {years} {years === 1 ? "год" : years < 5 ? "года" : "лет"}</th><th>На акт: без → с презервативом</th><th>Лечение</th><th>Последствия</th><th style={{ width: 60, textAlign: "right" }}>Источник</th></tr></thead>
+              <thead><tr><th style={{ width: 34 }}></th><th>Инфекция</th><th>Риск за {years} {years === 1 ? "год" : years < 5 ? "года" : "лет"}</th><th>За контакт: без → с презервативом</th><th>Лечение</th><th>Последствия</th><th style={{ width: 60, textAlign: "right" }}>Источник</th></tr></thead>
               <tbody>
                 {STIS.flatMap((s) => {
                   const exp = !!guideOpen[s.key];
@@ -626,7 +636,7 @@ export default function App() {
                       <span aria-hidden style={{ marginLeft: 8, color: exp ? s.color : C.dim, fontSize: 10 }}>{exp ? "▾" : "▸"}</span>
                     </td>
                     <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM))}</td>
-                    <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(Math.min(0.999, s.beta * actMul))} <span style={{ color: C.dim }}>→</span> {pctAct(Math.min(0.999, s.beta * actMul) * (1 - s.e))}</td>
+                    <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1))} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e))}</td>
                     <td><span style={{ background: `${SEV[s.sev]}22`, color: SEV[s.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{s.treat}</span></td>
                     <td style={{ color: C.mid, fontSize: 12.5 }}>{s.cons}</td>
                     <td style={{ textAlign: "right" }}><span className="src" tabIndex={0}><span style={{ width: 8, height: 8, borderRadius: "50%", background: ACC_COLOR[s.acc] }} title={`точность: ${s.acc}`} /><span className="ic">i</span><span className="box"><b style={{ color: C.hi }}>Точность: {s.acc}</b><br />{s.src}</span></span></td>
@@ -658,7 +668,7 @@ export default function App() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 16 }}>
             {STIS.map((s) => (<button key={s.key} onClick={() => setSelected(s.key)} style={{ border: `1px solid ${selected === s.key ? s.color : C.border}`, background: selected === s.key ? `${s.color}22` : "transparent", color: selected === s.key ? C.hi : C.mid, padding: "6px 12px", borderRadius: 999, fontSize: 12.5, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ color: s.color }}>●</span>{s.label}</button>))}
           </div>
-          <Breakdown s={selSti} cfg={cfg} years={years} veMul={veMulOf(selSti, vaxHpv, vaxHbv)} actMul={actMul} />
+          <Breakdown s={selSti} cfg={cfg} years={years} veMul={veMulOf(selSti, vaxHpv, vaxHbv)} actSel={actSel} />
         </details>
 
         <details style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 14 }}>
@@ -666,10 +676,10 @@ export default function App() {
           <div style={{ color: C.mid, fontSize: 13, lineHeight: 1.65, marginTop: 14 }}>
             <p style={{ marginTop: 0 }}>Только для <b style={{ color: C.hi }}>ВИЧ</b> вероятность передачи на акт и эффективность презерватива взяты из исследований (сплошная линия). Для остальных надёжных per-act чисел нет — правдоподобные средние (пунктир). Это сравнение и форма, а не точный прогноз.</p>
             <p><b style={{ color: C.hi }}>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие, хукапы — у каждого свои число, частота, длительность, презерватив и «проверенность». Это отражает реальность: с разными партнёрами по-разному и часто, и долго, и насколько защищённо (барьер с близкими используют реже, со случайными — чаще).</p>
-            <p><b style={{ color: C.hi }}>Виды секса.</b> Передача за акт зависит от практики и роли: рецептивный анальный примерно в 17 раз рискованнее вагинального, вводящий — около половины, оральный — заметно ниже. Эти соотношения взяты из данных по ВИЧ (Patel 2014, CDC); для остальных инфекций они применены как грубое приближение. Множитель к β = среднее по выбранным практикам (равные веса — упрощение). Рецептивный и вводящий вагинальный взаимоисключают друг друга (анатомия).</p>
+            <p><b style={{ color: C.hi }}>Виды секса.</b> Передача за акт зависит от практики и роли: рецептивный анальный примерно в 17 раз рискованнее вагинального, вводящий — около половины, оральный — заметно ниже. Эти соотношения взяты из данных по ВИЧ (Patel 2014, CDC); для остальных инфекций они применены как грубое приближение. Практики складываются (аддитивно): считаем, что в каждом контакте присутствует каждая выбранная практика со своим β, а «не заразиться за контакт» = произведение по практикам — поэтому добавление любой практики риск только повышает (упрощение: в реальности не каждый контакт включает все практики). Рецептивный и вводящий вагинальный взаимоисключают друг друга (анатомия).</p>
             <p><b style={{ color: C.hi }}>Проверены.</b> Снижает шанс, что партнёр этого типа заражён, пропорционально доле проверенных. Тест не идеален — между заражением и положительным тестом есть «окно», поэтому даже 100% проверенных не гарантируют ноль; считаем это оценкой.</p>
             <p><b style={{ color: C.hi }}>Фон среды (множитель).</b> Оценка ассортативности — того, что люди чаще сходятся с похожими по активности. Случайные и хукап-партнёры в среднем из более активного/рискового круга, поэтому шанс, что такой партнёр уже заражён, выше, чем по общей популяции. Это множитель к распространённости p: постоянные ×1,0, приходящие ×1,4, хукапы ×1,8 — это оценки, не данные, и их легко поменять.</p>
-            <p style={{ marginBottom: 0 }}><b style={{ color: C.hi }}>Формула.</b> Для типа: k = частота × длительность (хукап = 1 акт); βeff = β·вид_секса·(1 − презерватив·e)·прививка; шанс заразиться от заражённого партнёра = 1 − (1 − βeff)^k; умножается на p · фон · (1 − проверенность); вклады перемножаются по всем партнёрам всех типов. Постоянные — длящаяся связь (экспозиция копится со временем); приходящие и хукапы обновляются каждый год. «Хотя бы одна» — независимость инфекций (грубая верхняя оценка).</p>
+            <p style={{ marginBottom: 0 }}><b style={{ color: C.hi }}>Формула.</b> Для типа: k = частота × длительность (хукап = 1 контакт); для каждой выбранной практики βeff = β·множитель_практики·(1 − презерватив·e)·прививка; выживаемость за контакт = ∏(1 − βeff) по практикам; шанс заразиться от заражённого партнёра = 1 − (выживаемость_за_контакт)^k; умножается на p · фон · (1 − проверенность); вклады перемножаются по всем партнёрам всех типов. Постоянные — длящаяся связь (экспозиция копится со временем); приходящие и хукапы обновляются каждый год. «Хотя бы одна» — независимость инфекций (грубая верхняя оценка).</p>
           </div>
         </details>
 
