@@ -10,6 +10,9 @@ dist/
 # Claude Code agent worktrees (parallel subagents)
 .claude/worktrees/
 
+# local preview server config (machine-specific: python static server)
+.claude/launch.json
+
 # local layout preview (mirror of src/App.jsx, opened in a browser)
 preview.html
 

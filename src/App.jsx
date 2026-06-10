@@ -271,6 +271,9 @@ const I18N = {
     vaccinated: "vaccinated",
     addBtn: "+ add",
     removeCard: "remove (count → 0)",
+    shareBtn: "Share profile",
+    shareDone: "Copied to clipboard!",
+    shareHint: "Copy a link that reopens exactly these settings",
     poolInfo: "Background environment — an estimate of assortativity (mixing): casual and hookup partners more often come from a more active/risky pool, so the chance a partner is infected is higher for them. Multiplier on prevalence p: steady ×1, recurring ×1.4, hookups ×1.8 (estimate).",
     bg: "background", bgMul: (m) => `background ×${m}`,
     oneActBg: (m) => `1 act · background ×${m}`,
@@ -414,6 +417,9 @@ const I18N = {
     vaccinated: "привит",
     addBtn: "+ добавить",
     removeCard: "убрать (количество → 0)",
+    shareBtn: "Поделиться профилем",
+    shareDone: "Скопировано в буфер!",
+    shareHint: "Скопировать ссылку, открывающую именно эти настройки",
     poolInfo: "Фон среды — оценка ассортативности (смешивания): случайные и хукап-партнёры чаще из более активного/рискового круга, поэтому шанс, что партнёр заражён, у них выше. Множитель к распространённости p: постоянные ×1, приходящие ×1,4, хукапы ×1,8 (оценка).",
     bg: "фон среды", bgMul: (m) => `фон среды ×${m}`,
     oneActBg: (m) => `1 акт · фон ×${m}`,
@@ -553,6 +559,9 @@ const I18N = {
     vaccinated: "vakcinisan/a",
     addBtn: "+ dodaj",
     removeCard: "ukloni (broj → 0)",
+    shareBtn: "Podeli profil",
+    shareDone: "Kopirano u klipbord!",
+    shareHint: "Kopiraj link koji otvara baš ova podešavanja",
     poolInfo: "Pozadinska sredina — procena asortativnosti (mešanja): povremeni i partneri iz avantura češće dolaze iz aktivnijeg/rizičnijeg kruga, pa je šansa da je partner zaražen kod njih veća. Množilac na prevalenciju p: stalni ×1, povremeni ×1,4, avanture ×1,8 (procena).",
     bg: "pozadinska sredina", bgMul: (m) => `pozadina ×${m}`,
     oneActBg: (m) => `1 akt · pozadina ×${m}`,
@@ -1353,13 +1362,8 @@ function ContraTable({ lang, L }) {
   );
 }
 
-function Pregnancy({ who, setWho, years, setYears, yMax, setYMax, lang, L }) {
+function Pregnancy({ who, setWho, years, setYears, yMax, setYMax, lang, L, w, setW, meth, setMeth, mcfg, setMcfg, manAge, setManAge, activePreg, setActivePreg }) {
   const months = years * 12;
-  const [w, setW] = useState({ age: 26, perWeek: 3 });
-  const [meth, setMeth] = useState({ condom_m: 100 });
-  const [mcfg, setMcfg] = useState(() => mkPregCfg(PREG_PRESETS.find((p) => p.key === "dating")));
-  const [manAge, setManAge] = useState(28);
-  const [activePreg, setActivePreg] = useState("dating");
   const setMType = (key, patch) => { setMcfg((c) => ({ ...c, [key]: { ...c[key], ...patch } })); setActivePreg(null); };
   const applyPreg = (pr) => { setMcfg(mkPregCfg(pr)); setActivePreg(pr.key); };
   const mFac = mAge(manAge);
@@ -1483,8 +1487,62 @@ function LangSwitch({ lang, setLang }) {
   );
 }
 
+// --- «Поделиться»: состояние ⇄ ссылка (хэш #c=base64url). Hash работает на любом подпути GitHub Pages и без перезагрузки. ---
+function encodeShare(snap) {
+  try { return btoa(unescape(encodeURIComponent(JSON.stringify(snap)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  catch { return ""; }
+}
+function decodeShare() {
+  try {
+    const h = (typeof window !== "undefined" ? window.location.hash : "") || "";
+    const m = h.match(/[#&]c=([^&]+)/);
+    if (!m) return null;
+    let b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while (b.length % 4) b += "=";
+    return JSON.parse(decodeURIComponent(escape(atob(b))));
+  } catch { return null; }
+}
+// Накладываем сохранённый конфиг поверх дефолта по каждому типу партнёров (устойчиво к нехватке полей).
+const mergeTypes = (base, over) => over ? {
+  steady: { ...base.steady, ...(over.steady || {}) },
+  casual: { ...base.casual, ...(over.casual || {}) },
+  hookup: { ...base.hookup, ...(over.hookup || {}) },
+} : base;
+const SHARE_INIT = decodeShare();
+
+// Кнопка «Поделиться»: копирует ссылку с текущими настройками в буфер, с явным визуальным фидбеком.
+function ShareButton({ snapshot, L }) {
+  const [copied, setCopied] = useState(false);
+  const tRef = useRef(null);
+  useEffect(() => () => clearTimeout(tRef.current), []);
+  const copy = async () => {
+    const url = window.location.href.split("#")[0] + "#c=" + encodeShare(snapshot());
+    let ok = false;
+    try { await navigator.clipboard.writeText(url); ok = true; } catch {}
+    if (!ok) {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = url; ta.style.position = "fixed"; ta.style.left = "-9999px";
+        document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); document.body.removeChild(ta);
+      } catch {}
+    }
+    try { window.history.replaceState(null, "", url); } catch {} // и сама страница становится «расшариваемой»
+    if (ok) { setCopied(true); clearTimeout(tRef.current); tRef.current = setTimeout(() => setCopied(false), 2200); }
+  };
+  return (
+    <button onClick={copy} title={L.shareHint} aria-label={L.shareBtn}
+      onMouseDown={(e) => { e.currentTarget.style.opacity = "0.7"; }}
+      onMouseUp={(e) => { e.currentTarget.style.opacity = ""; }}
+      onMouseLeave={(e) => { e.currentTarget.style.opacity = ""; }}
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, background: copied ? "#2ea043" : C.panel2, color: copied ? "#fff" : C.hi, border: `1px solid ${copied ? "#2ea043" : C.border}`, borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "background .15s, border-color .15s, opacity .1s" }}>
+      <span aria-hidden style={{ fontSize: 14, lineHeight: 1 }}>{copied ? "✓" : "🔗"}</span>
+      {copied ? L.shareDone : L.shareBtn}
+    </button>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
+    if (SHARE_INIT && SHARE_INIT.lang && LANGS.includes(SHARE_INIT.lang)) return SHARE_INIT.lang;
     try { const v = localStorage.getItem("lang"); if (v && LANGS.includes(v)) return v; } catch {}
     return "en"; // дефолт — английский, без авто-детекта языка браузера
   });
@@ -1494,40 +1552,59 @@ export default function App() {
   }, [lang]);
   const L = I18N[lang];
 
-  const [cfg, setCfg] = useState(mkCfg(OPEN));
-  const [years, setYears] = useState(10);
-  const [yMax, setYMax] = useState(100);
-  const [hidden, setHidden] = useState({});
-  const [showAny, setShowAny] = useState(false);
-  const [selected, setSelected] = useState("chl");
-  const [vaxHpv, setVaxHpv] = useState(false);
-  const [vaxHbv, setVaxHbv] = useState(false);
-  const [acts, setActs] = useState({ vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true });
-  const [activePreset, setActivePreset] = useState("open");
+  const [cfg, setCfg] = useState(() => mergeTypes(mkCfg(OPEN), SHARE_INIT && SHARE_INIT.cfg));
+  const [years, setYears] = useState(SHARE_INIT?.years ?? 10);
+  const [yMax, setYMax] = useState(SHARE_INIT?.yMax ?? 100);
+  const [hidden, setHidden] = useState(SHARE_INIT?.hidden ?? {});
+  const [showAny, setShowAny] = useState(SHARE_INIT?.showAny ?? false);
+  const [selected, setSelected] = useState(SHARE_INIT?.selected ?? "chl");
+  const [vaxHpv, setVaxHpv] = useState(SHARE_INIT?.vaxHpv ?? false);
+  const [vaxHbv, setVaxHbv] = useState(SHARE_INIT?.vaxHbv ?? false);
+  const [acts, setActs] = useState(SHARE_INIT?.acts ?? { vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true });
+  const [activePreset, setActivePreset] = useState(SHARE_INIT ? (SHARE_INIT.preset ?? null) : "open");
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
-  const [mode, setMode] = useState("sti");
-  const [pregWho, setPregWho] = useState("woman");
+  const [mode, setMode] = useState(SHARE_INIT?.mode ?? "sti");
+  const [pregWho, setPregWho] = useState(SHARE_INIT?.who ?? "woman");
+  // Состояние беременности поднято в App — чтобы «Поделиться» сериализовал и его.
+  const [w, setW] = useState(() => SHARE_INIT?.w ?? { age: 26, perWeek: 3 });
+  const [meth, setMeth] = useState(() => SHARE_INIT?.meth ?? { condom_m: 100 });
+  const [mcfg, setMcfg] = useState(() => mergeTypes(mkPregCfg(PREG_PRESETS.find((p) => p.key === "dating")), SHARE_INIT && SHARE_INIT.mcfg));
+  const [manAge, setManAge] = useState(SHARE_INIT?.manAge ?? 28);
+  const [activePreg, setActivePreg] = useState(SHARE_INIT ? (SHARE_INIT.preg ?? null) : "dating");
   C = mode === "preg" ? CP : CS;
   PREG = C.accent;
 
   const actSel = useMemo(() => actSelOf(acts), [acts]);
 
-  // Всплывашки .box у кнопок «i» не должны уезжать за край экрана.
+  // Снимок всех настроек для ссылки «Поделиться» (актуален на момент клика).
+  const snapshot = () => ({ v: 1, lang, mode, who: pregWho, cfg, years, yMax, hidden, showAny, selected, vaxHpv, vaxHbv, acts, preset: activePreset, w, meth, mcfg, manAge, preg: activePreg });
+
+  // Всплывашки .box у кнопок «i»: position:fixed + зажим в границы экрана.
+  // Fixed не расширяет документ, поэтому всплывашка не порождает скролл и не вылезает за край.
   useEffect(() => {
     const place = (e) => {
       const src = e.target && e.target.closest && e.target.closest(".src");
       if (!src) return;
       const box = src.querySelector(".box"); if (!box) return;
-      box.style.left = ""; box.style.right = ""; box.style.top = ""; box.style.bottom = "";
+      const m = 8;
+      const ir = src.getBoundingClientRect();
+      const bw = box.offsetWidth, bh = box.offsetHeight; // box уже display:block (hover/focus)
+      box.style.position = "fixed";
+      box.style.right = "auto"; box.style.bottom = "auto";
+      // предварительно ставим над иконкой, выровняв правый край — без скачка из угла
+      box.style.left = Math.max(m, ir.right - bw) + "px";
+      box.style.top = Math.max(m, ir.top - bh - 6) + "px";
       requestAnimationFrame(() => {
-        const m = 8, vw = window.innerWidth, vh = window.innerHeight;
-        let r = box.getBoundingClientRect();
-        if (r.right > vw - m) { box.style.right = "0"; box.style.left = "auto"; }
-        if (r.left < m) { box.style.left = "0"; box.style.right = "auto"; }
-        r = box.getBoundingClientRect();
-        if (r.bottom > vh - m) { box.style.bottom = "140%"; box.style.top = "auto"; }
-        else if (r.top < m) { box.style.top = "140%"; box.style.bottom = "auto"; }
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const r = src.getBoundingClientRect();
+        const w = box.offsetWidth, h = box.offsetHeight;
+        const left = Math.max(m, Math.min(r.right - w, vw - w - m));
+        let top = r.top - h - 6;            // по умолчанию над иконкой
+        if (top < m) top = r.bottom + 6;    // не влезает сверху — под иконку
+        top = Math.max(m, Math.min(top, vh - h - m));
+        box.style.left = left + "px";
+        box.style.top = top + "px";
       });
     };
     document.addEventListener("mouseover", place);
@@ -1618,7 +1695,7 @@ export default function App() {
         <div style={{ marginBottom: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
             <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>{mode === "sti" ? L.title : L.pregTitle}</h1>
-            <span style={{ fontSize: 10, color: C.accent, border: `1px solid ${C.accent}`, borderRadius: 4, padding: "3px 7px", letterSpacing: 0.5, textTransform: "uppercase" }}>{L.badge}</span>
+            <div style={{ marginLeft: "auto" }}><ShareButton snapshot={snapshot} L={L} /></div>
           </div>
           <p style={{ color: C.mid, fontSize: 14, margin: 0, lineHeight: 1.5 }}>{mode === "sti" ? L.intro : L.pregIntro}</p>
         </div>
@@ -1761,7 +1838,7 @@ export default function App() {
         </details>
         </>)}
 
-        {mode === "preg" && <Pregnancy who={pregWho} setWho={setPregWho} years={years} setYears={setYears} yMax={yMax} setYMax={setYMax} lang={lang} L={L} />}
+        {mode === "preg" && <Pregnancy who={pregWho} setWho={setPregWho} years={years} setYears={setYears} yMax={yMax} setYMax={setYMax} lang={lang} L={L} w={w} setW={setW} meth={meth} setMeth={setMeth} mcfg={mcfg} setMcfg={setMcfg} manAge={manAge} setManAge={setManAge} activePreg={activePreg} setActivePreg={setActivePreg} />}
 
         <p style={{ color: C.dim, fontSize: 12, lineHeight: 1.6, textAlign: "center", marginTop: 0 }}>{L.footerDisclaimer}</p>
         <p style={{ color: C.dim, fontSize: 12, textAlign: "center", marginTop: 8 }}><a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.githubLink}</a></p>
