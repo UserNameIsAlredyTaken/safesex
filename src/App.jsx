@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
@@ -814,6 +814,32 @@ function Breakdown({ s, cfg, years, veMul, actSel = [1], lang, L }) {
 
 const OPEN = PRESETS.find((p) => p.key === "open");
 
+function LangSwitch({ lang, setLang }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!open) return;
+    const h = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", h);
+    return () => document.removeEventListener("mousedown", h);
+  }, [open]);
+  return (
+    <div ref={ref} style={{ position: "absolute", top: 0, right: 0, zIndex: 50 }}>
+      <button onClick={() => setOpen((o) => !o)} aria-label="Language" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.panel2, color: C.hi, border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 10px", fontSize: 13, cursor: "pointer" }}>
+        <span aria-hidden>🌐</span>{lang.toUpperCase()}
+        <span aria-hidden style={{ color: C.dim, fontSize: 10, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
+      </button>
+      {open && (
+        <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 50, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 6 }}>
+          {LANGS.map((lg) => (
+            <button key={lg} onClick={() => { setLang(lg); setOpen(false); }} style={{ background: lang === lg ? C.accent : "transparent", color: lang === lg ? C.bg : C.mid, border: `1px solid ${lang === lg ? C.accent : C.border}`, borderRadius: 999, padding: "5px 12px", fontSize: 13, fontWeight: lang === lg ? 600 : 500, cursor: "pointer" }}>{lg.toUpperCase()}</button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
     try { const v = localStorage.getItem("lang"); if (v && LANGS.includes(v)) return v; } catch {}
@@ -931,19 +957,14 @@ export default function App() {
         .rich [data-hi] { color:${C.hi}; }
         .rich [data-grn] { color:#4dd4ac; }
         .rich [data-red] { color:#ff7b73; }
-        .langsel { background:${C.panel2}; border:1px solid ${C.border}; color:${C.hi}; padding:6px 30px 6px 12px; border-radius:8px; font-size:13px; cursor:pointer; appearance:none; -webkit-appearance:none; -moz-appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%239fb0c0' stroke-width='1.5' fill='none'/></svg>"); background-repeat:no-repeat; background-position:right 10px center; }
-        .langsel:focus { outline:none; border-color:${C.accent}; }
-        .langsel option { background:${C.panel2}; color:${C.hi}; }
       `}</style>
 
-      <div style={{ maxWidth: 940, margin: "0 auto" }}>
+      <div style={{ maxWidth: 940, margin: "0 auto", position: "relative" }}>
+        <LangSwitch lang={lang} setLang={setLang} />
         <div style={{ marginBottom: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
             <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>{L.title}</h1>
             <span style={{ fontSize: 10, color: C.accent, border: `1px solid ${C.accent}`, borderRadius: 4, padding: "3px 7px", letterSpacing: 0.5, textTransform: "uppercase" }}>{L.badge}</span>
-            <select className="langsel" style={{ marginLeft: "auto" }} value={lang} onChange={(e) => setLang(e.target.value)} aria-label="Language">
-              {LANGS.map((lg) => (<option key={lg} value={lg}>{I18N[lg].langName}</option>))}
-            </select>
           </div>
           <p style={{ color: C.mid, fontSize: 14, margin: 0, lineHeight: 1.5 }}>{L.intro}</p>
         </div>
