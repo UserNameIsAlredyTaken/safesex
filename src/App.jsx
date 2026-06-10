@@ -17,33 +17,74 @@ import {
 const C = { bg:"#0f141a", panel:"#161d26", panel2:"#1b2430", border:"#283442", hi:"#e8edf2", mid:"#9fb0c0", dim:"#64748b", accent:"#f0a500" };
 const SEV = { 5:"#ff3b3b", 4:"#ff7b00", 3:"#ffc300", 2:"#b5d600", 1:"#38d9a9" };
 
+const CDC = "CDC", WHO = "ВОЗ";
 const STIS = [
   { key: "hiv", label: "ВИЧ", color: "#4dabf7", sev: 5, p: 0.002, beta: 0.0008, e: 0.80, grounded: true,
     treat: "Неизлечимо — пожизненная АРТ", cons: "Без лечения — СПИД, иммунный отказ", acc: "высокая",
-    src: "Передача/акт: Patel 2014 (CDC) — рецепт. вагинальный 8 на 10 000. Презерватив ~80%: Cochrane. Анальный ~в 17 раз опаснее. Точность: высокая." },
+    src: "Передача/акт: Patel 2014 (CDC) — рецепт. вагинальный 8 на 10 000. Презерватив ~80%: Cochrane. Анальный ~в 17 раз опаснее. Точность: высокая.",
+    guide: {
+      symptoms: "Через 2–4 недели у части заражённых — гриппоподобный синдром (лихорадка, сыпь, боль в горле, увеличение лимфоузлов). Затем годами без симптомов, пока иммунитет постепенно разрушается.",
+      treatment: "Излечения нет, но антиретровирусная терапия (АРТ) подавляет вирус до неопределяемого уровня — человек живёт долго и при «неопределяемом» не передаёт вирус половым путём (U=U). Профилактика: PrEP до контакта, PEP — в течение 72 ч после.",
+      consequences: "Без лечения — СПИД: тяжёлый иммунодефицит, оппортунистические инфекции и опухоли, смерть.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/hiv/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hiv-aids" }] } },
   { key: "hpv", label: "ВПЧ", color: "#ff4d6d", sev: 4, p: 0.25, beta: 0.40, e: 0.40, grounded: false,
     vax: { ve: 0.85, note: "Эффективнее до начала половой жизни; ~90% онкогенных типов, но не все. Оценка." },
     treat: "Нет лекарства; онкогенен", cons: "Рак (шейка, горло, анус), кондиломы", acc: "низкая",
-    src: "Передача/акт — грубая оценка; ВПЧ очень заразен. Презерватив ~40% (CDC). Защищает прививка. Точность: низкая." },
+    src: "Передача/акт — грубая оценка; ВПЧ очень заразен. Презерватив ~40% (CDC). Защищает прививка. Точность: низкая.",
+    guide: {
+      symptoms: "Чаще всего бессимптомно; в 9 из 10 случаев инфекция уходит сама за ~2 года. Некоторые типы дают генитальные кондиломы (бородавки); онкогенные типы протекают скрыто и выявляются скринингом.",
+      treatment: "Лекарства от самого вируса нет — лечат проявления: кондиломы удаляют, предраковые изменения шейки матки наблюдают и лечат. Надёжно предотвращается вакциной (лучше всего до начала половой жизни).",
+      consequences: "Онкогенные типы вызывают рак шейки матки, а также рак ануса, ротоглотки, полового члена, вульвы и влагалища.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/sti/about/about-genital-hpv-infection.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/human-papilloma-virus-and-cancer" }] } },
   { key: "hbv", label: "Гепатит B", color: "#94d82d", sev: 4, p: 0.003, beta: 0.03, e: 0.90, grounded: false,
     vax: { ve: 0.95, note: "При иммунном ответе ~95%, заражение почти исключено. Оценка." },
     treat: "Хронический неизлечим; есть прививка", cons: "Цирроз, рак печени при хронизации", acc: "низкая",
-    src: "Сексуальная передача/акт — грубая оценка. Презерватив ~90%. Зависит от прививки. Точность: низкая." },
+    src: "Сексуальная передача/акт — грубая оценка. Презерватив ~90%. Зависит от прививки. Точность: низкая.",
+    guide: {
+      symptoms: "Часто бессимптомно. Острая фаза: усталость, тошнота, боль в животе, тёмная моча, желтуха. Чем младше заразившийся, тем выше шанс перехода в хроническую форму.",
+      treatment: "Острый гепатит обычно проходит сам; хронический неизлечим, но контролируется противовирусными препаратами. Надёжно предотвращается вакцинацией.",
+      consequences: "Хроническая инфекция со временем → цирроз и рак печени.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/hepatitis-b/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hepatitis-b" }] } },
   { key: "hcv", label: "Гепатит C", color: "#748ffc", sev: 3, p: 0.005, beta: 0.0002, e: 0.70, grounded: false,
     treat: "Излечим (~95%, DAA)", cons: "Цирроз, рак печени без лечения", acc: "низкая",
-    src: "В основном через кровь; сексуальная передача низкая и оценочная. Излечим (DAA ~95%). Точность: низкая." },
+    src: "В основном через кровь; сексуальная передача низкая и оценочная. Излечим (DAA ~95%). Точность: низкая.",
+    guide: {
+      symptoms: "Обычно бессимптомно годами; иногда усталость, желтуха. Многие не знают, что заражены, поэтому важен анализ.",
+      treatment: "Излечим: курс противовирусных прямого действия (DAA) даёт ~95% выздоровления за 8–12 недель. Вакцины нет. Передаётся в основном через кровь, половой путь — реже.",
+      consequences: "Без лечения — цирроз, печёночная недостаточность, рак печени.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/hepatitis-c/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hepatitis-c" }] } },
   { key: "syp", label: "Сифилис", color: "#cc5de8", sev: 3, p: 0.004, beta: 0.10, e: 0.60, grounded: false,
     treat: "Излечим (пенициллин)", cons: "Поражение мозга, сердца, НС (третичный)", acc: "низкая-средняя",
-    src: "Передача/акт — оценка; шанкр часто вне зоны презерватива. Презерватив ~50–71% (CDC). Точность: низкая–средняя." },
+    src: "Передача/акт — оценка; шанкр часто вне зоны презерватива. Презерватив ~50–71% (CDC). Точность: низкая–средняя.",
+    guide: {
+      symptoms: "Стадийное течение. Первичный: безболезненная язва (шанкр) в месте заражения. Вторичный: сыпь (часто на ладонях и стопах), температура, увеличение лимфоузлов. Затем латентная стадия без симптомов.",
+      treatment: "Излечим антибиотиком (пенициллин). Чем раньше начато лечение, тем проще; повреждения третичной стадии необратимы.",
+      consequences: "Без лечения через годы — третичный сифилис: поражение сердца, мозга и нервной системы; при беременности — врождённый сифилис у ребёнка.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/syphilis/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/syphilis" }] } },
   { key: "gon", label: "Гонорея", color: "#ff922b", sev: 2, p: 0.008, beta: 0.20, e: 0.90, grounded: false,
     treat: "Излечима; растёт устойчивость", cons: "Бесплодие, ВЗОМТ, диссеминация", acc: "низкая",
-    src: "Передача/акт — грубая оценка; презерватив >90% (CDC). Антибиотикорезистентность. Точность: низкая для β." },
+    src: "Передача/акт — грубая оценка; презерватив >90% (CDC). Антибиотикорезистентность. Точность: низкая для β.",
+    guide: {
+      symptoms: "Часто бессимптомна (особенно у женщин). Возможны: жжение при мочеиспускании, выделения (бели, гной), у женщин — кровотечения между циклами. Бывает ректальная и глоточная формы.",
+      treatment: "Излечима антибиотиком (инъекция цефтриаксона), но устойчивость к препаратам растёт — лечение строго по назначению врача.",
+      consequences: "Без лечения — ВЗОМТ, бесплодие, внематочная беременность; может распространиться в кровь и суставы; повышает риск заражения ВИЧ.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/gonorrhea/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
   { key: "chl", label: "Хламидия", color: "#ffd43b", sev: 2, p: 0.045, beta: 0.10, e: 0.70, grounded: false,
     treat: "Излечима антибиотиком", cons: "Бесплодие, ВЗОМТ (часто скрыто)", acc: "низкая-средняя",
-    src: "Передача/акт — оценка; часто бессимптомна. Презерватив 50–90% (CDC). Точность: низкая–средняя." },
+    src: "Передача/акт — оценка; часто бессимптомна. Презерватив 50–90% (CDC). Точность: низкая–средняя.",
+    guide: {
+      symptoms: "Часто бессимптомна. Возможны выделения, жжение при мочеиспускании, боль внизу живота; симптомы могут появиться лишь через несколько недель.",
+      treatment: "Излечима антибиотиком; важно пройти весь курс и пролечить партнёров, иначе повторное заражение.",
+      consequences: "Без лечения — ВЗОМТ, рубцевание маточных труб, бесплодие, внематочная беременность.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/chlamydia/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
   { key: "tri", label: "Трихомониаз", color: "#20c997", sev: 1, p: 0.02, beta: 0.12, e: 0.50, grounded: false,
     treat: "Излечим одним курсом", cons: "Воспаление; повышает риск др. ИППП", acc: "низкая",
-    src: "Передача/акт — оценка; презерватив ~50%. Лечится одним курсом. Точность: низкая." },
+    src: "Передача/акт — оценка; презерватив ~50%. Лечится одним курсом. Точность: низкая.",
+    guide: {
+      symptoms: "Около 70% — без симптомов. Возможны: зуд, жжение, покраснение, выделения (у женщин нередко пенистые с запахом), дискомфорт при мочеиспускании.",
+      treatment: "Легко излечим: курс антибиотика (метронидазол или тинидазол); лечить нужно обоих партнёров.",
+      consequences: "Воспаление; повышает риск заражения и передачи других ИППП, включая ВИЧ; при беременности — преждевременные роды.",
+      sources: [{ label: CDC, url: "https://www.cdc.gov/trichomoniasis/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
 ];
 
 const ACC_COLOR = { "высокая": "#38d9a9", "низкая-средняя": "#ffc300", "низкая": "#ff7b00" };
@@ -394,6 +435,7 @@ export default function App() {
   const [acts, setActs] = useState({ vagR: true, vagI: false, analR: false, analI: false, oralR: false, oralI: false });
   const [activePreset, setActivePreset] = useState("open");
   const [open, setOpen] = useState({});
+  const [guideOpen, setGuideOpen] = useState({});
 
   const actMul = useMemo(() => actMulOf(acts), [acts]);
 
@@ -479,6 +521,12 @@ export default function App() {
         .src:hover .box, .src:focus-within .box { display:block; }
         .pill { background:${C.panel2}; border:1px solid ${C.border}; color:${C.mid}; padding:6px 12px; border-radius:999px; font-size:12px; cursor:pointer; }
         .pill.on { background:${C.accent}; color:${C.bg}; border-color:${C.accent}; font-weight:600; }
+        .ghd { color:${C.dim}; font-size:11px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+        .gtx { color:${C.mid}; font-size:12.5px; line-height:1.55; }
+        table.inf tbody tr.inf-row { cursor:pointer; transition:background .12s; }
+        table.inf tbody tr.inf-row:hover { background:#ffffff0a; }
+        table.inf tbody tr.inf-row.on { background:#ffffff12; }
+        table.inf tbody tr.inf-row.on:hover { background:#ffffff16; }
       `}</style>
 
       <div style={{ maxWidth: 940, margin: "0 auto" }}>
@@ -567,20 +615,38 @@ export default function App() {
             <table className="inf">
               <thead><tr><th style={{ width: 34 }}></th><th>Инфекция</th><th>Риск за {years} {years === 1 ? "год" : years < 5 ? "года" : "лет"}</th><th>На акт: без → с презервативом</th><th>Лечение</th><th>Последствия</th><th style={{ width: 60, textAlign: "right" }}>Источник</th></tr></thead>
               <tbody>
-                {STIS.map((s) => (
-                  <tr key={s.key} style={{ borderLeft: `3px solid ${SEV[s.sev]}`, opacity: hidden[s.key] ? 0.45 : 1, background: selected === s.key ? "#ffffff0d" : "transparent" }}>
-                    <td><input className="chk" type="checkbox" checked={!hidden[s.key]} onChange={() => toggle(s.key)} style={{ accentColor: s.color }} /></td>
-                    <td onClick={() => setSelected(s.key)} title="показать разбор расчёта" style={{ whiteSpace: "nowrap", cursor: "pointer" }}>
+                {STIS.flatMap((s) => {
+                  const exp = !!guideOpen[s.key];
+                  const rows = [
+                  <tr key={s.key} className={"inf-row" + ((selected === s.key || exp) ? " on" : "")} onClick={() => { setSelected(s.key); setGuideOpen((g) => ({ ...g, [s.key]: !g[s.key] })); }} title={exp ? "свернуть гайд" : "открыть гайд по болезни"} style={{ borderLeft: `3px solid ${SEV[s.sev]}`, opacity: hidden[s.key] ? 0.45 : 1 }}>
+                    <td onClick={(e) => e.stopPropagation()}><input className="chk" type="checkbox" checked={!hidden[s.key]} onChange={() => toggle(s.key)} style={{ accentColor: s.color }} /></td>
+                    <td style={{ whiteSpace: "nowrap" }}>
                       <span style={{ color: s.color, marginRight: 7 }}>{s.grounded ? "●" : "◌"}</span>{s.label}
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>привит</span>}
+                      <span aria-hidden style={{ marginLeft: 8, color: exp ? s.color : C.dim, fontSize: 10 }}>{exp ? "▾" : "▸"}</span>
                     </td>
                     <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM))}</td>
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(Math.min(0.999, s.beta * actMul))} <span style={{ color: C.dim }}>→</span> {pctAct(Math.min(0.999, s.beta * actMul) * (1 - s.e))}</td>
                     <td><span style={{ background: `${SEV[s.sev]}22`, color: SEV[s.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{s.treat}</span></td>
                     <td style={{ color: C.mid, fontSize: 12.5 }}>{s.cons}</td>
                     <td style={{ textAlign: "right" }}><span className="src" tabIndex={0}><span style={{ width: 8, height: 8, borderRadius: "50%", background: ACC_COLOR[s.acc] }} title={`точность: ${s.acc}`} /><span className="ic">i</span><span className="box"><b style={{ color: C.hi }}>Точность: {s.acc}</b><br />{s.src}</span></span></td>
-                  </tr>
-                ))}
+                  </tr>,
+                  ];
+                  if (exp) rows.push(
+                    <tr key={s.key + "-g"} style={{ borderLeft: `3px solid ${s.color}` }}>
+                      <td />
+                      <td colSpan={6} style={{ background: C.panel2, padding: "14px 16px" }}>
+                        <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+                          <div><div className="ghd">Симптомы</div><div className="gtx">{s.guide.symptoms}</div></div>
+                          <div><div className="ghd">Лечение</div><div className="gtx">{s.guide.treatment}</div></div>
+                          <div><div className="ghd">Последствия</div><div className="gtx">{s.guide.consequences}</div></div>
+                        </div>
+                        <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>Источники: {s.guide.sources.map((src, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{src.label} ↗</a></span>))} — справочная информация о болезни, не диагноз.</div>
+                      </td>
+                    </tr>
+                  );
+                  return rows;
+                })}
               </tbody>
             </table>
           </div>
