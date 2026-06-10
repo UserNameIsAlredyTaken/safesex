@@ -7,6 +7,9 @@ dist/
 # local Claude Code settings (personal, machine-specific)
 .claude/settings.local.json
 
+# Claude Code agent worktrees (parallel subagents)
+.claude/worktrees/
+
 # local layout preview (mirror of src/App.jsx, opened in a browser)
 preview.html
 
