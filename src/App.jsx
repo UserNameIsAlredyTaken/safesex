@@ -1502,7 +1502,7 @@ export default function App() {
   const [selected, setSelected] = useState("chl");
   const [vaxHpv, setVaxHpv] = useState(false);
   const [vaxHbv, setVaxHbv] = useState(false);
-  const [acts, setActs] = useState({ vagR: true, vagI: false, analR: false, analI: false, oralR: false, oralI: false });
+  const [acts, setActs] = useState({ vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true });
   const [activePreset, setActivePreset] = useState("open");
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
@@ -1521,12 +1521,13 @@ export default function App() {
       const box = src.querySelector(".box"); if (!box) return;
       box.style.left = ""; box.style.right = ""; box.style.top = ""; box.style.bottom = "";
       requestAnimationFrame(() => {
-        const m = 8, vw = window.innerWidth;
+        const m = 8, vw = window.innerWidth, vh = window.innerHeight;
         let r = box.getBoundingClientRect();
         if (r.right > vw - m) { box.style.right = "0"; box.style.left = "auto"; }
         if (r.left < m) { box.style.left = "0"; box.style.right = "auto"; }
         r = box.getBoundingClientRect();
-        if (r.top < m) { box.style.top = "140%"; box.style.bottom = "auto"; }
+        if (r.bottom > vh - m) { box.style.bottom = "140%"; box.style.top = "auto"; }
+        else if (r.top < m) { box.style.top = "140%"; box.style.bottom = "auto"; }
       });
     };
     document.addEventListener("mouseover", place);
@@ -1591,7 +1592,7 @@ export default function App() {
         }
         .src { position:relative; display:inline-flex; align-items:center; gap:5px; cursor:help; }
         .src .ic { width:12px; height:12px; border-radius:50%; border:1px solid ${C.dim}; color:${C.dim}; font-size:9px; line-height:1; display:inline-flex; align-items:center; justify-content:center; opacity:.85; }
-        .src .box { display:none; position:absolute; right:0; bottom:140%; width:280px; background:${C.panel2}; border:1px solid ${C.border}; border-radius:8px; padding:10px 12px; font-size:12px; line-height:1.5; color:${C.mid}; z-index:20; box-shadow:0 8px 24px rgba(0,0,0,.4); text-transform:none; letter-spacing:0; font-weight:400; }
+        .src .box { display:none; position:absolute; right:0; bottom:140%; width:280px; max-width:calc(100vw - 16px); white-space:normal; word-break:break-word; background:${C.panel2}; border:1px solid ${C.border}; border-radius:8px; padding:10px 12px; font-size:12px; line-height:1.5; color:${C.mid}; z-index:20; box-shadow:0 8px 24px rgba(0,0,0,.4); text-transform:none; letter-spacing:0; font-weight:400; }
         .src:hover .box, .src:focus-within .box { display:block; }
         .src.dn .box { top:150%; bottom:auto; }
         .pill { background:${C.panel2}; border:1px solid ${C.border}; color:${C.mid}; padding:6px 12px; border-radius:999px; font-size:12px; cursor:pointer; }
