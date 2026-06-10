@@ -270,6 +270,7 @@ const I18N = {
     vaxHbv: "Vaccinated against hepatitis B",
     vaccinated: "vaccinated",
     addBtn: "+ add",
+    removeCard: "remove (count → 0)",
     poolInfo: "Background environment — an estimate of assortativity (mixing): casual and hookup partners more often come from a more active/risky pool, so the chance a partner is infected is higher for them. Multiplier on prevalence p: steady ×1, recurring ×1.4, hookups ×1.8 (estimate).",
     bg: "background", bgMul: (m) => `background ×${m}`,
     oneActBg: (m) => `1 act · background ×${m}`,
@@ -394,6 +395,7 @@ const I18N = {
     pregAssum5: (<><b data-hi>Contraception — the reliable part.</b> The typical-use table (% pregnancies per year, CDC/Trussell): a method lowers the annual failure relative to «no method» (85%/yr). Methods combine by multiplication — a <b>lower bound</b>: in reality it's higher because of dependence (a shared user factor). Source: <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC ↗</a>.</>),
     pregAssum6: (<><b data-hi>Woman = couple.</b> Partners do not add up — you can conceive once per cycle, the bottleneck is her cycle. So the total amount of sex and contraception matter, not the number of partners.</>),
     pregAssum7: (<><b data-hi>Man = STI logic.</b> «At least one pregnancy among partners»: the contribution of each type is multiplied. Steady — by cycles over the whole period; recurring — a relationship of duration dur, refreshed yearly; hookups — a single act (per-act ≈ ⅕ of the per-cycle f — a rough estimate).</>),
+    pregAssum8: (<><b data-hi>Why the number of partners matters for the man.</b> Each partner is a separate «draw»: she can get pregnant independently of the others, so we count not «how many children total» but the chance that <b>at least one</b> pregnancy happens. The more partners — and the more unprotected sex with each — the higher that chance, because independent opportunities pile up. For each partner we take her «did not get pregnant» probability and multiply them together; one minus that product is «at least one». For the woman it is the opposite: partners do not add up, because her cycle is the shared bottleneck (one conception per cycle).</>),
   },
   ru: {
     langName: "Русский",
@@ -411,6 +413,7 @@ const I18N = {
     vaxHbv: "Привит от гепатита B",
     vaccinated: "привит",
     addBtn: "+ добавить",
+    removeCard: "убрать (количество → 0)",
     poolInfo: "Фон среды — оценка ассортативности (смешивания): случайные и хукап-партнёры чаще из более активного/рискового круга, поэтому шанс, что партнёр заражён, у них выше. Множитель к распространённости p: постоянные ×1, приходящие ×1,4, хукапы ×1,8 (оценка).",
     bg: "фон среды", bgMul: (m) => `фон среды ×${m}`,
     oneActBg: (m) => `1 акт · фон ×${m}`,
@@ -531,6 +534,7 @@ const I18N = {
     pregAssum5: (<><b data-hi>Контрацепция — надёжная часть.</b> Таблица типичного использования (% беременностей за год, CDC/Trussell): метод снижает годовой отказ относительно «без метода» (85%/год). Методы сочетаются перемножением — <b>оценка снизу</b>: реально выше из-за зависимости (общий пользовательский фактор). Источник: <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC ↗</a>.</>),
     pregAssum6: (<><b data-hi>Девушка = пара.</b> Партнёры не суммируются — забеременеть можно раз за цикл, узкое место — её цикл. Поэтому важно суммарное количество секса и контрацепция, а не число партнёров.</>),
     pregAssum7: (<><b data-hi>Парень = ЗППП-логика.</b> «Хотя бы одна беременность среди партнёрш»: вклад каждого типа перемножается. Постоянные — по циклам весь период; приходящие — связь длительностью dur, обновляется за год; хукапы — один акт (per-act ≈ ⅕ от цикловой f — грубая оценка).</>),
+    pregAssum8: (<><b data-hi>Почему у парня важно число партнёрш.</b> Каждая партнёрша — отдельный «розыгрыш»: забеременеть она может независимо от других, поэтому считаем не «сколько всего детей», а шанс, что произойдёт <b>хотя бы одна</b> беременность. Чем больше партнёрш и чем больше с каждой секса без надёжной контрацепции — тем выше этот шанс, потому что независимые возможности складываются. Для каждой партнёрши берём вероятность «не забеременела» и перемножаем их; единица минус это произведение и есть «хотя бы одна». У девушки наоборот: партнёры не складываются, потому что её цикл — общее узкое место (одно зачатие за цикл).</>),
   },
   sr: {
     langName: "Srpski",
@@ -548,6 +552,7 @@ const I18N = {
     vaxHbv: "Vakcinisan/a protiv hepatitisa B",
     vaccinated: "vakcinisan/a",
     addBtn: "+ dodaj",
+    removeCard: "ukloni (broj → 0)",
     poolInfo: "Pozadinska sredina — procena asortativnosti (mešanja): povremeni i partneri iz avantura češće dolaze iz aktivnijeg/rizičnijeg kruga, pa je šansa da je partner zaražen kod njih veća. Množilac na prevalenciju p: stalni ×1, povremeni ×1,4, avanture ×1,8 (procena).",
     bg: "pozadinska sredina", bgMul: (m) => `pozadina ×${m}`,
     oneActBg: (m) => `1 akt · pozadina ×${m}`,
@@ -668,6 +673,7 @@ const I18N = {
     pregAssum5: (<><b data-hi>Kontracepcija — pouzdani deo.</b> Tabela tipičnog korišćenja (% trudnoća godišnje, CDC/Trussell): metod smanjuje godišnji neuspeh u odnosu na „bez metoda“ (85%/god.). Metodi se kombinuju množenjem — <b>procena odozdo</b>: realno je više zbog zavisnosti (zajednički korisnički faktor). Izvor: <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC ↗</a>.</>),
     pregAssum6: (<><b data-hi>Devojka = par.</b> Partneri se ne sabiraju — začeće je moguće jednom po ciklusu, usko grlo je njen ciklus. Zato je bitna ukupna količina seksa i kontracepcija, a ne broj partnera.</>),
     pregAssum7: (<><b data-hi>Mladić = PPI logika.</b> „Bar jedna trudnoća među partnerkama“: doprinos svakog tipa se množi. Stalni — po ciklusima ceo period; povremeni — veza trajanja dur, obnavlja se godišnje; avanture — jedan akt (per-act ≈ ⅕ ciklusne f — gruba procena).</>),
+    pregAssum8: (<><b data-hi>Zašto je broj partnerki bitan za mladića.</b> Svaka partnerka je zaseban „pokušaj“: ona može zatrudneti nezavisno od drugih, pa računamo ne „koliko dece ukupno“ već šansu da se desi <b>bar jedna</b> trudnoća. Što više partnerki — i što više seksa bez pouzdane kontracepcije sa svakom — to je ta šansa veća, jer se nezavisne mogućnosti sabiraju. Za svaku partnerku uzimamo verovatnoću „nije zatrudnela“ i množimo ih; jedan minus taj proizvod je „bar jedna“. Kod devojke je obrnuto: partneri se ne sabiraju, jer je njen ciklus zajedničko usko grlo (jedno začeće po ciklusu).</>),
   },
 };
 const LANGS = ["en", "ru", "sr"];
@@ -820,6 +826,7 @@ function TypeCard({ meta, t, setT, open, toggleOpen, lang, L }) {
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
         <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
         <span style={{ color: C.dim, fontSize: 11, marginLeft: "auto", display: "inline-flex", alignItems: "center" }}>{cap}<Info text={L.poolInfo} /></span>
+        <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: 6 }}>×</button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
         <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: Math.round(v) })} min={0} max={meta.countMax} step={1} valueText={`${cnt}`} />
@@ -1216,6 +1223,7 @@ function PregTypeCard({ meta, t, setT, lang, L }) {
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
         <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
         <span style={{ color: C.dim, fontSize: 11, marginLeft: "auto" }}>{cap}</span>
+        <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: 6 }}>×</button>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
         <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: v })} min={0} max={meta.countMax} step={0.5} valueText={`${dec((Math.round(cnt * 10) / 10).toString(), lang)}`} />
@@ -1441,7 +1449,8 @@ function Pregnancy({ who, setWho, years, setYears, yMax, setYMax, lang, L }) {
           <p>{L.pregAssum4}</p>
           <p>{L.pregAssum5}</p>
           <p>{L.pregAssum6}</p>
-          <p style={{ marginBottom: 0 }}>{L.pregAssum7}</p>
+          <p>{L.pregAssum7}</p>
+          <p style={{ marginBottom: 0 }}>{L.pregAssum8}</p>
         </div>
       </details>
     </>

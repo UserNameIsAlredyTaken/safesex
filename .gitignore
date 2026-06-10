@@ -13,6 +13,9 @@ dist/
 # local layout preview (mirror of src/App.jsx, opened in a browser)
 preview.html
 
+# proofreading worksheet (Russian texts extracted from App.jsx)
+texts-ru.md
+
 # logs & editor cruft
 *.log
 .DS_Store
