@@ -825,9 +825,9 @@ function LangSwitch({ lang, setLang }) {
   }, [open]);
   return (
     <div ref={ref} style={{ position: "absolute", top: 0, right: 0, zIndex: 50 }}>
-      <button onClick={() => setOpen((o) => !o)} aria-label="Language" style={{ display: "inline-flex", alignItems: "center", gap: 6, background: C.panel2, color: C.hi, border: `1px solid ${C.border}`, borderRadius: 8, padding: "6px 10px", fontSize: 13, cursor: "pointer" }}>
-        <span aria-hidden>🌐</span>{lang.toUpperCase()}
-        <span aria-hidden style={{ color: C.dim, fontSize: 10, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
+      <button onClick={() => setOpen((o) => !o)} aria-label="Language" style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "transparent", color: C.mid, border: `1px solid ${C.border}`, borderRadius: 6, padding: "2px 7px", fontSize: 11.5, cursor: "pointer", opacity: 0.8 }}>
+        <span aria-hidden style={{ fontSize: 11 }}>🌐</span>{lang.toUpperCase()}
+        <span aria-hidden style={{ color: C.dim, fontSize: 9, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
       </button>
       {open && (
         <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 50, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 6 }}>
