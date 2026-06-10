@@ -518,7 +518,7 @@ export default function App() {
         .chk { width:17px; height:17px; cursor:pointer; }
         .studio { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; margin-bottom:14px; }
         .studio-chart { position:sticky; top:0; z-index:5; order:-1; box-shadow:0 8px 16px -6px rgba(0,0,0,.55); }
-        .chartbox { height:220px; }
+        .chartbox { height:150px; }
         @media (min-width:880px) {
           .studio { grid-template-columns:360px minmax(0,1fr); }
           .studio-controls { grid-column:1; grid-row:1; }
@@ -684,6 +684,7 @@ export default function App() {
         </details>
 
         <p style={{ color: C.dim, fontSize: 12, lineHeight: 1.6, textAlign: "center", marginTop: 0 }}>Это любительская образовательная модель, а не медицинский прогноз и не основание для медицинских решений.</p>
+        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", marginTop: 8 }}><a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>Исходный код на GitHub ↗</a></p>
       </div>
     </div>
   );
