@@ -937,9 +937,9 @@ function SexActs({ acts, setActs, lang }) {
 function Slider({ label, value, set, min, max, step, valueText, hint, info, labelH, subtle, dataTour }) {
   return (
     <div data-tour={dataTour} style={{ flex: 1, minWidth: 150, opacity: subtle ? 0.75 : 1 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 8, minHeight: labelH }}>
-        <span style={{ color: subtle ? C.dim : C.mid, fontSize: subtle ? 12 : 13, letterSpacing: 0.2, display: "inline-flex", alignItems: "center" }}>{label}{info && <Info text={info} />}</span>
-        <span style={{ color: subtle ? C.mid : C.accent, fontSize: subtle ? 13 : 16, fontWeight: subtle ? 500 : 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{valueText}</span>
+      <div style={{ display: "flex", flexDirection: subtle ? "column" : "row", justifyContent: "space-between", alignItems: subtle ? "stretch" : "baseline", gap: subtle ? 2 : 8, marginBottom: 8, minHeight: labelH }}>
+        <span style={{ color: subtle ? C.dim : C.mid, fontSize: subtle ? 12 : 13, letterSpacing: 0.2, flex: 1, whiteSpace: "nowrap" }}>{label}{info && <Info text={info} />}</span>
+        <span style={{ color: subtle ? C.mid : C.accent, fontSize: subtle ? 13 : 16, fontWeight: subtle ? 500 : 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", flexShrink: 0 }}>{valueText}</span>
       </div>
       <input className={"rng" + (subtle ? " rng-mini" : "")} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(parseFloat(e.target.value))} />
       {hint && <div style={{ color: C.dim, fontSize: 11, marginTop: 6 }}>{hint}</div>}
