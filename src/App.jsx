@@ -315,7 +315,13 @@ const I18N = {
     warnTitle: "This is an amateur calculator, not a medical tool.",
     warnBody: (<>The real probabilities are <b style={{ color: C.accent }}>almost certainly inexact</b>, because the model relies on many assumptions and estimates with wide spreads. Its main use is comparing how different parameters may affect the chance of infection. Don't make medical decisions based on the model — consult a specialist.</>),
     preset: "Behavior preset",
-    presetInfo: (<><b>Celibacy</b> — no sex.<br /><b>Monogamy</b> — one steady partner.<br /><b>Serial monogamy</b> — one partner at a time, but they change over the years.<br /><b>Monogamish</b> — mostly one partner + rare hookups.<br /><b>Open / swing</b> — a steady partner plus sex on the side.<br /><b>Polyamory</b> — several ongoing relationships at once.<br /><b>ONS / hookups</b> — one-night stands, no follow-up.<br /><b>Core group</b> — a tight circle with frequent partner turnover.</>),
+    tourStart: "Tour", tourNext: "Next", tourSkip: "Skip", tourDone: "Done",
+    tour1: "Pick a relationship style — it fills the partner cards below.",
+    tour2: "This curve is your cumulative chance of getting infected over the years.",
+    tour3: "Try changing how often a condom is used.",
+    tour4: "Mark which practices you do and in which role.",
+    tour5: "Your chance depends heavily on the environment you live in.",
+    presetInfo: (<><b>Celibacy</b> — no sex.<br /><b>Monogamy</b> — one steady partner.<br /><b>Serial monogamy</b> — one partner at a time, but they change over the years.<br /><b>Monogamish</b> — mostly one partner + rare one-night stands.<br /><b>Open / swing</b> — a steady partner plus sex on the side.<br /><b>Polyamory</b> — several ongoing relationships at once.<br /><b>ONS / one-night</b> — one-night stands, no follow-up.<br /><b>Core group</b> — a tight circle with frequent partner turnover.</>),
     sexActs: "Sex acts",
     sexActsInfo: "Which practices and in which role. Per-act risk depends on the practice: receptive anal ≈ ×17 vs vaginal, insertive less, oral notably lower (based on HIV data; rough for other infections). For simplicity we assume every selected practice is present in each contact — so each one you add only raises the risk.",
     noActs: "No practice selected — risk is treated as zero.",
@@ -328,12 +334,12 @@ const I18N = {
     shareBtn: "Share risk profile",
     shareDone: "Copied to clipboard!",
     shareHint: "Copy a link that reopens exactly these settings",
-    poolInfo: (<>How «active» this partner type's pool is. Hookups come from a more active circle → likelier infected.</>),
+    poolInfo: (<>How «active» this partner type's pool is. One-night partners come from a more active circle → likelier infected.</>),
     bg: "pool", bgMul: (m) => `pool ×${m}`,
     oneActBg: (m) => `1 act · pool ×${m}`,
-    condom: "Condom",
+    condom: "Acts with a condom",
     condomInfo: "Share of acts with partners of this type that use a condom.",
-    tested: "Tested",
+    tested: "Partners with a test",
     testedInfo: "Share of partners of this type whose recent negative test you actually KNOW — only a result you know lowers your risk.",
     details: "details",
     sexPerWeek: "Sex per week",
@@ -349,14 +355,14 @@ const I18N = {
     atLeastOne: "at least one of the enabled",
     envLabel: "Environment",
     envNormal: "normal", envHigh: "high background", envOutbreak: "outbreak",
-    envInfo: (<>Infections cluster in sexual networks, so a partner is likelier infected than the population average. The switch scales each infection's prevalence — its own factor, see the disease card.<br /><br /><b>High background</b> — a more active, higher-risk circle.<br /><b>Outbreak</b> — a concentrated network during an active epidemic.<br /><br />Illustrative estimates, not a prediction.</>),
-    envGuideLabel: "Risk environment (prevalence ×)",
+    envInfo: (<>Infections cluster in sexual networks, so a partner is likelier infected than the population average. The switch scales each infection's prevalence — its own factor, see the disease card.<br /><br /><b>High background</b> — a more active, higher-risk circle.<br /><b>Outbreak</b> — a concentrated network during an active epidemic.<br /><br />The multiplier estimates are big assumptions, not a prediction.</>),
+    envGuideLabel: "Risk environment (prevalence × — rough assumptions)",
     anyLabel: "At least one",
     topRiskLine: (years, yw, name, pct, col) => (<>Over {years} {yw} of active sex life, the highest risk is <span style={{ color: col, fontWeight: 600 }}>{name}</span> — about <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
     enableOne: "Enable at least one infection below.",
     structTitle: "Partnership structure over time",
     structStats: (avg, lanes, total) => (<>sex ≈ <b data-hi>{avg}×</b>/wk · peak <b data-hi>{lanes}</b> · total relationships: <b data-hi>{total}</b></>),
-    legSteady: "steady", legCasual: "recurring", legHookup: "hookups",
+    legSteady: "steady partners", legCasual: "recurring partners", legHookup: "one-night",
     structLegendTail: "",
     noPartners: "No partners — add some in the cards on the left.",
     shownPart: (total) => `part of the relationships shown for clarity — statistics over all ${total}`,
@@ -385,7 +391,7 @@ const I18N = {
     thType: "Type", thPartners: "Partners", thContacts: "Contacts k", thTransPerAct: "Transmission per contact", thChanceInf: "Chance partner infected", thRiskHor: (years, yw) => `Risk over ${years} ${yw}`,
     perYear: "/yr",
     noActivePartners: "No active partners — add someone in the cards on the left to see the breakdown.",
-    thContactsInfo: (<><b data-hi>Sex acts with one partner</b> of this type over the period.<br />Formula: <span data-f>sex/week × 52/12 × duration (months)</span>; a hookup = 1 act.</>),
+    thContactsInfo: (<><b data-hi>Sex acts with one partner</b> of this type over the period.<br />Formula: <span data-f>sex/week × 52/12 × duration (months)</span>; a one-night partner = 1 act.</>),
     thTransPerActInfo: (<><b data-hi>Transmission in one contact</b>, if the partner is infected.<br />Combines the selected sex acts; already includes this type's condom and vaccine.<br />Formula: <span data-f>1 − ∏(1 − β·practice·(1 − condom·e))</span> over the selected practices.</>),
     thChanceInfInfo: (<><b data-hi>Chance the partner is already infected.</b><br />Formula: <span data-f>prevalence × environment × pool × (1 − tested)</span>.</>),
     thRiskHorInfo: (<><b data-hi>This type's risk over the period.</b><br />From one partner: <span data-f>1 − (1 − chance_infected × transmission_over_all_contacts)</span>, raised to the power of the partner count.<br />The types are then combined in the «Total» row below.</>),
@@ -393,12 +399,12 @@ const I18N = {
     thTotalInfo: (<><b data-hi>The final risk — the height of the curve.</b><br />The types are independent, so they combine: <span data-f>total = 1 − product of «not infected» across all types</span>.</>),
     assumTitle: "Assumptions and how this is computed",
     assumP1: (<>Only for <b data-hi>HIV</b> are per-act transmission and condom effectiveness taken from research (solid line). For the others there are no reliable numbers — these are order-of-magnitude estimates (dashed) based on CDC and WHO; the source for each infection is in the «Source» column of the table.</>),
-    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring, hookups. For each you can separately set how often a condom is used and how much you know about partners' test status. Each type also has its own multiplier for the chance a partner is already infected — different partners come from circles of different activity: steady ×1, recurring ×2, hookups ×4. Estimated from surveys: among casual and once-off partners prevalence runs several times higher than among steady ones (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>). The multiplier is relative — the overall community level is set by «Environment», and the two multiply without double-counting.</>),
+    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring and one-night partners. For each you can separately set how often a condom is used and how much you know about partners' test status. Each type also has its own multiplier for the chance a partner is already infected — different partners come from circles of different activity: steady ×1, recurring ×2, one-night ×4. Estimated from surveys: among casual and once-off partners prevalence runs several times higher than among steady ones (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>). The multiplier is relative — the overall community level is set by «Environment», and the two multiply without double-counting.</>),
     assumP3: (<><b data-hi>Sex acts add up.</b> We assume every selected practice is present in each contact, so adding one only raises the risk (a simplification — not always true in reality). The risk ratios rely on HIV; for other infections this is a rough approximation.</>),
     assumP4: (<><b data-hi>Tested share.</b> A test has a «window» between infection and a positive result, so even 100% tested does not guarantee zero — it's an estimate.</>),
     assumP5: (<><b data-hi>Partner pool.</b> Estimates how much more active this type's circle is, and therefore how much likelier the partner is already infected. Relative multipliers (steady &lt; recurring &lt; hookups), not exact values.</>),
-    assumP6: (<><b data-hi>How it's computed.</b> Per type the number of contacts is <span data-f>k = frequency × duration</span> (hookup = 1). The chance of catching it from a partner grows with k and is multiplied by the chance the partner is infected. The contributions of all types multiply → cumulative risk rises over time. The exact per-column formulas are in the breakdown tooltips.</>),
-    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the whole community baseline: normal / high background / outbreak — its own multiplier on each infection's prevalence (values and sources on the disease cards). The type picks the partner's circle, the environment sets the overall level; together they give «chance the partner is infected» = <span data-f>prevalence × environment × pool</span>, with no double-counting. Example (HIV): in an outbreak, core-group prevalence is roughly 100× the average, but part of that is already carried by the partner-type multiplier (hookup ×4), so for the environment we use ×25 — together <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>). If <span data-f>prevalence × environment × pool</span> exceeds 100%, the «chance the partner is infected» is capped at 100% — a rough assumption.</>),
+    assumP6: (<><b data-hi>How it's computed.</b> Per type the number of contacts is <span data-f>k = frequency × duration</span> (one-night = 1). The chance of catching it from a partner grows with k and is multiplied by the chance the partner is infected. The contributions of all types multiply → cumulative risk rises over time. The exact per-column formulas are in the breakdown tooltips.</>),
+    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the whole community baseline: normal / high background / outbreak — its own multiplier on each infection's prevalence (values and sources on the disease cards). The type picks the partner's circle, the environment sets the overall level; together they give «chance the partner is infected» = <span data-f>prevalence × environment × pool</span>, with no double-counting. Example (HIV): in an outbreak, core-group prevalence is roughly 100× the average, but part of that is already carried by the partner-type multiplier (one-night ×4), so for the environment we use ×25 — together <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>). If <span data-f>prevalence × environment × pool</span> exceeds 100%, the «chance the partner is infected» is capped at 100% — a rough assumption.</>),
     assumExTitle: "Example: how environment and pool combine",
     assumExFormula: (<>Chance a partner is already infected = <span data-f>prevalence × environment × pool</span>.</>),
     assumSources: (<>Sources: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>casual vs steady ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>once-off prevalence ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>assortative mixing ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>condom by partnership (NATSAL, Britain) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>WHO ↗</a></>),
@@ -477,7 +483,13 @@ const I18N = {
     warnTitle: "Это любительский калькулятор, а не медицинский инструмент.",
     warnBody: (<>Реальные вероятности <b style={{ color: C.accent }}>практически гарантированно не точные</b>, так как использовано много допущений и оценок с большими разбросами. Основная польза модели — сравнение того, как разные параметры могут влиять на вероятность заражения. Не принимайте медицинских решений на основе модели — консультируйтесь со специалистом.</>),
     preset: "Пресет поведения",
-    presetInfo: (<><b>Целибат</b> — без секса.<br /><b>Моногамия</b> — один постоянный партнёр.<br /><b>Серийная моногамия</b> — один партнёр, но со временем они меняются.<br /><b>Monogamish</b> — в основном один + редкие хукапы.<br /><b>Открытые / свинг</b> — постоянный партнёр плюс секс на стороне.<br /><b>Полиамория</b> — несколько постоянных связей одновременно.<br /><b>ONS / хукапы</b> — секс на одну ночь, без продолжения.<br /><b>Core group</b> — тесный круг с частой сменой партнёров.</>),
+    tourStart: "Тур", tourNext: "Далее", tourSkip: "Пропустить", tourDone: "Готово",
+    tour1: "Выбери стиль отношений — он заполнит карточки партнёров ниже.",
+    tour2: "Эта кривая — твой накопленный шанс заразиться за годы.",
+    tour3: "Попробуй изменить, как часто используется презерватив.",
+    tour4: "Отметь, каким сексом ты занимаешься и в какой роли.",
+    tour5: "Шанс сильно зависит от среды, в которой ты живёшь.",
+    presetInfo: (<><b>Целибат</b> — без секса.<br /><b>Моногамия</b> — один постоянный партнёр.<br /><b>Серийная моногамия</b> — один партнёр, но со временем они меняются.<br /><b>Monogamish</b> — в основном один + редкие связи на одну ночь.<br /><b>Открытые / свинг</b> — постоянный партнёр плюс секс на стороне.<br /><b>Полиамория</b> — несколько постоянных связей одновременно.<br /><b>ONS / на одну ночь</b> — секс на одну ночь, без продолжения.<br /><b>Core group</b> — тесный круг с частой сменой партнёров.</>),
     sexActs: "Виды секса",
     sexActsInfo: "Какие практики и в какой роли. Риск за акт зависит от практики: рецептивный анальный ≈ ×17 к вагинальному, вводящий — меньше, оральный — заметно ниже (по данным ВИЧ; для других инфекций грубо). Для упрощения считаем, что в каждом контакте присутствуют все выбранные практики — поэтому каждая добавленная только повышает риск.",
     noActs: "Не выбрано ни одной практики — риск считается нулевым.",
@@ -490,12 +502,12 @@ const I18N = {
     shareBtn: "Поделиться профилем риска",
     shareDone: "Скопировано в буфер!",
     shareHint: "Скопировать ссылку, открывающую именно эти настройки",
-    poolInfo: (<>Насколько «активен» круг партнёров этого типа. Хукапы — из более активного круга → чаще заражены.</>),
+    poolInfo: (<>Насколько «активен» круг партнёров этого типа. Партнёры на одну ночь — из более активного круга → чаще заражены.</>),
     bg: "круг", bgMul: (m) => `круг ×${m}`,
     oneActBg: (m) => `1 акт · круг ×${m}`,
-    condom: "Презерватив",
+    condom: "Актов в презервативе",
     condomInfo: "Доля актов с партнёрами этого типа, в которых используется презерватив.",
-    tested: "Проверены",
+    tested: "Партнёров с анализами",
     testedInfo: "Доля партнёров этого типа, чей недавний отрицательный тест ты ЗНАЕШЬ — снизить риск может только известный результат.",
     details: "детали",
     sexPerWeek: "Секс в неделю",
@@ -511,14 +523,14 @@ const I18N = {
     atLeastOne: "хотя бы одна из включённых",
     envLabel: "Среда",
     envNormal: "обычная", envHigh: "высокий фон", envOutbreak: "вспышка",
-    envInfo: (<>Инфекции концентрируются в сексуальных сетях, поэтому партнёр заражён чаще, чем по средней распространённости. Переключатель множит распространённость каждой инфекции — свой множитель, см. карточку болезни.<br /><br /><b>Высокий фон</b> — более активный, рисковый круг.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии.<br /><br />Иллюстративные оценки, не прогноз.</>),
-    envGuideLabel: "Среда риска (множитель к распространённости)",
+    envInfo: (<>Инфекции концентрируются в сексуальных сетях, поэтому партнёр заражён чаще, чем по средней распространённости. Переключатель множит распространённость каждой инфекции — свой множитель, см. карточку болезни.<br /><br /><b>Высокий фон</b> — более активный, рисковый круг.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии.<br /><br />Оценки множителей — большие допущения, а не прогноз.</>),
+    envGuideLabel: "Среда риска (множитель к распространённости — грубые допущения)",
     anyLabel: "Хотя бы одна",
     topRiskLine: (years, yw, name, pct, col) => (<>За {years} {yw} активной половой жизни выше всего риск <span style={{ color: col, fontWeight: 600 }}>{name}</span> — около <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
     enableOne: "Включи хотя бы одну инфекцию ниже.",
     structTitle: "Структура партнёрств во времени",
     structStats: (avg, lanes, total) => (<>секс ≈ <b data-hi>{avg}×</b>/нед · пик <b data-hi>{lanes}</b> · всего связей: <b data-hi>{total}</b></>),
-    legSteady: "постоянные", legCasual: "приходящие", legHookup: "хукапы",
+    legSteady: "постоянные партнёры", legCasual: "приходящие партнёры", legHookup: "на одну ночь",
     structLegendTail: "",
     noPartners: "Нет партнёров — добавь в карточках слева.",
     shownPart: (total) => `показана часть связей для наглядности — статистика по всем ${total}`,
@@ -547,7 +559,7 @@ const I18N = {
     thType: "Тип", thPartners: "Партнёров", thContacts: "Контактов k", thTransPerAct: "Передача за контакт", thChanceInf: "Шанс партнёр заразен", thRiskHor: (years, yw) => `Риск за ${years} ${yw}`,
     perYear: "/год",
     noActivePartners: "Нет активных партнёров — добавь кого-нибудь в карточках слева, чтобы увидеть разбор.",
-    thContactsInfo: (<><b data-hi>Половых актов с одним партнёром</b> этого типа за период.<br />Формула: <span data-f>секс/нед × 52/12 × длительность (мес)</span>; хукап = 1 акт.</>),
+    thContactsInfo: (<><b data-hi>Половых актов с одним партнёром</b> этого типа за период.<br />Формула: <span data-f>секс/нед × 52/12 × длительность (мес)</span>; партнёр на одну ночь = 1 акт.</>),
     thTransPerActInfo: (<><b data-hi>Передача за один контакт</b>, если партнёр заражён.<br />Складывает выбранные виды секса; уже учитывает презерватив и прививку этого типа.<br />Формула: <span data-f>1 − ∏(1 − β·практика·(1 − презерватив·e))</span> по выбранным практикам.</>),
     thChanceInfInfo: (<><b data-hi>Шанс, что партнёр уже заражён.</b><br />Формула: <span data-f>распространённость × среда × пул × (1 − проверенность)</span>.</>),
     thRiskHorInfo: (<><b data-hi>Риск от этого типа за период.</b><br />От одного партнёра: <span data-f>1 − (1 − шанс_заражён × передача_за_все_контакты)</span>, возводится в степень числа партнёров.<br />Затем типы объединяются в строке «Всего» ниже.</>),
@@ -555,12 +567,12 @@ const I18N = {
     thTotalInfo: (<><b data-hi>Итоговый риск — высота кривой.</b><br />Типы независимы, поэтому объединяются: <span data-f>всего = 1 − произведение «не заразиться» по всем типам</span>.</>),
     assumTitle: "Допущения и как это считается",
     assumP1: (<>Только для <b data-hi>ВИЧ</b> передача за акт и эффективность презерватива взяты из исследований (сплошная линия). Для остальных инфекций надёжных чисел нет — это правдоподобные оценки по порядку величины (пунктир) на основе данных CDC и ВОЗ; источник по каждой инфекции — в колонке «Источник» таблицы.</>),
-    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие, хукапы. У каждого можно отдельно настроить, как часто используется презерватив и насколько ты знаешь о справках партнёров. У каждого типа также свой множитель вероятности, что партнёр уже заражён — разные партнёры существуют в кругах разной активности: постоянные ×1, приходящие ×2, хукапы ×4. Оценка по опросам: у случайных и разовых партнёров распространённость в разы выше, чем у постоянных (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>). Множитель относительный — общий уровень сообщества задаёт «Среда», и они перемножаются, не дублируя друг друга.</>),
+    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие и партнёры на одну ночь. У каждого можно отдельно настроить, как часто используется презерватив и насколько ты знаешь о справках партнёров. У каждого типа также свой множитель вероятности, что партнёр уже заражён — разные партнёры существуют в кругах разной активности: постоянные ×1, приходящие ×2, на одну ночь ×4. Оценка по опросам: у случайных и разовых партнёров распространённость в разы выше, чем у постоянных (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>). Множитель относительный — общий уровень сообщества задаёт «Среда», и они перемножаются, не дублируя друг друга.</>),
     assumP3: (<><b data-hi>Виды секса складываются.</b> Считаем, что в каждом контакте присутствуют все выбранные практики, поэтому каждая добавленная только повышает риск (упрощение — в реальности не всегда так). Соотношения рисков опираются на ВИЧ; для остальных инфекций это грубое приближение.</>),
     assumP4: (<><b data-hi>Проверенность.</b> У теста есть «окно» между заражением и положительным результатом, поэтому даже 100% проверенных не гарантируют ноль — это оценка.</>),
     assumP5: (<><b data-hi>Пул партнёров.</b> Оценивает, насколько активнее круг этого типа и потому вероятнее уже заражён партнёр. Относительные множители (постоянные &lt; приходящие &lt; хукапы), не точные величины.</>),
-    assumP6: (<><b data-hi>Как считается.</b> Для типа число контактов <span data-f>k = частота × длительность</span> (хукап = 1). Шанс заразиться от партнёра растёт с k и умножается на шанс, что партнёр заражён. Вклады всех типов перемножаются → кумулятивный риск растёт во времени. Точные формулы по столбцам — в подсказках таблицы разбора.</>),
-    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: обычная / высокий фон / вспышка — свой множитель к распространённости каждой инфекции (значения и источники — в карточках болезней). Тип выбирает круг партнёра, среда задаёт общий уровень; вместе они дают «шанс, что партнёр заражён» = <span data-f>распространённость × среда × пул</span>, без двойного счёта. Пример (ВИЧ): во вспышку распространённость в «кор-группе» примерно в 100 раз выше средней, но часть этого уже несёт множитель типа партнёра (хукап ×4), поэтому для среды берём ×25 — вместе <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>). Если произведение <span data-f>распространённость × среда × пул</span> выходит за 100%, «шанс, что партнёр заражён» ограничивается 100% — это грубое допущение.</>),
+    assumP6: (<><b data-hi>Как считается.</b> Для типа число контактов <span data-f>k = частота × длительность</span> (на одну ночь = 1). Шанс заразиться от партнёра растёт с k и умножается на шанс, что партнёр заражён. Вклады всех типов перемножаются → кумулятивный риск растёт во времени. Точные формулы по столбцам — в подсказках таблицы разбора.</>),
+    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: обычная / высокий фон / вспышка — свой множитель к распространённости каждой инфекции (значения и источники — в карточках болезней). Тип выбирает круг партнёра, среда задаёт общий уровень; вместе они дают «шанс, что партнёр заражён» = <span data-f>распространённость × среда × пул</span>, без двойного счёта. Пример (ВИЧ): во вспышку распространённость в «кор-группе» примерно в 100 раз выше средней, но часть этого уже несёт множитель типа партнёра (на одну ночь ×4), поэтому для среды берём ×25 — вместе <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>). Если произведение <span data-f>распространённость × среда × пул</span> выходит за 100%, «шанс, что партнёр заражён» ограничивается 100% — это грубое допущение.</>),
     assumExTitle: "Пример: как комбинируются среда и пул",
     assumExFormula: (<>Шанс, что партнёр уже заражён = <span data-f>распространённость × среда × пул</span>.</>),
     assumSources: (<>Источники: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>казуальные vs постоянные ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>распространённость у разовых ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ассортативное смешивание ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>презерватив по типу связи (NATSAL, Британия) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ВОЗ ↗</a></>),
@@ -635,7 +647,13 @@ const I18N = {
     warnTitle: "Ovo je amaterski kalkulator, a ne medicinski alat.",
     warnBody: (<>Stvarne verovatnoće su <b style={{ color: C.accent }}>gotovo sigurno netačne</b>, jer model koristi mnogo pretpostavki i procena sa velikim rasponima. Glavna korist je poređenje kako različiti parametri mogu uticati na verovatnoću zaraze. Ne donosi medicinske odluke na osnovu modela — posavetuj se sa stručnjakom.</>),
     preset: "Preset ponašanja",
-    presetInfo: (<><b>Celibat</b> — bez seksa.<br /><b>Monogamija</b> — jedan stalni partner.<br /><b>Serijska monogamija</b> — jedan partner, ali se vremenom menjaju.<br /><b>Monogamish</b> — uglavnom jedan + retke avanture.<br /><b>Otvorene / sving</b> — stalni partner plus seks sa strane.<br /><b>Poliamorija</b> — nekoliko stalnih veza istovremeno.<br /><b>ONS / avanture</b> — seks za jednu noć, bez nastavka.<br /><b>Core group</b> — uzak krug sa čestom izmenom partnera.</>),
+    tourStart: "Tura", tourNext: "Dalje", tourSkip: "Preskoči", tourDone: "Gotovo",
+    tour1: "Izaberi stil odnosa — popuniće kartice partnera ispod.",
+    tour2: "Ova kriva je tvoja kumulativna šansa da se zaraziš tokom godina.",
+    tour3: "Probaj da promeniš koliko se često koristi kondom.",
+    tour4: "Označi kojim praksama se baviš i u kojoj ulozi.",
+    tour5: "Šansa mnogo zavisi od sredine u kojoj živiš.",
+    presetInfo: (<><b>Celibat</b> — bez seksa.<br /><b>Monogamija</b> — jedan stalni partner.<br /><b>Serijska monogamija</b> — jedan partner, ali se vremenom menjaju.<br /><b>Monogamish</b> — uglavnom jedan + retke veze za jednu noć.<br /><b>Otvorene / sving</b> — stalni partner plus seks sa strane.<br /><b>Poliamorija</b> — nekoliko stalnih veza istovremeno.<br /><b>ONS / jedna noć</b> — seks za jednu noć, bez nastavka.<br /><b>Core group</b> — uzak krug sa čestom izmenom partnera.</>),
     sexActs: "Vrste seksa",
     sexActsInfo: "Koje prakse i u kojoj ulozi. Rizik po aktu zavisi od prakse: receptivni analni ≈ ×17 u odnosu na vaginalni, insertivni manje, oralni znatno niže (po podacima o HIV-u; grubo za ostale infekcije). Radi jednostavnosti smatramo da su u svakom kontaktu prisutne sve izabrane prakse — pa svaka dodata samo povećava rizik.",
     noActs: "Nijedna praksa nije izabrana — rizik se računa kao nula.",
@@ -648,12 +666,12 @@ const I18N = {
     shareBtn: "Podeli profil rizika",
     shareDone: "Kopirano u klipbord!",
     shareHint: "Kopiraj link koji otvara baš ova podešavanja",
-    poolInfo: (<>Koliko je „aktivan“ krug ovog tipa partnera. Avanture — iz aktivnijeg kruga → češće zaražene.</>),
+    poolInfo: (<>Koliko je „aktivan“ krug ovog tipa partnera. Partneri za jednu noć — iz aktivnijeg kruga → češće zaražene.</>),
     bg: "krug", bgMul: (m) => `krug ×${m}`,
     oneActBg: (m) => `1 akt · krug ×${m}`,
-    condom: "Kondom",
+    condom: "Akata sa kondomom",
     condomInfo: "Udeo akata sa partnerima ovog tipa u kojima se koristi kondom.",
-    tested: "Testirani",
+    tested: "Partneri sa testom",
     testedInfo: "Udeo partnera ovog tipa čiji nedavni negativan test ZNAŠ — rizik smanjuje samo poznat rezultat.",
     details: "detalji",
     sexPerWeek: "Seks nedeljno",
@@ -669,14 +687,14 @@ const I18N = {
     atLeastOne: "bar jedna od uključenih",
     envLabel: "Sredina",
     envNormal: "obična", envHigh: "visok fon", envOutbreak: "epidemija",
-    envInfo: (<>Infekcije se koncentrišu u seksualnim mrežama, pa je partner zaražen češće nego po prosečnoj rasprostranjenosti. Prekidač množi rasprostranjenost svake infekcije — sopstveni množilac, vidi karticu bolesti.<br /><br /><b>Visok fon</b> — aktivniji, rizičniji krug.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije.<br /><br />Ilustrativne procene, ne predviđanje.</>),
-    envGuideLabel: "Rizik sredine (množilac rasprostranjenosti)",
+    envInfo: (<>Infekcije se koncentrišu u seksualnim mrežama, pa je partner zaražen češće nego po prosečnoj rasprostranjenosti. Prekidač množi rasprostranjenost svake infekcije — sopstveni množilac, vidi karticu bolesti.<br /><br /><b>Visok fon</b> — aktivniji, rizičniji krug.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije.<br /><br />Procene množilaca su velike pretpostavke, a ne predviđanje.</>),
+    envGuideLabel: "Rizik sredine (množilac rasprostranjenosti — grube pretpostavke)",
     anyLabel: "Bar jedna",
     topRiskLine: (years, yw, name, pct, col) => (<>Tokom {years} {yw} aktivnog polnog života najviši rizik je <span style={{ color: col, fontWeight: 600 }}>{name}</span> — oko <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
     enableOne: "Uključi bar jednu infekciju ispod.",
     structTitle: "Struktura partnerstava tokom vremena",
     structStats: (avg, lanes, total) => (<>seks ≈ <b data-hi>{avg}×</b>/ned · vrh <b data-hi>{lanes}</b> · ukupno veza: <b data-hi>{total}</b></>),
-    legSteady: "stalni", legCasual: "povremeni", legHookup: "avanture",
+    legSteady: "stalni partneri", legCasual: "povremeni partneri", legHookup: "za jednu noć",
     structLegendTail: "",
     noPartners: "Nema partnera — dodaj u karticama levo.",
     shownPart: (total) => `prikazan deo veza radi preglednosti — statistika po svih ${total}`,
@@ -705,7 +723,7 @@ const I18N = {
     thType: "Tip", thPartners: "Partnera", thContacts: "Kontakata k", thTransPerAct: "Prenos po kontaktu", thChanceInf: "Šansa da je partner zaražen", thRiskHor: (years, yw) => `Rizik za ${years} ${yw}`,
     perYear: "/god",
     noActivePartners: "Nema aktivnih partnera — dodaj nekoga u karticama levo da bi video/la razradu.",
-    thContactsInfo: (<><b data-hi>Polnih akata sa jednim partnerom</b> ovog tipa tokom perioda.<br />Formula: <span data-f>seks/ned × 52/12 × trajanje (mes)</span>; avantura = 1 akt.</>),
+    thContactsInfo: (<><b data-hi>Polnih akata sa jednim partnerom</b> ovog tipa tokom perioda.<br />Formula: <span data-f>seks/ned × 52/12 × trajanje (mes)</span>; partner za jednu noć = 1 akt.</>),
     thTransPerActInfo: (<><b data-hi>Prenos u jednom kontaktu</b>, ako je partner zaražen.<br />Sabira izabrane vrste seksa; već uračunava kondom i vakcinu ovog tipa.<br />Formula: <span data-f>1 − ∏(1 − β·praksa·(1 − kondom·e))</span> po izabranim praksama.</>),
     thChanceInfInfo: (<><b data-hi>Šansa da je partner već zaražen.</b><br />Formula: <span data-f>rasprostranjenost × sredina × pul × (1 − testirani)</span>.</>),
     thRiskHorInfo: (<><b data-hi>Rizik od ovog tipa tokom perioda.</b><br />Od jednog partnera: <span data-f>1 − (1 − šansa_zaražen × prenos_po_svim_kontaktima)</span>, stepenuje se brojem partnera.<br />Zatim se tipovi objedinjuju u redu „Ukupno“ ispod.</>),
@@ -713,12 +731,12 @@ const I18N = {
     thTotalInfo: (<><b data-hi>Konačni rizik — visina krive.</b><br />Tipovi su nezavisni, pa se objedinjuju: <span data-f>ukupno = 1 − proizvod „ne zaraziti se“ po svim tipovima</span>.</>),
     assumTitle: "Pretpostavke i kako se ovo računa",
     assumP1: (<>Samo za <b data-hi>HIV</b> su prenos po aktu i efikasnost kondoma uzeti iz istraživanja (puna linija). Za ostale infekcije nema pouzdanih brojeva — to su procene reda veličine (isprekidana) na osnovu CDC i SZO; izvor za svaku infekciju je u koloni „Izvor“ tabele.</>),
-    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni, avanture. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko znaš o testovima partnera. Svaki tip ima i svoj množilac verovatnoće da je partner već zaražen — različiti partneri dolaze iz krugova različite aktivnosti: stalni ×1, povremeni ×2, avanture ×4. Procena iz anketa: kod povremenih i jednokratnih partnera prevalencija je višestruko viša nego kod stalnih (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>). Množilac je relativan — opšti nivo zajednice zadaje „Sredina“, i oni se množe bez dvostrukog brojanja.</>),
+    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni i partneri za jednu noć. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko znaš o testovima partnera. Svaki tip ima i svoj množilac verovatnoće da je partner već zaražen — različiti partneri dolaze iz krugova različite aktivnosti: stalni ×1, povremeni ×2, za jednu noć ×4. Procena iz anketa: kod povremenih i jednokratnih partnera prevalencija je višestruko viša nego kod stalnih (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>). Množilac je relativan — opšti nivo zajednice zadaje „Sredina“, i oni se množe bez dvostrukog brojanja.</>),
     assumP3: (<><b data-hi>Vrste seksa se sabiraju.</b> Smatramo da je u svakom kontaktu prisutna svaka izabrana praksa, pa dodavanje samo povećava rizik (pojednostavljenje — u stvarnosti nije uvek tako). Odnosi rizika oslanjaju se na HIV; za ostale infekcije to je gruba aproksimacija.</>),
     assumP4: (<><b data-hi>Udeo testiranih.</b> Test ima „prozor“ između zaraze i pozitivnog rezultata, pa čak ni 100% testiranih ne garantuje nulu — to je procena.</>),
     assumP5: (<><b data-hi>Pul partnera.</b> Procenjuje koliko je aktivniji krug ovog tipa i zato verovatnije da je partner već zaražen. Relativni množioci (stalni &lt; povremeni &lt; avanture), ne tačne vrednosti.</>),
-    assumP6: (<><b data-hi>Kako se računa.</b> Po tipu broj kontakata je <span data-f>k = učestalost × trajanje</span> (avantura = 1). Šansa za zarazu od partnera raste sa k i množi se šansom da je partner zaražen. Doprinosi svih tipova se množe → kumulativni rizik raste tokom vremena. Tačne formule po kolonama su u podsetnicima tabele razrade.</>),
-    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: obična / visok fon / epidemija — sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori na karticama bolesti). Tip bira krug partnera, sredina zadaje opšti nivo; zajedno daju „šansu da je partner zaražen“ = <span data-f>rasprostranjenost × sredina × pul</span>, bez dvostrukog brojanja. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 100× viša od proseka, ali deo toga već nosi množilac tipa partnera (avantura ×4), pa za sredinu uzimamo ×25 — zajedno <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>). Ako <span data-f>rasprostranjenost × sredina × pul</span> pređe 100%, „šansa da je partner zaražen“ se ograničava na 100% — gruba pretpostavka.</>),
+    assumP6: (<><b data-hi>Kako se računa.</b> Po tipu broj kontakata je <span data-f>k = učestalost × trajanje</span> (jedna noć = 1). Šansa za zarazu od partnera raste sa k i množi se šansom da je partner zaražen. Doprinosi svih tipova se množe → kumulativni rizik raste tokom vremena. Tačne formule po kolonama su u podsetnicima tabele razrade.</>),
+    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: obična / visok fon / epidemija — sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori na karticama bolesti). Tip bira krug partnera, sredina zadaje opšti nivo; zajedno daju „šansu da je partner zaražen“ = <span data-f>rasprostranjenost × sredina × pul</span>, bez dvostrukog brojanja. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 100× viša od proseka, ali deo toga već nosi množilac tipa partnera (za jednu noć ×4), pa za sredinu uzimamo ×25 — zajedno <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>). Ako <span data-f>rasprostranjenost × sredina × pul</span> pređe 100%, „šansa da je partner zaražen“ se ograničava na 100% — gruba pretpostavka.</>),
     assumExTitle: "Primer: kako se kombinuju sredina i pul",
     assumExFormula: (<>Šansa da je partner već zaražen = <span data-f>prevalencija × sredina × pul</span>.</>),
     assumSources: (<>Izvori: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>povremeni vs stalni ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>prevalencija kod jednokratnih ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>asortativno mešanje ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>kondom po tipu veze (NATSAL, Britanija) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>SZO ↗</a></>),
@@ -789,9 +807,9 @@ const I18N = {
 const LANGS = ["en", "ru", "sr"];
 
 const TYPES = [
-  { key:"steady", label:{ en:"Steady", ru:"Постоянные", sr:"Stalni" }, color:"#f0a500", kind:"ongoing",  countMax:3,  countLab:{ en:"how many", ru:"сколько", sr:"koliko" }, addCount:1 },
-  { key:"casual", label:{ en:"Recurring", ru:"Приходящие", sr:"Povremeni" }, color:"#2ec4b6", kind:"recurring", countMax:12, countLab:{ en:"how many per year", ru:"сколько в год", sr:"koliko godišnje" }, addCount:2 },
-  { key:"hookup", label:{ en:"Hookups", ru:"Хукапы", sr:"Avanture" }, color:"#4dabf7", kind:"oneoff",   countMax:50, countLab:{ en:"how many per year", ru:"сколько в год", sr:"koliko godišnje" }, addCount:5 },
+  { key:"steady", label:{ en:"Steady partners", ru:"Постоянные партнёры", sr:"Stalni partneri" }, color:"#f0a500", kind:"ongoing",  countMax:3,  countLab:{ en:"how many", ru:"сколько", sr:"koliko" }, addCount:1 },
+  { key:"casual", label:{ en:"Recurring partners", ru:"Приходящие партнёры", sr:"Povremeni partneri" }, color:"#2ec4b6", kind:"recurring", countMax:12, countLab:{ en:"such partners per year", ru:"Таких партнёров в год", sr:"takvih partnera godišnje" }, addCount:2 },
+  { key:"hookup", label:{ en:"One-night partner", ru:"Партнёр на одну ночь", sr:"Partner za jednu noć" }, color:"#4dabf7", kind:"oneoff",   countMax:50, countLab:{ en:"such partners per year", ru:"Таких партнёров в год", sr:"takvih partnera godišnje" }, addCount:5 },
 ];
 const BASE = {
   steady: { count:1, condom:100, perWeek:2.5, dur:0,   tested:0, poolMul:1.0 },
@@ -810,7 +828,7 @@ const PRESETS = [
   { key:"monogamish", label:{ en:"Monogamish", ru:"Monogamish", sr:"Monogamish" }, steady:{count:1,perWeek:3}, hookup:{count:2} },
   { key:"open", label:{ en:"Open / swing", ru:"Открытые / свинг", sr:"Otvorene / sving" }, steady:{count:1,perWeek:2}, casual:{count:4,perWeek:1,dur:2}, hookup:{count:3} },
   { key:"poly", label:{ en:"Polyamory", ru:"Полиамория", sr:"Poliamorija" }, steady:{count:2,perWeek:2}, casual:{count:1,perWeek:1,dur:6} },
-  { key:"ons", label:{ en:"ONS / hookups", ru:"ONS / хукапы", sr:"ONS / avanture" }, hookup:{count:12} },
+  { key:"ons", label:{ en:"ONS / one-night", ru:"ONS / на одну ночь", sr:"ONS / jedna noć" }, hookup:{count:12} },
   { key:"core", label:{ en:"Core group", ru:"Core group", sr:"Core grupa" }, casual:{count:2,perWeek:1,dur:1}, hookup:{count:30} },
 ];
 
@@ -916,35 +934,59 @@ function SexActs({ acts, setActs, lang }) {
   );
 }
 
-function Slider({ label, value, set, min, max, step, valueText, hint, info, labelH }) {
+function Slider({ label, value, set, min, max, step, valueText, hint, info, labelH, subtle, dataTour }) {
   return (
-    <div style={{ flex: 1, minWidth: 150 }}>
+    <div data-tour={dataTour} style={{ flex: 1, minWidth: 150, opacity: subtle ? 0.75 : 1 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, marginBottom: 8, minHeight: labelH }}>
-        <span style={{ color: C.mid, fontSize: 13, letterSpacing: 0.2, display: "inline-flex", alignItems: "center" }}>{label}{info && <Info text={info} />}</span>
-        <span style={{ color: C.accent, fontSize: 16, fontWeight: 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{valueText}</span>
+        <span style={{ color: subtle ? C.dim : C.mid, fontSize: subtle ? 12 : 13, letterSpacing: 0.2, display: "inline-flex", alignItems: "center" }}>{label}{info && <Info text={info} />}</span>
+        <span style={{ color: subtle ? C.mid : C.accent, fontSize: subtle ? 13 : 16, fontWeight: subtle ? 500 : 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>{valueText}</span>
       </div>
-      <input className="rng" type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(parseFloat(e.target.value))} />
+      <input className={"rng" + (subtle ? " rng-mini" : "")} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(parseFloat(e.target.value))} />
       {hint && <div style={{ color: C.dim, fontSize: 11, marginTop: 6 }}>{hint}</div>}
     </div>
   );
 }
 
+// Плавное сворачивание/разворачивание по высоте + прозрачности (для появления/исчезновения карточек, гайдов).
+function Collapse({ open, dur = 420, style, children }) {
+  const ref = useRef(null);
+  const [h, setH] = useState(open ? "auto" : 0);
+  const init = useRef(true);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    if (init.current) { init.current = false; return; }
+    if (open) {
+      setH(el.scrollHeight);
+      const tm = setTimeout(() => setH("auto"), dur);
+      return () => clearTimeout(tm);
+    } else {
+      setH(el.scrollHeight);
+      requestAnimationFrame(() => requestAnimationFrame(() => setH(0)));
+    }
+  }, [open]);
+  return (
+    <div ref={ref} style={{ height: h === "auto" ? "auto" : h, overflow: "hidden", opacity: open ? 1 : 0, transition: `height ${dur}ms ease, opacity ${dur}ms ease`, ...style }}>
+      {children}
+    </div>
+  );
+}
 function TypeCard({ meta, t, setT, open, toggleOpen, lang, L }) {
   const col = meta.color;
   const floatCount = meta.kind !== "ongoing"; // приходящие/хукапы — дробное число в год
   const cnt = floatCount ? Math.round(t.count * 10) / 10 : Math.round(t.count);
-  if (t.count <= 0) {
-    return (
-      <button onClick={() => setT({ count: meta.addCount })} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left", background: "transparent", border: `1px dashed ${C.border}`, borderLeft: `3px solid ${col}77`, borderRadius: 10, padding: "11px 14px", cursor: "pointer" }}>
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: col, opacity: 0.55 }} />
-        <span style={{ color: C.mid, fontSize: 13.5 }}>{meta.label[lang]}</span>
-        <span style={{ marginLeft: "auto", color: col, fontSize: 12.5, fontWeight: 600 }}>{L.addBtn}</span>
-      </button>
-    );
-  }
+  const active = t.count > 0;
   const cap = meta.kind === "ongoing" ? L.bgMul(t.poolMul) : meta.kind === "oneoff" ? L.oneActBg(t.poolMul) : `${fmtDur(t.dur, lang)} · ${L.bgMul(t.poolMul)}`;
   return (
-    <div style={{ background: C.panel, border: `1px solid ${col}55`, borderLeft: `3px solid ${col}`, borderRadius: 12, padding: "13px 16px" }}>
+    <div>
+      <Collapse open={!active}>
+        <button onClick={() => setT({ count: meta.addCount })} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left", background: "transparent", border: `1px dashed ${C.border}`, borderLeft: `3px solid ${col}77`, borderRadius: 10, padding: "11px 14px", cursor: "pointer" }}>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: col, opacity: 0.55 }} />
+          <span style={{ color: C.mid, fontSize: 13.5 }}>{meta.label[lang]}</span>
+          <span style={{ marginLeft: "auto", color: col, fontSize: 12.5, fontWeight: 600 }}>{L.addBtn}</span>
+        </button>
+      </Collapse>
+      <Collapse open={active}>
+        <div style={{ background: C.panel, border: `1px solid ${col}55`, borderLeft: `3px solid ${col}`, borderRadius: 12, padding: "13px 16px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
         <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
         <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
@@ -953,12 +995,12 @@ function TypeCard({ meta, t, setT, open, toggleOpen, lang, L }) {
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
         <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: floatCount ? Math.round(v * 10) / 10 : Math.round(v) })} min={0} max={meta.countMax} step={floatCount ? 0.1 : 1} valueText={floatCount ? dec(cnt.toString(), lang) : `${cnt}`} />
-        <Slider label={L.condom} value={t.condom} set={(v) => setT({ condom: v })} min={0} max={100} step={1} valueText={`${t.condom}%`} info={L.condomInfo} />
+        <Slider label={L.condom} value={t.condom} set={(v) => setT({ condom: v })} min={0} max={100} step={1} valueText={`${t.condom}%`} info={L.condomInfo} dataTour={active ? "condom" : undefined} />
         <Slider label={L.tested} value={t.tested} set={(v) => setT({ tested: v })} min={0} max={100} step={1} valueText={`${t.tested}%`} info={L.testedInfo} />
       </div>
       <button onClick={toggleOpen} style={{ background: "transparent", border: "none", color: col, fontSize: 12, cursor: "pointer", padding: 0, marginTop: 12 }}>{open ? `▾ ${L.details}` : `▸ ${L.details}`}</button>
       {open && (
-        <div style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 13 }}>
+        <div className="fade-in" style={{ marginTop: 12, paddingTop: 12, borderTop: `1px solid ${C.border}`, display: "flex", flexDirection: "column", gap: 13 }}>
           {meta.kind !== "oneoff" && (
             <Slider label={L.sexPerWeek} value={t.perWeek} set={(v) => setT({ perWeek: Math.round(v * 10) / 10 })} min={0.1} max={14} step={0.1} valueText={`${dec(t.perWeek.toFixed(1), lang)}×`} hint={L.sexPerWeekHint} />
           )}
@@ -969,6 +1011,8 @@ function TypeCard({ meta, t, setT, open, toggleOpen, lang, L }) {
           {meta.kind === "ongoing" && <div style={{ color: C.dim, fontSize: 12 }}>{L.ongoingNote}</div>}
         </div>
       )}
+        </div>
+      </Collapse>
     </div>
   );
 }
@@ -1052,9 +1096,9 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
   const fmtP = (v) => pctVal(v * 100, lang);
   // Точность для формул: для малых значений оставляем десятую, чтобы умножения сходились (4,5% × 2 = 9%).
   const pp = (x) => dec(x * 100 < 10 ? (x * 100).toFixed(1).replace(/\.0$/, "") : String(Math.round(x * 100)), lang) + "%";
-  const active = TYPES.map((meta) => {
+  const rows = TYPES.map((meta) => {
     const T = cfg[meta.key]; const cnt = meta.kind === "ongoing" ? Math.round(T.count) : T.count;
-    if (cnt <= 0) return null;
+    if (cnt <= 0) return { meta, T, cnt: 0, inactive: true, k: 0, actEff: 0, pEff: 0, toHorizon: 0 };
     const encSurv = encSurvOf(s, actSel, (1 - (T.condom / 100) * s.e) * veMul);
     const actEff = 1 - encSurv; // передача за один контакт (все практики), если партнёр заражён
     const k = meta.kind === "oneoff" ? 1 : meta.kind === "ongoing" ? Math.max(1, T.perWeek * (52 / 12) * horizonM) : Math.max(1, T.perWeek * (52 / 12) * T.dur);
@@ -1075,7 +1119,8 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
     const fChance = `${pp(basePrev)} × ${D(envMul)} × ${D(T.poolMul)} × (1 − ${T.tested}%) = ${rawChance > 1 ? pp(rawChance) + " → 100%" : pp(pEff)}`;
     const fRisk = meta.kind === "ongoing" ? `1 − (1 − ${fmtP(perPartner)})^${cnt} = ${fmtP(toHorizon)}` : `1 − ((1 − ${fmtP(perPartner)})^${D(cnt)})^${years} = ${fmtP(toHorizon)}`;
     return { meta, T, cnt, actEff, k, pEff, toHorizon, fK, fAct, fChance, fRisk };
-  }).filter(Boolean);
+  });
+  const active = rows.filter((r) => !r.inactive);
   if (active.length === 0) return <div style={{ color: C.mid, fontSize: 13, padding: "8px 0" }}>{L.noActivePartners}</div>;
   const totalRisk = 1 - survivalAt(s, horizonM, cfg, veMul, actSel);
   const fTotal = `1 − ${active.map((r) => `(1 − ${fmtP(r.toHorizon)})`).join(" × ")} = ${fmtP(totalRisk)}`;
@@ -1121,7 +1166,16 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
         <table className="inf" style={{ minWidth: 560 }}>
           <thead><tr><th>{L.thType}</th><th>{L.thPartners}</th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thContacts}<Info dn text={L.thContactsInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thTransPerAct}<Info dn text={L.thTransPerActInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thChanceInf}<Info dn text={L.thChanceInfInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thRiskHor(years, yw)}<Info dn text={L.thRiskHorInfo} /></span></th></tr></thead>
           <tbody>
-            {active.map((r) => (
+            {rows.map((r) => r.inactive ? (
+              <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}55`, color: C.dim }}>
+                <td style={{ whiteSpace: "nowrap", color: C.dim }}><span style={{ color: `${r.meta.color}77`, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
+                <td className="num">0</td>
+                <td className="num">0</td>
+                <td className="num">0%</td>
+                <td className="num">0%</td>
+                <td className="num">0%</td>
+              </tr>
+            ) : (
               <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}` }}>
                 <td style={{ whiteSpace: "nowrap", color: C.hi }}><span style={{ color: r.meta.color, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
                 <td className="num">{dec((Math.round(r.cnt * 10) / 10).toString(), lang)}{r.meta.kind !== "ongoing" ? L.perYear : ""}</td>
@@ -1144,7 +1198,7 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
   );
 }
 
-const OPEN = PRESETS.find((p) => p.key === "open");
+const ONS = PRESETS.find((p) => p.key === "ons");
 
 // ───────────────────────── МОДЕЛЬ БЕРЕМЕННОСТИ (отдельный движок) ─────────────────────────
 // Единица — менструальный цикл (≈месяц). Кумулятив P = 1 − (1 − годовой_отказ)^лет.
@@ -1153,28 +1207,26 @@ const OPEN = PRESETS.find((p) => p.key === "open");
 const SEG = (on) => ({ padding: "9px 18px", borderRadius: 10, border: `1px solid ${on ? C.accent : C.border}`, background: on ? C.accent : "transparent", color: on ? C.bg : C.mid, fontWeight: on ? 700 : 500, cursor: "pointer", fontSize: 14 });
 const SUBSEG = (on, col) => ({ padding: "7px 14px", borderRadius: 999, border: `1px solid ${on ? col : C.border}`, background: on ? `${col}22` : "transparent", color: on ? C.hi : C.mid, cursor: "pointer", fontSize: 13, fontWeight: on ? 600 : 400 });
 
-// Фертильность за цикл при регулярном незащищённом сексе, по возрасту женщины (ОЦЕНКА тренда).
-function fAge(age) {
-  if (age <= 25) return 0.23;
-  if (age <= 29) return 0.20;
-  if (age <= 31) return 0.17;
-  if (age <= 34) return 0.15;
-  if (age <= 37) return 0.11;
-  if (age <= 39) return 0.09;
-  if (age <= 41) return 0.06;
-  if (age <= 43) return 0.035;
-  if (age <= 45) return 0.015;
-  return 0.005;
+// Кусочно-линейная интерполяция по таблице опорных точек — чтобы значения менялись плавно,
+// а не ступеньками (иначе при тяге слайдера кривая прыгает на границах диапазонов).
+function lerpTable(x, pts) {
+  if (x <= pts[0][0]) return pts[0][1];
+  const n = pts.length;
+  if (x >= pts[n - 1][0]) return pts[n - 1][1];
+  for (let i = 1; i < n; i++) {
+    if (x <= pts[i][0]) {
+      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+      return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+    }
+  }
+  return pts[n - 1][1];
 }
-// Множитель частоты секса к f за цикл (ОЦЕНКА формы).
-function kFreq(perWeek) {
-  if (perWeek >= 4) return 1.15;
-  if (perWeek >= 3) return 1.1;
-  if (perWeek >= 2) return 1.0;
-  if (perWeek >= 1) return 0.8;
-  if (perWeek >= 0.5) return 0.6;
-  return 0.45;
-}
+// Фертильность за цикл при регулярном незащищённом сексе, по возрасту женщины (ОЦЕНКА тренда; теперь плавная).
+const F_AGE_PTS = [[25, 0.23], [29, 0.20], [31, 0.17], [34, 0.15], [37, 0.11], [39, 0.09], [41, 0.06], [43, 0.035], [45, 0.015], [50, 0.005]];
+function fAge(age) { return lerpTable(age, F_AGE_PTS); }
+// Множитель частоты секса к f за цикл (ОЦЕНКА формы; теперь плавный).
+const F_FREQ_PTS = [[0.1, 0.45], [0.5, 0.6], [1, 0.8], [2, 1.0], [3, 1.1], [4, 1.15]];
+function kFreq(perWeek) { return lerpTable(perWeek, F_FREQ_PTS); }
 // Контрацепция: типичное использование, % незапланированных беременностей за 1 год (CDC/Trussell).
 // perfect/typical — доля за ПЕРВЫЙ ГОД (0..1). sev — РЕДАКТОРСКАЯ шкала 1–5 (цвет-код, не данные).
 // control: 'toggle' — постоянно; 'perAct' — на акт (слайдер доли); 'oneOff' — разово (не на кривую).
@@ -1308,7 +1360,7 @@ const PREG_PRESETS = [
   { key: "mono", label: { en: "Monogamy", ru: "Моногамия", sr: "Monogamija" }, steady: { count: 1, perWeek: 3, age: 26 } },
   { key: "dating", label: { en: "Dating", ru: "Встречается", sr: "Zabavlja se" }, casual: { count: 2, perWeek: 1, dur: 12, age: 26 } },
   { key: "active", label: { en: "Active dating", ru: "Активные знакомства", sr: "Aktivna upoznavanja" }, casual: { count: 4, perWeek: 1, dur: 3, age: 26 }, hookup: { count: 6, age: 26 } },
-  { key: "hookups", label: { en: "Hookups", ru: "Хукапы", sr: "Avanture" }, hookup: { count: 15, age: 26 } },
+  { key: "hookups", label: { en: "One-night", ru: "На одну ночь", sr: "Jedna noć" }, hookup: { count: 15, age: 26 } },
 ];
 const mkPregCfg = (over = {}) => ({
   steady: { ...PREG_BASE.steady, ...(over.steady || { count: 0 }) },
@@ -1330,11 +1382,21 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
   const horizonM = years * 12;
   const ts = years <= 12 ? 1 : years <= 30 ? 5 : 10;
   const ticks = []; for (let y = 0; y <= years; y += ts) ticks.push(y * 12);
+  // Анимация кривых только при дискретных изменениях; слайдеры — без анимации.
+  const [chartAnim, setChartAnim] = useState(true);
+  useEffect(() => {
+    const isRange = (el) => el && el.matches && el.matches('input[type="range"]');
+    const onInput = (e) => { if (isRange(e.target)) setChartAnim(false); };
+    const onClick = (e) => { if (!isRange(e.target)) setChartAnim(true); };
+    document.addEventListener("input", onInput, true);
+    document.addEventListener("click", onClick, true);
+    return () => { document.removeEventListener("input", onInput, true); document.removeEventListener("click", onClick, true); };
+  }, []);
   return (
     <div className="studio-chart" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
       <div style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
-        <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} labelH={36} />
-        <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} labelH={36} />
+        <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
+        <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
       </div>
       <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
         {lines.map((ln) => (<span key={ln.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${ln.dash ? "dashed" : "solid"} ${ln.color}`, display: "inline-block" }} />{ln.label}</span>))}
@@ -1346,7 +1408,7 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
             <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
             <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
             <Tooltip content={(p) => <PregTip {...p} lang={lang} />} />
-            {lines.map((ln) => (<Line key={ln.key} type="monotone" dataKey={ln.key} name={ln.label} stroke={ln.color} strokeWidth={ln.dash ? 1.6 : 2.4} strokeDasharray={ln.dash ? "6 4" : "0"} dot={false} isAnimationActive={false} />))}
+            {lines.map((ln) => (<Line key={ln.key} type="monotone" dataKey={ln.key} name={ln.label} stroke={ln.color} strokeWidth={ln.dash ? 1.6 : 2.4} strokeDasharray={ln.dash ? "6 4" : "0"} dot={false} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -1356,31 +1418,34 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
 }
 function PregTypeCard({ meta, t, setT, lang, L }) {
   const col = meta.color; const floatCount = meta.kind !== "ongoing"; const cnt = floatCount ? Math.round(t.count * 10) / 10 : Math.round(t.count);
-  if (t.count <= 0) {
-    return (
-      <button onClick={() => setT({ count: meta.addCount })} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left", background: "transparent", border: `1px dashed ${C.border}`, borderLeft: `3px solid ${col}77`, borderRadius: 10, padding: "11px 14px", cursor: "pointer" }}>
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: col, opacity: 0.55 }} />
-        <span style={{ color: C.mid, fontSize: 13.5 }}>{meta.label[lang]}</span>
-        <span style={{ marginLeft: "auto", color: col, fontSize: 12.5, fontWeight: 600 }}>{L.addBtn}</span>
-      </button>
-    );
-  }
+  const active = t.count > 0;
   const cap = meta.kind === "oneoff" ? L.pregOneoffCap : meta.kind === "ongoing" ? L.pregOngoingCap : L.pregRelCap(fmtDur(t.dur, lang));
   return (
-    <div style={{ background: C.panel, border: `1px solid ${col}55`, borderLeft: `3px solid ${col}`, borderRadius: 12, padding: "13px 16px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-        <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
-        <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
-        <span style={{ color: C.dim, fontSize: 11, marginLeft: "auto" }}>{cap}</span>
-        <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: 6 }}>×</button>
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
-        <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: floatCount ? Math.round(v * 10) / 10 : Math.round(v) })} min={0} max={meta.countMax} step={floatCount ? 0.1 : 1} valueText={floatCount ? dec(cnt.toString(), lang) : `${cnt}`} />
-        <Slider label={L.pregPartnerAge} value={t.age} set={(v) => setT({ age: Math.round(v) })} min={16} max={99} step={1} valueText={`${Math.round(t.age)}`} info={L.pregPartnerAgeInfo} />
-        {meta.kind !== "oneoff" && <Slider label={L.sexPerWeek} value={t.perWeek} set={(v) => setT({ perWeek: Math.round(v * 10) / 10 })} min={0.1} max={14} step={0.1} valueText={`${dec(t.perWeek.toFixed(1), lang)}×`} />}
-        {meta.kind === "recurring" && <Slider label={L.relDuration} value={t.dur} set={(v) => setT({ dur: v })} min={1} max={60} step={1} valueText={fmtDur(t.dur, lang)} />}
-        <WomanMethods meth={t.meth} setMeth={(fn) => setT({ meth: fn(t.meth) })} lang={lang} L={L} />
-      </div>
+    <div>
+      <Collapse open={!active}>
+        <button onClick={() => setT({ count: meta.addCount })} style={{ display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left", background: "transparent", border: `1px dashed ${C.border}`, borderLeft: `3px solid ${col}77`, borderRadius: 10, padding: "11px 14px", cursor: "pointer" }}>
+          <span style={{ width: 10, height: 10, borderRadius: "50%", background: col, opacity: 0.55 }} />
+          <span style={{ color: C.mid, fontSize: 13.5 }}>{meta.label[lang]}</span>
+          <span style={{ marginLeft: "auto", color: col, fontSize: 12.5, fontWeight: 600 }}>{L.addBtn}</span>
+        </button>
+      </Collapse>
+      <Collapse open={active}>
+        <div style={{ background: C.panel, border: `1px solid ${col}55`, borderLeft: `3px solid ${col}`, borderRadius: 12, padding: "13px 16px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
+            <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
+            <span style={{ color: C.dim, fontSize: 11, marginLeft: "auto" }}>{cap}</span>
+            <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: 6 }}>×</button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
+            <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: floatCount ? Math.round(v * 10) / 10 : Math.round(v) })} min={0} max={meta.countMax} step={floatCount ? 0.1 : 1} valueText={floatCount ? dec(cnt.toString(), lang) : `${cnt}`} />
+            <Slider label={L.pregPartnerAge} value={t.age} set={(v) => setT({ age: Math.round(v) })} min={16} max={99} step={1} valueText={`${Math.round(t.age)}`} info={L.pregPartnerAgeInfo} />
+            {meta.kind !== "oneoff" && <Slider label={L.sexPerWeek} value={t.perWeek} set={(v) => setT({ perWeek: Math.round(v * 10) / 10 })} min={0.1} max={14} step={0.1} valueText={`${dec(t.perWeek.toFixed(1), lang)}×`} />}
+            {meta.kind === "recurring" && <Slider label={L.relDuration} value={t.dur} set={(v) => setT({ dur: v })} min={1} max={60} step={1} valueText={fmtDur(t.dur, lang)} />}
+            <WomanMethods meth={t.meth} setMeth={(fn) => setT({ meth: fn(t.meth) })} lang={lang} L={L} />
+          </div>
+        </div>
+      </Collapse>
     </div>
   );
 }
@@ -1401,10 +1466,10 @@ function WomanMethods({ meth, setMeth, lang, L }) {
   return (
     <div>
       <div style={{ color: C.mid, fontSize: 13, marginBottom: 8, display: "inline-flex", alignItems: "center" }}>{L.contraLabel}<Info text={L.contraInfo} /></div>
-      {added.length > 0 && (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 8 }}>
-          {added.map((m) => (
-            <div key={m.key} style={{ display: "flex", alignItems: "center", gap: 8, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "7px 10px" }}>
+      <div>
+        {usable.map((m) => (
+          <Collapse key={m.key} open={m.key in meth}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "7px 10px", marginBottom: 8 }}>
               <span style={{ width: 8, height: 8, borderRadius: "50%", background: SEV[m.sev], flex: "0 0 8px" }} title={L.sevTitle} />
               <span style={{ color: C.hi, fontSize: 13 }}>{m.label[lang]}</span>
               {m.control === "perAct" && (
@@ -1415,16 +1480,16 @@ function WomanMethods({ meth, setMeth, lang, L }) {
               )}
               <button onClick={() => rm(m.key)} title={L.removeMethod} style={{ marginLeft: m.control === "perAct" ? 4 : "auto", background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px" }}>×</button>
             </div>
-          ))}
-        </div>
-      )}
+          </Collapse>
+        ))}
+      </div>
       <div ref={ref} style={{ position: "relative" }}>
         <button onClick={() => setOpen((o) => !o)} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", background: C.panel2, color: C.accent, border: `1px dashed ${C.accent}66`, borderRadius: 8, padding: "9px 12px", fontSize: 13, cursor: "pointer" }}>
           <span>{L.addMethod}</span>
           <span style={{ color: C.dim, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
         </button>
         {open && (
-          <div style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 30, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div className="fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", left: 0, right: 0, zIndex: 30, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 12, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 8, flexWrap: "wrap" }}>
             {avail.map((m) => <button key={m.key} onClick={() => add(m.key)} className="pill">{m.label[lang]}</button>)}
             {avail.length === 0 && <span style={{ color: C.dim, fontSize: 12 }}>{L.allMethodsAdded}</span>}
           </div>
@@ -1475,21 +1540,25 @@ function ContraTable({ lang, L }) {
               const exp = !!open[m.key];
               const rows = [
                 <tr key={m.key} className={"inf-row" + (exp ? " on" : "")} onClick={() => setOpen((o) => ({ ...o, [m.key]: !o[m.key] }))} title={exp ? L.collapseGuide : L.openGuide} style={{ borderLeft: `3px solid ${SEV[m.sev]}` }}>
-                  <td style={{ whiteSpace: "nowrap", color: C.hi }}>{m.label[lang]}<span aria-hidden style={{ marginLeft: 8, color: exp ? PREG : C.dim, fontSize: 10 }}>{exp ? "▾" : "▸"}</span></td>
+                  <td style={{ whiteSpace: "nowrap", color: C.hi }}>{m.label[lang]}<span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${PREG}22` : C.panel2, border: `1px solid ${exp ? PREG : C.border}`, color: exp ? PREG : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span></td>
                   <td className="num">{fmtP(m.perfect)}</td>
                   <td className="num" style={{ whiteSpace: "nowrap" }}>{fmtP(m.typical)}{GAP[m.key] && <Info dn text={GAP[m.key][lang]} />}</td>
                   <td><span style={{ background: `${SEV[m.sev]}22`, color: SEV[m.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{m.side[lang]}</span></td>
                 </tr>,
               ];
-              if (exp) rows.push(
+              rows.push(
                 <tr key={m.key + "-g"} style={{ borderLeft: `3px solid ${SEV[m.sev]}` }}>
-                  <td colSpan={4} style={{ background: C.panel2, padding: "14px 16px" }}>
+                  <td colSpan={4} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
+                   <Collapse open={exp}>
+                    <div style={{ padding: "14px 16px" }}>
                     <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
                       <div><div className="ghd">{L.howWorks}</div><div className="gtx">{m.guide.how[lang]}</div></div>
                       <div><div className="ghd">{L.sideRisks}</div><div className="gtx">{m.guide.side[lang]}</div></div>
                       <div><div className="ghd">{L.whoFor}</div><div className="gtx">{m.guide.who[lang]}</div></div>
                     </div>
                     <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>{L.sourcesLab}: {m.sources.map((s, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: PREG, textDecoration: "none" }}>{s.label} ↗</a></span>))} {L.contraSourcesTail}</div>
+                    </div>
+                   </Collapse>
                   </td>
                 </tr>
               );
@@ -1613,7 +1682,7 @@ function LangSwitch({ lang, setLang }) {
         <span aria-hidden style={{ color: C.dim, fontSize: 9, transform: open ? "rotate(180deg)" : "none", transition: "transform .15s" }}>▾</span>
       </button>
       {open && (
-        <div style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 50, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 6 }}>
+        <div className="fade-in" style={{ position: "absolute", top: "calc(100% + 6px)", right: 0, zIndex: 50, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 10, padding: 8, boxShadow: "0 10px 28px rgba(0,0,0,.5)", display: "flex", gap: 6 }}>
           {LANGS.map((lg) => (
             <button key={lg} onClick={() => { setLang(lg); setOpen(false); }} style={{ background: lang === lg ? C.accent : "transparent", color: lang === lg ? C.bg : C.mid, border: `1px solid ${lang === lg ? C.accent : C.border}`, borderRadius: 999, padding: "5px 12px", fontSize: 13, fontWeight: lang === lg ? 600 : 500, cursor: "pointer" }}>{lg.toUpperCase()}</button>
           ))}
@@ -1686,7 +1755,7 @@ function parseShare(o) {
   if (o.v === 1) return o; // старый полный формат — уже в форме SHARE_INIT
   if (o.v !== 2) return null;
   const r = { lang: o.l || "en", mode: o.m ? "preg" : "sti", who: o.g ? "man" : "woman",
-    years: o.y ?? 10, yMax: o.ym ?? 100, preset: "open", preg: "dating" };
+    years: o.y ?? 10, yMax: o.ym ?? 100, preset: "ons", preg: "dating" };
   if (typeof o.ps === "number" && PRESETS[o.ps]) { r.preset = PRESET_KEYS[o.ps]; r.cfg = mkCfg(PRESETS[o.ps]); }
   else if (o.c) { r.preset = null; r.cfg = unpackStiCfg(o.c); }
   if (typeof o.a === "number") r.acts = maskToActs(o.a);
@@ -1755,6 +1824,73 @@ function ShareButton({ snapshot, L }) {
   );
 }
 
+// ── Онбординг-тур: подсветка-кольцо + пузырёк. Без затемнения — элементы остаются интерактивными. ──
+const TOUR_ENABLED = false; // фича-тур выключена (код сохранён — можно вернуть, поставив true)
+const TOUR_STEPS = [
+  { sel: '[data-tour="chart"]', k: "tour2" },     // график — первым
+  { sel: '[data-tour="presets"]', k: "tour1" },
+  { sel: '[data-tour="condom"]', k: "tour3" },
+  { sel: '[data-tour="acts"]', k: "tour4" },
+  { sel: '[data-tour="env"]', k: "tour5" },
+];
+function Tour({ step, setStep, L }) {
+  const [rects, setRects] = useState(null);   // { t: целевой бокс, c: бокс графика }
+  const [moving, setMoving] = useState(false); // окно анимации перемещения пятна
+  useEffect(() => {
+    if (step < 0 || step >= TOUR_STEPS.length) return;
+    const el = document.querySelector(TOUR_STEPS[step].sel);
+    if (!el) { setRects(null); return; }
+    el.scrollIntoView({ block: "center", behavior: "smooth" });
+    setMoving(true);
+    const mv = setTimeout(() => setMoving(false), 420);
+    const pad = 6;
+    const box = (r) => ({ x: r.left - pad, y: r.top - pad, w: r.width + 2 * pad, h: r.height + 2 * pad });
+    let raf, prev = "";
+    const tick = () => {
+      const t = box(el.getBoundingClientRect());
+      const ce = document.querySelector('[data-tour="chart"]');
+      const c = ce ? box(ce.getBoundingClientRect()) : t;
+      const key = `${t.x},${t.y},${t.w},${t.h}|${c.x},${c.y},${c.w},${c.h}`;
+      if (key !== prev) { prev = key; setRects({ t, c }); }
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
+    return () => { cancelAnimationFrame(raf); clearTimeout(mv); };
+  }, [step]);
+  if (step < 0 || step >= TOUR_STEPS.length || !rects) return null;
+  const last = step === TOUR_STEPS.length - 1;
+  const finish = () => { try { localStorage.setItem("tour_done", "1"); } catch (e) {} setStep(-1); };
+  const t = rects.t;
+  const below = t.y + t.h + 180 < window.innerHeight;
+  const left = Math.max(155, Math.min(window.innerWidth - 155, t.x + t.w / 2));
+  const bub = below
+    ? { left, top: t.y + t.h + 14, transform: "translateX(-50%)" }
+    : { left, top: Math.max(12, t.y - 14), transform: "translate(-50%, -100%)" };
+  const cls = moving ? "tour-hole" : undefined; // плавное перемещение только при смене шага, не при скролле
+  return (
+    <>
+      <svg aria-hidden style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 1000 }}>
+        <defs>
+          <mask id="tourmask">
+            <rect x="0" y="0" width="100%" height="100%" fill="#fff" />
+            <rect className={cls} x={rects.c.x} y={rects.c.y} width={rects.c.w} height={rects.c.h} rx="12" fill="#000" />
+            <rect className={cls} x={rects.t.x} y={rects.t.y} width={rects.t.w} height={rects.t.h} rx="10" fill="#000" />
+          </mask>
+        </defs>
+        <rect x="0" y="0" width="100%" height="100%" fill="rgba(0,0,0,0.6)" mask="url(#tourmask)" />
+      </svg>
+      <div style={{ position: "fixed", left: bub.left, top: bub.top, transform: bub.transform, maxWidth: 290, width: "calc(100vw - 32px)", boxSizing: "border-box", background: C.panel2, border: "none", borderRadius: 12, padding: "14px 16px", boxShadow: "0 14px 38px rgba(0,0,0,0.62)", zIndex: 1001 }}>
+        <div style={{ color: C.hi, fontSize: 14, lineHeight: 1.5, marginBottom: 12 }}>{L[TOUR_STEPS[step].k]}</div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ color: C.dim, fontSize: 12 }}>{step + 1}/{TOUR_STEPS.length}</span>
+          <button onClick={finish} style={{ marginLeft: "auto", background: "transparent", border: "none", color: C.mid, cursor: "pointer", fontSize: 13 }}>{L.tourSkip}</button>
+          <button onClick={() => (last ? finish() : setStep(step + 1))} style={{ background: C.accent, color: C.bg, border: "none", borderRadius: 8, padding: "7px 14px", cursor: "pointer", fontSize: 13, fontWeight: 600 }}>{last ? L.tourDone : L.tourNext}</button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
     if (SHARE_INIT && SHARE_INIT.lang && LANGS.includes(SHARE_INIT.lang)) return SHARE_INIT.lang;
@@ -1767,16 +1903,28 @@ export default function App() {
   }, [lang]);
   const L = I18N[lang];
 
-  const [cfg, setCfg] = useState(() => mergeTypes(mkCfg(OPEN), SHARE_INIT && SHARE_INIT.cfg));
+  const [cfg, setCfg] = useState(() => mergeTypes(mkCfg(ONS), SHARE_INIT && SHARE_INIT.cfg));
   const [years, setYears] = useState(SHARE_INIT?.years ?? 10);
   const [yMax, setYMax] = useState(SHARE_INIT?.yMax ?? 100);
   const [hidden, setHidden] = useState(SHARE_INIT?.hidden ?? {});
   const [env, setEnv] = useState(SHARE_INIT?.env ?? "normal");
+  // Анимация кривых: только при дискретных изменениях (кнопки). Слайдеры тянут значение плавно сами —
+  // их изменения применяем к графику без анимации, иначе кривые отстают/дёргаются.
+  const [chartAnim, setChartAnim] = useState(true);
+  useEffect(() => {
+    const isRange = (el) => el && el.matches && el.matches('input[type="range"]');
+    const onInput = (e) => { if (isRange(e.target)) setChartAnim(false); };
+    const onClick = (e) => { if (!isRange(e.target)) setChartAnim(true); };
+    document.addEventListener("input", onInput, true);
+    document.addEventListener("click", onClick, true);
+    return () => { document.removeEventListener("input", onInput, true); document.removeEventListener("click", onClick, true); };
+  }, []);
   const [selected, setSelected] = useState(SHARE_INIT?.selected ?? "chl");
   const [vaxHpv, setVaxHpv] = useState(SHARE_INIT?.vaxHpv ?? false);
   const [vaxHbv, setVaxHbv] = useState(SHARE_INIT?.vaxHbv ?? false);
   const [acts, setActs] = useState(SHARE_INIT?.acts ?? { vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true });
-  const [activePreset, setActivePreset] = useState(SHARE_INIT ? (SHARE_INIT.preset ?? null) : "open");
+  const [activePreset, setActivePreset] = useState(SHARE_INIT ? (SHARE_INIT.preset ?? null) : "ons");
+  const [tourStep, setTourStep] = useState(() => { if (!TOUR_ENABLED) return -1; try { return localStorage.getItem("tour_done") ? -1 : 0; } catch (e) { return -1; } });
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
   const [mode, setMode] = useState(SHARE_INIT?.mode ?? "sti");
@@ -1864,6 +2012,12 @@ export default function App() {
         .rng::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%; background:${C.accent}; cursor:grab; border:3px solid ${C.bg}; box-shadow:0 0 0 1px ${C.accent}; }
         .rng::-webkit-slider-thumb:active { cursor:grabbing; }
         .rng::-moz-range-thumb { width:18px; height:18px; border-radius:50%; background:${C.accent}; cursor:grab; border:3px solid ${C.bg}; }
+        /* Слайдеры настроек отображения графика — другая форма/цвет/размер, чтобы отличались от поведенческих */
+        .rng-mini { height:3px; background:${C.border}; }
+        .rng-mini::-webkit-slider-thumb { width:10px; height:18px; border-radius:3px; background:${C.mid}; border:2px solid ${C.bg}; box-shadow:0 0 0 1px ${C.border}; }
+        .rng-mini::-moz-range-thumb { width:10px; height:18px; border-radius:3px; background:${C.mid}; border:2px solid ${C.bg}; box-shadow:0 0 0 1px ${C.border}; }
+        .rng-mini::-webkit-slider-thumb:hover, .rng-mini::-webkit-slider-thumb:active { background:${C.hi}; }
+        .rng-mini::-moz-range-thumb:hover { background:${C.hi}; }
         summary { cursor:pointer; }
         .tbl-wrap { overflow-x:auto; }
         table.inf { border-collapse:collapse; width:100%; min-width:760px; font-size:13px; }
@@ -1897,9 +2051,18 @@ export default function App() {
         .rich [data-grn] { color:#4dd4ac; }
         .rich [data-red] { color:#ff7b73; }
         [data-f] { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace; color:#8fd0e6; font-size:0.93em; letter-spacing:0.1px; }
+        button { transition: background-color .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease, box-shadow .16s ease; }
+        button:active { transform: scale(0.97); }
+        .rng::-webkit-slider-thumb { transition: transform .12s ease, box-shadow .16s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
+        .fade-in { animation: fadeIn .42s ease both; }
+        @keyframes fadeSoft { from { opacity:0; } to { opacity:1; } }
+        .fade-soft { animation: fadeSoft .45s ease both; }
+        .tour-hole { transition: x .42s ease, y .42s ease, width .42s ease, height .42s ease; }
       `}</style>
 
       <div style={{ maxWidth: 940, margin: "0 auto", position: "relative" }}>
+        {TOUR_ENABLED && mode === "sti" && <Tour step={tourStep} setStep={setTourStep} L={L} />}
         <LangSwitch lang={lang} setLang={setLang} />
         <div style={{ display: "flex", gap: 8, marginBottom: 18, flexWrap: "wrap" }}>
           <button onClick={() => setMode("sti")} style={SEG(mode === "sti")}>{L.modeSti}</button>
@@ -1909,7 +2072,10 @@ export default function App() {
         <div style={{ marginBottom: 22 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, flexWrap: "wrap" }}>
             <h1 style={{ fontSize: 26, fontWeight: 700, letterSpacing: -0.5, margin: 0 }}>{mode === "sti" ? L.title : L.pregTitle}</h1>
-            <div style={{ marginLeft: "auto" }}><ShareButton snapshot={snapshot} L={L} /></div>
+            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+              {TOUR_ENABLED && mode === "sti" && <button onClick={() => setTourStep(0)} style={{ background: "transparent", border: `1px solid ${C.border}`, color: C.mid, borderRadius: 8, padding: "7px 12px", fontSize: 13, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>👋 {L.tourStart}</button>}
+              <ShareButton snapshot={snapshot} L={L} />
+            </div>
           </div>
           {(mode === "sti" ? L.intro : L.pregIntro) && <p style={{ color: C.mid, fontSize: 14, margin: 0, lineHeight: 1.5 }}>{mode === "sti" ? L.intro : L.pregIntro}</p>}
         </div>
@@ -1924,16 +2090,15 @@ export default function App() {
           <div className="studio-controls">
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 14 }}>
               <div style={{ fontSize: 11, color: C.dim, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6, display: "inline-flex", alignItems: "center" }}>{L.preset}<Info text={L.presetInfo} /></div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <div data-tour="presets" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {PRESETS.map((pr) => (<button key={pr.key} onClick={() => applyPreset(pr)} className={"pill " + (activePreset === pr.key ? "on" : "")}>{pr.label[lang]}</button>))}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
+                {TYPES.map((meta) => (<TypeCard key={meta.key} meta={meta} t={cfg[meta.key]} setT={(patch) => setType(meta.key, patch)} open={!!open[meta.key]} toggleOpen={() => setOpen((o) => ({ ...o, [meta.key]: !o[meta.key] }))} lang={lang} L={L} />))}
               </div>
             </div>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 14 }}>
-              {TYPES.map((meta) => (<TypeCard key={meta.key} meta={meta} t={cfg[meta.key]} setT={(patch) => setType(meta.key, patch)} open={!!open[meta.key]} toggleOpen={() => setOpen((o) => ({ ...o, [meta.key]: !o[meta.key] }))} lang={lang} L={L} />))}
-            </div>
-
-            <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 18px" }}>
+            <div data-tour="acts" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 18px" }}>
               <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, marginBottom: 10, display: "inline-flex", alignItems: "center" }}>{L.sexActs}<Info text={L.sexActsInfo} /></div>
               <SexActs acts={acts} setActs={setActs} lang={lang} />
               {actSel.length === 0 && <div style={{ color: "#ff922b", fontSize: 12, marginTop: 10 }}>{L.noActs}</div>}
@@ -1951,26 +2116,26 @@ export default function App() {
 
           <div className="studio-chart" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
             <div style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
-              <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} labelH={36} />
-              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} labelH={36} />
+              <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
+              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
             </div>
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
               {STIS.filter((s) => !hidden[s.key]).map((s) => (<span key={s.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${s.grounded ? "solid" : "dashed"} ${s.color}`, display: "inline-block" }} />{s.label[lang]}</span>))}
             </div>
-            <div className="chartbox">
+            <div className="chartbox" data-tour="chart">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
                   <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
                   <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
                   <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
-                  {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={false} />))}
+                  {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
               <div style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], pctVal(riskPct(top, horizonM), lang), top.color) : L.enableOne}</div>
-              <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+              <div data-tour="env" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.5, marginRight: 2 }}>{L.envLabel}</span>
                 {[["normal", L.envNormal], ["high", L.envHigh], ["outbreak", L.envOutbreak]].map(([k, lab]) => (
                   <button key={k} className={"pill " + (env === k ? "on" : "")} onClick={() => setEnv(k)}>{lab}</button>
@@ -2006,7 +2171,7 @@ export default function App() {
                     <td style={{ whiteSpace: "nowrap" }}>
                       <span style={{ color: s.color, marginRight: 7 }}>{s.grounded ? "●" : "◌"}</span>{s.label[lang]}
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note[lang]} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>{L.vaccinated}</span>}
-                      <span aria-hidden style={{ marginLeft: 8, color: exp ? s.color : C.dim, fontSize: 10 }}>{exp ? "▾" : "▸"}</span>
+                      <span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span>
                     </td>
                     <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1), lang)} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e), lang)}</td>
@@ -2015,10 +2180,11 @@ export default function App() {
                     <td style={{ textAlign: "right" }}><span className="src" tabIndex={0}><span style={{ width: 8, height: 8, borderRadius: "50%", background: ACC_COLOR[s.acc] }} title={`${L.accuracyLab}: ${accLab}`} /><span className="ic">i</span><span className="box"><b style={{ color: C.hi }}>{L.accuracyLab}: {accLab}</b><br />{s.src[lang]}</span></span></td>
                   </tr>,
                   ];
-                  if (exp) rows.push(
+                  rows.push(
                     <tr key={s.key + "-g"} style={{ borderLeft: `3px solid ${s.color}` }}>
-                      <td colSpan={7} style={{ background: C.panel2, padding: 0 }}>
-                       <div style={{ position: "sticky", left: 0, width: "calc(100vw - 84px)", maxWidth: 860, boxSizing: "border-box", padding: "14px 16px" }}>
+                      <td colSpan={7} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
+                       <Collapse open={exp} style={{ position: "sticky", left: 0, width: "calc(100vw - 84px)", maxWidth: 860, boxSizing: "border-box" }}>
+                       <div style={{ padding: "14px 16px" }}>
                         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
                           <div><div className="ghd">{L.sympt}</div><div className="gtx">{s.guide.symptoms[lang]}</div></div>
                           <div><div className="ghd">{L.treatm}</div><div className="gtx">{s.guide.treatment[lang]}</div></div>
@@ -2040,6 +2206,7 @@ export default function App() {
                         )}
                         <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>{L.sourcesLab}: {s.guide.sources.map((src, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{typeof src.label === "string" ? src.label : src.label[lang]} ↗</a></span>))} {L.guideTail}</div>
                        </div>
+                       </Collapse>
                       </td>
                     </tr>
                   );
@@ -2050,7 +2217,7 @@ export default function App() {
           </div>
         </div>
 
-        <details open style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 14 }}>
+        <details style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 14 }}>
           <summary style={{ color: C.hi, fontSize: 15, fontWeight: 600 }}>{L.breakdownTitle}</summary>
           {L.breakdownIntro && <p style={{ color: C.mid, fontSize: 13, lineHeight: 1.6, margin: "12px 0 12px" }}>{L.breakdownIntro}</p>}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14, marginBottom: 16 }}>
