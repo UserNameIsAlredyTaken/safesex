@@ -356,9 +356,9 @@ const I18N = {
     envLabel: "Environment",
     envNormal: "normal", envHigh: "high background", envOutbreak: "outbreak",
     envInfo: (<>Infections cluster in sexual networks, so a partner is likelier infected than the population average. The switch scales each infection's prevalence — its own factor, see the disease card.<br /><br /><b>High background</b> — a more active, higher-risk circle.<br /><b>Outbreak</b> — a concentrated network during an active epidemic.<br /><br />The multiplier estimates are big assumptions, not a prediction.</>),
-    envGuideLabel: "Risk environment (prevalence × — rough assumptions)",
+    envGuideLabel: "Risk environment",
     anyLabel: "At least one",
-    topRiskLine: (years, yw, name, pct, col) => (<>Over {years} {yw} of active sex life, the highest risk is <span style={{ color: col, fontWeight: 600 }}>{name}</span> — about <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
+    topRiskLine: (years, yw, name, col) => (<>Over {years} {yw} of active sex life, the highest risk is <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
     enableOne: "Enable at least one infection below.",
     structTitle: "Partnership structure over time",
     structStats: (avg, lanes, total) => (<>sex ≈ <b data-hi>{avg}×</b>/wk · peak <b data-hi>{lanes}</b> · total relationships: <b data-hi>{total}</b></>),
@@ -385,8 +385,8 @@ const I18N = {
     withoutCondom: "without condom", withCondom: "with condom",
     barAct: "Per 1 contact (all practices, if the partner is infected)",
     barHor: (years, yw) => `Over ${years} ${yw}`,
-    satDrop: (years, yw, cutAct, cutHor) => (<>Per <b data-hi>one contact</b> a condom removes <b data-grn>{cutAct}%</b> of the risk. But over <b data-hi>{years} {yw}</b> with repeats — only <b data-red>{cutHor}%</b>: with many contacts the risk «saturates», and relative protection falls.</>),
-    satFlat: (years, yw, cutHor) => (<>Both per <b data-hi>one contact</b> and over <b data-hi>{years} {yw}</b> a condom removes about the same (~<b data-grn>{cutHor}%</b>). For rarely transmitted infections the risk does not «saturate», so relative protection does not fall over time.</>),
+    satDrop: (years, yw) => (<>Per <b data-hi>one contact</b> a condom removes noticeably more risk than over <b data-hi>{years} {yw}</b> as a whole: with many contacts the risk «saturates» over time, and relative protection falls.</>),
+    satFlat: (years, yw) => (<>Per <b data-hi>one contact</b> and over <b data-hi>{years} {yw}</b> a condom removes about the same. For rarely transmitted infections the risk does not «saturate», so relative protection does not fall over time.</>),
     contribIntro: (years, yw) => (<>The contribution of each <b data-hi>partner type</b> over {years} {yw} (its own frequency, duration, condom, tested share, background), then they combine:</>),
     thType: "Type", thPartners: "Partners", thContacts: "Contacts k", thTransPerAct: "Transmission per contact", thChanceInf: "Chance partner infected", thRiskHor: (years, yw) => `Risk over ${years} ${yw}`,
     perYear: "/yr",
@@ -531,9 +531,9 @@ const I18N = {
     envLabel: "Среда",
     envNormal: "обычная", envHigh: "высокий фон", envOutbreak: "вспышка",
     envInfo: (<>Инфекции концентрируются в сексуальных сетях, поэтому партнёр заражён чаще, чем по средней распространённости. Переключатель множит распространённость каждой инфекции — свой множитель, см. карточку болезни.<br /><br /><b>Высокий фон</b> — более активный, рисковый круг.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии.<br /><br />Оценки множителей — большие допущения, а не прогноз.</>),
-    envGuideLabel: "Среда риска (множитель к распространённости — грубые допущения)",
+    envGuideLabel: "Среда риска",
     anyLabel: "Хотя бы одна",
-    topRiskLine: (years, yw, name, pct, col) => (<>За {years} {yw} активной половой жизни выше всего риск <span style={{ color: col, fontWeight: 600 }}>{name}</span> — около <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
+    topRiskLine: (years, yw, name, col) => (<>За {years} {yw} активной половой жизни выше всего риск <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
     enableOne: "Включи хотя бы одну инфекцию ниже.",
     structTitle: "Структура партнёрств во времени",
     structStats: (avg, lanes, total) => (<>секс ≈ <b data-hi>{avg}×</b>/нед · пик <b data-hi>{lanes}</b> · всего связей: <b data-hi>{total}</b></>),
@@ -560,8 +560,8 @@ const I18N = {
     withoutCondom: "без презерватива", withCondom: "с презервативом",
     barAct: "За 1 контакт (все практики, если партнёр заражён)",
     barHor: (years, yw) => `За ${years} ${yw}`,
-    satDrop: (years, yw, cutAct, cutHor) => (<>За <b data-hi>один контакт</b> презерватив убирает <b data-grn>{cutAct}%</b> риска. Но за <b data-hi>{years} {yw}</b> с повторами — уже только <b data-red>{cutHor}%</b>: при многих контактах риск «насыщается», и относительная защита падает.</>),
-    satFlat: (years, yw, cutHor) => (<>И за <b data-hi>один контакт</b>, и за <b data-hi>{years} {yw}</b> презерватив убирает примерно одинаково (~<b data-grn>{cutHor}%</b>). У редко передающихся инфекций риск не «насыщается», поэтому относительная защита со временем не падает.</>),
+    satDrop: (years, yw) => (<>За <b data-hi>один контакт</b> презерватив убирает заметно больше риска, чем за <b data-hi>{years} {yw}</b> в сумме: при многих контактах риск со временем «насыщается», и относительная защита падает.</>),
+    satFlat: (years, yw) => (<>И за <b data-hi>один контакт</b>, и за <b data-hi>{years} {yw}</b> презерватив убирает примерно одинаково. У редко передающихся инфекций риск не «насыщается», поэтому относительная защита со временем не падает.</>),
     contribIntro: (years, yw) => (<>Вклад каждого <b data-hi>типа партнёров</b> за {years} {yw} (своя частота, длительность, презерватив, проверенность, фон), затем они объединяются:</>),
     thType: "Тип", thPartners: "Партнёров", thContacts: "Контактов k", thTransPerAct: "Передача за контакт", thChanceInf: "Шанс партнёр заразен", thRiskHor: (years, yw) => `Риск за ${years} ${yw}`,
     perYear: "/год",
@@ -702,9 +702,9 @@ const I18N = {
     envLabel: "Sredina",
     envNormal: "obična", envHigh: "visok fon", envOutbreak: "epidemija",
     envInfo: (<>Infekcije se koncentrišu u seksualnim mrežama, pa je partner zaražen češće nego po prosečnoj rasprostranjenosti. Prekidač množi rasprostranjenost svake infekcije — sopstveni množilac, vidi karticu bolesti.<br /><br /><b>Visok fon</b> — aktivniji, rizičniji krug.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije.<br /><br />Procene množilaca su velike pretpostavke, a ne predviđanje.</>),
-    envGuideLabel: "Rizik sredine (množilac rasprostranjenosti — grube pretpostavke)",
+    envGuideLabel: "Rizik sredine",
     anyLabel: "Bar jedna",
-    topRiskLine: (years, yw, name, pct, col) => (<>Tokom {years} {yw} aktivnog polnog života najviši rizik je <span style={{ color: col, fontWeight: 600 }}>{name}</span> — oko <span style={{ color: C.hi, fontWeight: 600 }}>{pct}</span>.</>),
+    topRiskLine: (years, yw, name, col) => (<>Tokom {years} {yw} aktivnog polnog života najviši rizik je <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
     enableOne: "Uključi bar jednu infekciju ispod.",
     structTitle: "Struktura partnerstava tokom vremena",
     structStats: (avg, lanes, total) => (<>seks ≈ <b data-hi>{avg}×</b>/ned · vrh <b data-hi>{lanes}</b> · ukupno veza: <b data-hi>{total}</b></>),
@@ -731,8 +731,8 @@ const I18N = {
     withoutCondom: "bez kondoma", withCondom: "sa kondomom",
     barAct: "Po 1 kontaktu (sve prakse, ako je partner zaražen)",
     barHor: (years, yw) => `Za ${years} ${yw}`,
-    satDrop: (years, yw, cutAct, cutHor) => (<>Po <b data-hi>jednom kontaktu</b> kondom uklanja <b data-grn>{cutAct}%</b> rizika. Ali za <b data-hi>{years} {yw}</b> sa ponavljanjima — već samo <b data-red>{cutHor}%</b>: pri mnogo kontakata rizik se „zasiti“, i relativna zaštita opada.</>),
-    satFlat: (years, yw, cutHor) => (<>I po <b data-hi>jednom kontaktu</b> i za <b data-hi>{years} {yw}</b> kondom uklanja otprilike isto (~<b data-grn>{cutHor}%</b>). Kod retko prenosivih infekcija rizik se ne „zasiti“, pa relativna zaštita tokom vremena ne opada.</>),
+    satDrop: (years, yw) => (<>Po <b data-hi>jednom kontaktu</b> kondom uklanja primetno više rizika nego za <b data-hi>{years} {yw}</b> ukupno: pri mnogo kontakata rizik se tokom vremena „zasiti“, i relativna zaštita opada.</>),
+    satFlat: (years, yw) => (<>I po <b data-hi>jednom kontaktu</b> i za <b data-hi>{years} {yw}</b> kondom uklanja otprilike isto. Kod retko prenosivih infekcija rizik se ne „zasiti“, pa relativna zaštita tokom vremena ne opada.</>),
     contribIntro: (years, yw) => (<>Doprinos svakog <b data-hi>tipa partnera</b> za {years} {yw} (sopstvena učestalost, trajanje, kondom, udeo testiranih, pozadina), zatim se kombinuju:</>),
     thType: "Tip", thPartners: "Partnera", thContacts: "Kontakata k", thTransPerAct: "Prenos po kontaktu", thChanceInf: "Šansa da je partner zaražen", thRiskHor: (years, yw) => `Rizik za ${years} ${yw}`,
     perYear: "/god",
@@ -960,7 +960,7 @@ function Slider({ label, value, set, min, max, step, valueText, hint, info, labe
     <div data-tour={dataTour} style={{ flex: 1, minWidth: 150, opacity: subtle ? 0.75 : 1 }}>
       <div style={{ display: "flex", flexDirection: subtle ? "column" : "row", justifyContent: "space-between", alignItems: subtle ? "stretch" : "baseline", gap: subtle ? 2 : 8, marginBottom: 8, minHeight: labelH }}>
         <span style={{ color: subtle ? C.dim : C.mid, fontSize: subtle ? 12 : 13, letterSpacing: 0.2, flex: 1, whiteSpace: "nowrap" }}>{label}{info && <Info text={info} />}</span>
-        <span style={{ color: subtle ? C.mid : C.accent, fontSize: subtle ? 13 : 16, fontWeight: subtle ? 500 : 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", flexShrink: 0 }}>{valueText}</span>
+        <span style={{ color: subtle ? C.mid : C.accent, fontSize: subtle ? 13 : 16, fontWeight: subtle ? 500 : 600, fontFamily: "ui-monospace, monospace", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap", flexShrink: 0 }}>{valueText || " "}</span>
       </div>
       <input className={"rng" + (subtle ? " rng-mini" : "")} type="range" min={min} max={max} step={step} value={value} onChange={(e) => set(parseFloat(e.target.value))} />
       {hint && <div style={{ color: C.dim, fontSize: 11, marginTop: 6 }}>{hint}</div>}
@@ -1106,7 +1106,7 @@ function ChartTooltip({ active, payload, label, hidden, lang, L }) {
   return (
     <div style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 12px", fontSize: 12 }}>
       <div style={{ color: C.mid, marginBottom: 6 }}>{yrs > 0 ? yrs + " " + yrShort(lang) + " " : ""}{mos} {moWord(lang)}</div>
-      {rows.map((e) => { const s = STIS.find((x) => x.key === e.dataKey); return (<div key={e.dataKey} style={{ display: "flex", justifyContent: "space-between", gap: 18, color: C.hi }}><span><span style={{ color: e.stroke }}>●</span> {s ? s.label[lang] : L.anyLabel}</span><span>{pctVal(e.value, lang)}</span></div>); })}
+      {rows.map((e) => { const s = STIS.find((x) => x.key === e.dataKey); return (<div key={e.dataKey} style={{ color: C.hi }}><span style={{ color: e.stroke }}>●</span> {s ? s.label[lang] : L.anyLabel}</div>); })}
     </div>
   );
 }
@@ -1169,51 +1169,15 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
             <div style={{ fontSize: 12, color: C.dim, marginBottom: 6 }}>{row.lab}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
               <div style={{ flex: 1, height: 16, background: C.panel2, borderRadius: 4, overflow: "hidden" }}><div style={{ width: `${Math.max(2, (row.a / max) * 100)}%`, height: "100%", background: "#ff7b73" }} /></div>
-              <span className="num" style={{ width: 56, textAlign: "right", fontSize: 12.5, color: C.hi, fontWeight: 600 }}>{row.fmt(row.a)}</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ flex: 1, height: 16, background: C.panel2, borderRadius: 4, overflow: "hidden" }}><div style={{ width: `${Math.max(2, (row.b / max) * 100)}%`, height: "100%", background: "#4dd4ac" }} /></div>
-              <span className="num" style={{ width: 56, textAlign: "right", fontSize: 12.5, color: C.hi, fontWeight: 600 }}>{row.fmt(row.b)}</span>
             </div>
           </div>
         ); })}
         <div className="rich" style={{ fontSize: 12.5, color: C.mid, lineHeight: 1.55, marginTop: 6 }}>
-          {cutAct - cutHor >= 4 ? L.satDrop(years, yw, cutAct, cutHor) : L.satFlat(years, yw, cutHor)}
+          {cutAct - cutHor >= 4 ? L.satDrop(years, yw) : L.satFlat(years, yw)}
         </div>
-      </div>
-      <div style={{ borderTop: `1px solid ${C.border}`, margin: "4px 0 14px" }} />
-      <div className="rich" style={{ fontSize: 13, color: C.mid, lineHeight: 1.6, marginBottom: 12 }}>{L.contribIntro(years, yw)}</div>
-      <div style={{ overflowX: "auto" }}>
-        <table className="inf" style={{ minWidth: 560 }}>
-          <thead><tr><th>{L.thType}</th><th>{L.thPartners}</th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thContacts}<Info dn text={L.thContactsInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thTransPerAct}<Info dn text={L.thTransPerActInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thChanceInf}<Info dn text={L.thChanceInfInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thRiskHor(years, yw)}<Info dn text={L.thRiskHorInfo} /></span></th></tr></thead>
-          <tbody>
-            {rows.map((r) => r.inactive ? (
-              <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}55`, color: C.dim }}>
-                <td style={{ whiteSpace: "nowrap", color: C.dim }}><span style={{ color: `${r.meta.color}77`, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
-                <td className="num">0</td>
-                <td className="num">0</td>
-                <td className="num">0%</td>
-                <td className="num">0%</td>
-                <td className="num">0%</td>
-              </tr>
-            ) : (
-              <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}` }}>
-                <td style={{ whiteSpace: "nowrap", color: C.hi }}><span style={{ color: r.meta.color, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
-                <td className="num">{dec((Math.round(r.cnt * 10) / 10).toString(), lang)}{r.meta.kind !== "ongoing" ? L.perYear : ""}</td>
-                <td className="num"><CellTip f={r.fK}>{Math.round(r.k)}</CellTip></td>
-                <td className="num"><CellTip f={r.fAct}>{pctAct(r.actEff, lang)}</CellTip></td>
-                <td className="num"><CellTip f={r.fChance}>{pp(r.pEff)}</CellTip></td>
-                <td className="num" style={{ color: C.hi, fontWeight: 600 }}><CellTip f={r.fRisk}>{fmtP(r.toHorizon)}</CellTip></td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr style={{ borderTop: `2px solid ${C.border}` }}>
-              <td colSpan={5} style={{ color: C.hi, fontWeight: 600 }}><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thTotal}<Info dn text={L.thTotalInfo} /></span></td>
-              <td className="num" style={{ color: s.color, fontWeight: 700 }}><CellTip f={fTotal}>{fmtP(totalRisk)}</CellTip></td>
-            </tr>
-          </tfoot>
-        </table>
       </div>
     </div>
   );
@@ -2177,24 +2141,23 @@ export default function App() {
           <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
             <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
               <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
-              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
+              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText="" hint={L.scaleHint} subtle />
             </div>
             <div className="chart-extra" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
               {STIS.filter((s) => !hidden[s.key]).map((s) => (<span key={s.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${s.grounded ? "solid" : "dashed"} ${s.color}`, display: "inline-block" }} />{s.label[lang]}</span>))}
             </div>
             <div className="chartbox" data-tour="chart">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: 0 }}>
-                  <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />
+                <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: 8 }}>
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
-                  <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
+                  <YAxis hide domain={[0, yMax]} allowDataOverflow />
                   <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
                   {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
-              <div className="chart-extra" style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], pctVal(riskPct(top, horizonM), lang), top.color) : L.enableOne}</div>
+              <div className="chart-extra" style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], top.color) : L.enableOne}</div>
               <div data-tour="env" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.5, marginRight: 2 }}>{L.envLabel}</span>
                 {[["normal", L.envNormal], ["high", L.envHigh], ["outbreak", L.envOutbreak]].map(([k, lab]) => (
@@ -2220,7 +2183,7 @@ export default function App() {
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "6px 6px", marginBottom: 14 }}>
           <div className="tbl-wrap">
             <table className="inf">
-              <thead><tr><th style={{ width: 34 }}></th><th>{L.thInfection}</th><th>{L.thRisk(years, yearsWord(years, lang))}</th><th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th><th style={{ width: 60, textAlign: "right" }}>{L.thSource}</th></tr></thead>
+              <thead><tr><th style={{ width: 34 }}></th><th>{L.thInfection}</th><th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th><th style={{ width: 60, textAlign: "right" }}>{L.thSource}</th></tr></thead>
               <tbody>
                 {STIS.flatMap((s) => {
                   const exp = !!guideOpen[s.key];
@@ -2233,7 +2196,6 @@ export default function App() {
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note[lang]} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>{L.vaccinated}</span>}
                       <span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span>
                     </td>
-                    <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1), lang)} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e), lang)}</td>
                     <td><span style={{ background: `${SEV[s.sev]}22`, color: SEV[s.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{s.treat[lang]}</span></td>
                     <td style={{ color: C.mid, fontSize: 12.5 }}>{s.cons[lang]}</td>
@@ -2242,7 +2204,7 @@ export default function App() {
                   ];
                   rows.push(
                     <tr key={s.key + "-g"} style={{ borderLeft: `3px solid ${s.color}` }}>
-                      <td colSpan={7} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
+                      <td colSpan={6} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
                        <Collapse open={exp} style={{ position: "sticky", left: 0, width: "calc(100vw - 84px)", maxWidth: 860, boxSizing: "border-box" }}>
                        <div style={{ padding: "14px 16px" }}>
                         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
@@ -2253,15 +2215,7 @@ export default function App() {
                         {ENV[s.key] && (
                           <div style={{ marginTop: 14 }}>
                             <div className="ghd">{L.envGuideLabel}</div>
-                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "7px 0 9px" }}>
-                              {[[L.envNormal, 1], [L.envHigh, ENV[s.key].high], [L.envOutbreak, ENV[s.key].out]].map(([lab, mul], i) => (
-                                <span key={i} style={{ display: "inline-flex", alignItems: "baseline", gap: 6, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 10px" }}>
-                                  <span style={{ fontSize: 11, color: C.dim }}>{lab}</span>
-                                  <span className="num" style={{ fontSize: 12.5, color: C.mid }}>×{dec(String(mul), lang)}</span>
-                                </span>
-                              ))}
-                            </div>
-                            <div className="gtx">{ENV[s.key].note[lang]} <a href={ENV[s.key].src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{ENV[s.key].src.label[lang]} ↗</a></div>
+                            <div className="gtx" style={{ marginTop: 7 }}>{ENV[s.key].note[lang]} <a href={ENV[s.key].src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{ENV[s.key].src.label[lang]} ↗</a></div>
                           </div>
                         )}
                         <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>{L.sourcesLab}: {s.guide.sources.map((src, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{typeof src.label === "string" ? src.label : src.label[lang]} ↗</a></span>))} {L.guideTail}</div>
