@@ -417,17 +417,7 @@ const I18N = {
     contactIntro: "There are a few ways to get in touch:",
     contactGithub: (<>Open an <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue on GitHub</a> — good for questions and suggestions (issues are public, answers may help others).</>),
     contactEmailLine: (<>Email: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
-    contactFormTitle: "Send a message",
-    contactEmailLabel: "Your email",
-    contactEmailHint: "So I can reply",
-    contactHumanLabel: "What is 4 + 5?",
-    contactHumanHint: "Just to verify you're human",
-    contactMsgLabel: "Message",
-    contactSend: "Send",
     contactClose: "Close",
-    contactErrHuman: "Wrong answer to the check.",
-    contactErrMsg: "Enter a message.",
-    contactNote: "Your email client will open with a ready message — the site is static and doesn't send mail itself.",
     yrAxis: "y",
     // ── Режим / Mode switcher ──
     modeSti: "🦠 STIs",
@@ -602,17 +592,7 @@ const I18N = {
     contactIntro: "Есть несколько способов связаться:",
     contactGithub: (<>Открыть <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue на GitHub</a> — подходит для вопросов и предложений (issues публичны, ответы могут пригодиться другим).</>),
     contactEmailLine: (<>Почта: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
-    contactFormTitle: "Написать сообщение",
-    contactEmailLabel: "Ваш email",
-    contactEmailHint: "Чтобы я мог ответить",
-    contactHumanLabel: "Сколько будет 4 + 5?",
-    contactHumanHint: "Просто проверка, что вы человек",
-    contactMsgLabel: "Сообщение",
-    contactSend: "Отправить",
     contactClose: "Закрыть",
-    contactErrHuman: "Неверный ответ на проверку.",
-    contactErrMsg: "Введите сообщение.",
-    contactNote: "Откроется ваш почтовый клиент с готовым письмом — сайт статический и сам письма не отправляет.",
     yrAxis: "г",
     modeSti: "🦠 ЗППП",
     modePreg: "🤰 Беременность",
@@ -783,17 +763,7 @@ const I18N = {
     contactIntro: "Postoji nekoliko načina da me kontaktirate:",
     contactGithub: (<>Otvorite <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue na GitHub-u</a> — pogodno za pitanja i predloge (issues su javni, odgovori mogu pomoći drugima).</>),
     contactEmailLine: (<>Imejl: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
-    contactFormTitle: "Pošaljite poruku",
-    contactEmailLabel: "Vaš imejl",
-    contactEmailHint: "Da bih mogao da odgovorim",
-    contactHumanLabel: "Koliko je 4 + 5?",
-    contactHumanHint: "Samo provera da ste čovek",
-    contactMsgLabel: "Poruka",
-    contactSend: "Pošalji",
     contactClose: "Zatvori",
-    contactErrHuman: "Pogrešan odgovor na proveru.",
-    contactErrMsg: "Unesite poruku.",
-    contactNote: "Otvoriće se vaš imejl klijent sa spremnom porukom — sajt je statičan i sam ne šalje poštu.",
     yrAxis: "g",
     modeSti: "🦠 PPI",
     modePreg: "🤰 Trudnoća",
@@ -1942,63 +1912,28 @@ function Tour({ step, setStep, L }) {
   );
 }
 
-// Модалка «Контакты и фидбек». Сайт статический — форма не шлёт на сервер,
-// а собирает письмо и открывает почтовый клиент через mailto.
-function ContactModal({ L, onClose }) {
-  const [email, setEmail] = useState("");
-  const [human, setHuman] = useState("");
-  const [msg, setMsg] = useState("");
-  const [err, setErr] = useState("");
+// Поповер «Контакты и фидбек»: компактное окно у ссылки в футере.
+// Без формы — mailto ненадёжен на ПК; показываем только GitHub issue и почту.
+function ContactPopover({ L, onClose }) {
+  const ref = useRef(null);
   useEffect(() => {
     const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    const onDown = (e) => { const box = ref.current && ref.current.parentElement; if (box && !box.contains(e.target)) onClose(); };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onDown); };
   }, [onClose]);
-  const send = () => {
-    if (human.trim() !== "9") { setErr(L.contactErrHuman); return; }
-    if (!msg.trim()) { setErr(L.contactErrMsg); return; }
-    const body = (email.trim() ? `From: ${email.trim()}\n\n` : "") + msg.trim();
-    window.location.href = `mailto:contact@sexhealth.info?subject=${encodeURIComponent("Safe Sex — feedback")}&body=${encodeURIComponent(body)}`;
-    onClose();
-  };
-  const field = { width: "100%", boxSizing: "border-box", background: C.panel, color: C.hi, border: `1px solid ${C.border}`, borderRadius: 8, padding: "9px 11px", fontSize: 14, outline: "none" };
-  const lab = { display: "block", color: C.mid, fontSize: 12.5, marginBottom: 6 };
-  const hint = { color: C.dim, fontSize: 11, marginTop: 5 };
   return (
-    <div onMouseDown={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 2000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "5vh 16px", overflowY: "auto" }}>
-      <div className="fade-in" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()} style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 14, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", width: "100%", maxWidth: 460, padding: 22 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-          <h2 style={{ margin: 0, color: C.hi, fontSize: 18, fontWeight: 700 }}>{L.contactTitle}</h2>
-          <button onClick={onClose} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 22, lineHeight: 1, cursor: "pointer", padding: 4 }}>×</button>
-        </div>
-        <p style={{ color: C.mid, fontSize: 13.5, margin: "0 0 8px" }}>{L.contactIntro}</p>
-        <ul style={{ color: C.mid, fontSize: 13.5, lineHeight: 1.5, margin: "0 0 16px", paddingLeft: 20 }}>
-          <li style={{ marginBottom: 5 }}>{L.contactGithub}</li>
-          <li>{L.contactEmailLine}</li>
-        </ul>
-        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
-          <div style={{ color: C.hi, fontSize: 14, fontWeight: 600, marginBottom: 12 }}>{L.contactFormTitle}</div>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
-            <div style={{ flex: "1 1 180px" }}>
-              <label style={lab}>{L.contactEmailLabel}</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={field} />
-              <div style={hint}>{L.contactEmailHint}</div>
-            </div>
-            <div style={{ flex: "1 1 120px" }}>
-              <label style={lab}>{L.contactHumanLabel}</label>
-              <input value={human} onChange={(e) => setHuman(e.target.value)} style={field} />
-              <div style={hint}>{L.contactHumanHint}</div>
-            </div>
-          </div>
-          <label style={lab}>{L.contactMsgLabel}</label>
-          <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={5} style={{ ...field, resize: "vertical" }} />
-          {err && <div style={{ color: "#ff7b73", fontSize: 12.5, marginTop: 8 }}>{err}</div>}
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
-            <button onClick={send} style={{ background: C.accent, color: "#0f141a", border: "none", borderRadius: 8, padding: "9px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{L.contactSend}</button>
-          </div>
-          <p style={{ color: C.dim, fontSize: 11, lineHeight: 1.5, margin: "12px 0 0" }}>{L.contactNote}</p>
-        </div>
+    <div ref={ref} className="fade-in" role="dialog" style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", width: 280, maxWidth: "calc(100vw - 24px)", boxSizing: "border-box", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: "0 14px 38px rgba(0,0,0,0.55)", padding: "14px 16px", zIndex: 100, textAlign: "left", cursor: "default" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <span style={{ color: C.hi, fontSize: 14, fontWeight: 700 }}>{L.contactTitle}</span>
+        <button onClick={onClose} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 20, lineHeight: 1, cursor: "pointer", padding: 2 }}>×</button>
       </div>
+      <p style={{ color: C.mid, fontSize: 12.5, lineHeight: 1.5, margin: "0 0 8px" }}>{L.contactIntro}</p>
+      <ul style={{ color: C.mid, fontSize: 12.5, lineHeight: 1.5, margin: 0, paddingLeft: 18 }}>
+        <li style={{ marginBottom: 5 }}>{L.contactGithub}</li>
+        <li>{L.contactEmailLine}</li>
+      </ul>
     </div>
   );
 }
@@ -2381,10 +2316,12 @@ export default function App() {
         <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "8px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.footerSource}</a>
           <span style={{ color: C.border }}>|</span>
-          <button onClick={() => setContactOpen(true)} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 12, cursor: "pointer", padding: 0, fontFamily: "inherit" }}>{L.footerContactLink}</button>
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <button onClick={() => setContactOpen((v) => !v)} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 12, cursor: "pointer", padding: 0, fontFamily: "inherit" }}>{L.footerContactLink}</button>
+            {contactOpen && <ContactPopover L={L} onClose={() => setContactOpen(false)} />}
+          </span>
         </p>
       </div>
-      {contactOpen && <ContactModal L={L} onClose={() => setContactOpen(false)} />}
     </div>
   );
 }
