@@ -53,9 +53,9 @@ const STIS = [
     treat: { en: "No drug; oncogenic", ru: "Нет лекарства; онкогенен", sr: "Nema leka; onkogen" },
     cons: { en: "Cancer (cervix, throat, anus), warts", ru: "Рак (шейка, горло, анус), кондиломы", sr: "Rak (grlić, grlo, anus), kondilomi" },
     acc: "low",
-    src: { en: "Per-act transmission — rough estimate; HPV is highly contagious. Condom ~40% (CDC). Vaccine protects.",
-      ru: "Передача за акт — грубая оценка; ВПЧ очень заразен. Презерватив ~40% (CDC). Защищает прививка.",
-      sr: "Prenos po aktu — gruba procena; HPV je veoma zarazan. Kondom ~40% (CDC). Vakcina štiti." },
+    src: { en: "Per-act transmission — rough estimate; HPV is highly contagious. Condom ~40% (CDC). Vaccine protects. Prevalence (p=25%): any genital HPV ~42.5% among adults 18–59, high-risk types ~22.7% (NHANES 2013–2014, NCHS Data Brief 280).",
+      ru: "Передача за акт — грубая оценка; ВПЧ очень заразен. Презерватив ~40% (CDC). Защищает прививка. Распространённость (p=25%): любой генитальный ВПЧ ~42,5% среди взрослых 18–59 лет, высокоонкогенные типы ~22,7% (NHANES 2013–2014, NCHS Data Brief 280).",
+      sr: "Prenos po aktu — gruba procena; HPV je veoma zarazan. Kondom ~40% (CDC). Vakcina štiti. Rasprostranjenost (p=25%): bilo koji genitalni HPV ~42,5% među odraslima 18–59, visokorizični tipovi ~22,7% (NHANES 2013–2014, NCHS Data Brief 280)." },
     guide: {
       symptoms: {
         en: "Most often no symptoms; in 9 of 10 cases the infection clears on its own within ~2 years. Some types cause genital warts; oncogenic types are silent and found by screening.",
@@ -69,7 +69,7 @@ const STIS = [
         en: "Oncogenic types cause cervical cancer, as well as cancer of the anus, oropharynx, penis, vulva and vagina.",
         ru: "Онкогенные типы вызывают рак шейки матки, а также рак ануса, ротоглотки, полового члена, вульвы и влагалища.",
         sr: "Onkogeni tipovi izazivaju rak grlića materice, kao i rak anusa, ždrela, penisa, vulve i vagine." },
-      sources: [{ label: CDC, url: "https://www.cdc.gov/sti/about/about-genital-hpv-infection.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/human-papilloma-virus-and-cancer" }] } },
+      sources: [{ label: CDC, url: "https://www.cdc.gov/sti/about/about-genital-hpv-infection.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/human-papilloma-virus-and-cancer" }, { label: "NCHS Data Brief 280", url: "https://www.cdc.gov/nchs/products/databriefs/db280.htm" }] } },
   { key: "hbv", label: { en: "Hepatitis B", ru: "Гепатит B", sr: "Hepatitis B" }, color: "#94d82d", sev: 4, p: 0.003, beta: 0.03, e: 0.90, grounded: false,
     vax: { ve: 0.95, note: { en: "With an immune response ~95%, infection is nearly ruled out. Estimate.", ru: "При иммунном ответе ~95%, заражение почти исключено. Оценка.", sr: "Uz imuni odgovor ~95%, zaraza je gotovo isključena. Procena." } },
     treat: { en: "Chronic incurable; vaccine exists", ru: "Хронический неизлечим; есть прививка", sr: "Hronični neizlečiv; postoji vakcina" },
@@ -392,7 +392,7 @@ const I18N = {
     perYear: "/yr",
     noActivePartners: "No active partners — add someone in the cards on the left to see the breakdown.",
     thContactsInfo: (<><b data-hi>Sex acts with one partner</b> of this type over the period.<br />Formula: <span data-f>sex/week × 52/12 × duration (months)</span>; a one-night partner = 1 act.</>),
-    thTransPerActInfo: (<><b data-hi>Transmission in one contact</b>, if the partner is infected.<br />Combines the selected sex acts; already includes this type's condom and vaccine.<br />Formula: <span data-f>1 − ∏(1 − β·practice·(1 − condom·e))</span> over the selected practices.</>),
+    thTransPerActInfo: (<><b data-hi>Transmission in one contact</b>, if the partner is infected.<br />Already includes this type's condom and vaccine.<br />Each selected sex act has its own transmission: <span data-f>per&#8209;act&#8209;transmission × act&#8209;multiplier × (1 − share&#8209;with&#8209;condom × condom&#8209;protection)</span>.<br />Acts are combined: <span data-f>1 − product over acts (1 − act&#8209;transmission)</span>.</>),
     thChanceInfInfo: (<><b data-hi>Chance the partner is already infected.</b><br />Formula: <span data-f>prevalence × environment × pool × (1 − tested)</span>.</>),
     thRiskHorInfo: (<><b data-hi>This type's risk over the period.</b><br />From one partner: <span data-f>1 − (1 − chance_infected × transmission_over_all_contacts)</span>, raised to the power of the partner count.<br />The types are then combined in the «Total» row below.</>),
     thTotal: "Total",
@@ -410,7 +410,24 @@ const I18N = {
     assumSources: (<>Sources: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>casual vs steady ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>once-off prevalence ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>assortative mixing ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>condom by partnership (NATSAL, Britain) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>WHO ↗</a></>),
     footerDisclaimer: "This is an amateur educational model, not a medical forecast and not a basis for medical decisions.",
     footerNoWarranty: "Provided “as is”, for educational use only, without any warranty — use at your own risk.",
+    footerSource: "Source code",
+    footerContactLink: "Contact & feedback",
     githubLink: "Source code on GitHub ↗",
+    contactTitle: "Contact & feedback",
+    contactIntro: "There are a few ways to get in touch:",
+    contactGithub: (<>Open an <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue on GitHub</a> — good for questions and suggestions (issues are public, answers may help others).</>),
+    contactEmailLine: (<>Email: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    contactFormTitle: "Send a message",
+    contactEmailLabel: "Your email",
+    contactEmailHint: "So I can reply",
+    contactHumanLabel: "What is 4 + 5?",
+    contactHumanHint: "Just to verify you're human",
+    contactMsgLabel: "Message",
+    contactSend: "Send",
+    contactClose: "Close",
+    contactErrHuman: "Wrong answer to the check.",
+    contactErrMsg: "Enter a message.",
+    contactNote: "Your email client will open with a ready message — the site is static and doesn't send mail itself.",
     yrAxis: "y",
     // ── Режим / Mode switcher ──
     modeSti: "🦠 STIs",
@@ -560,7 +577,7 @@ const I18N = {
     perYear: "/год",
     noActivePartners: "Нет активных партнёров — добавь кого-нибудь в карточках слева, чтобы увидеть разбор.",
     thContactsInfo: (<><b data-hi>Половых актов с одним партнёром</b> этого типа за период.<br />Формула: <span data-f>секс/нед × 52/12 × длительность (мес)</span>; партнёр на одну ночь = 1 акт.</>),
-    thTransPerActInfo: (<><b data-hi>Передача за один контакт</b>, если партнёр заражён.<br />Складывает выбранные виды секса; уже учитывает презерватив и прививку этого типа.<br />Формула: <span data-f>1 − ∏(1 − β·практика·(1 − презерватив·e))</span> по выбранным практикам.</>),
+    thTransPerActInfo: (<><b data-hi>Передача за один контакт</b>, если партнёр заражён.<br />Уже учитывает презерватив и прививку этого типа.<br />Для каждого выбранного вида секса своя передача: <span data-f>передача&#8209;за&#8209;акт × множитель&#8209;вида × (1 − доля&#8209;в&#8209;презервативе × защита&#8209;презерватива)</span>.<br />Виды объединяются: <span data-f>1 − произведение по видам (1 − передача&#8209;вида)</span>.</>),
     thChanceInfInfo: (<><b data-hi>Шанс, что партнёр уже заражён.</b><br />Формула: <span data-f>распространённость × среда × пул × (1 − проверенность)</span>.</>),
     thRiskHorInfo: (<><b data-hi>Риск от этого типа за период.</b><br />От одного партнёра: <span data-f>1 − (1 − шанс_заражён × передача_за_все_контакты)</span>, возводится в степень числа партнёров.<br />Затем типы объединяются в строке «Всего» ниже.</>),
     thTotal: "Всего",
@@ -578,7 +595,24 @@ const I18N = {
     assumSources: (<>Источники: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>казуальные vs постоянные ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>распространённость у разовых ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ассортативное смешивание ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>презерватив по типу связи (NATSAL, Британия) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ВОЗ ↗</a></>),
     footerDisclaimer: "Это любительская образовательная модель, а не медицинский прогноз и не основание для медицинских решений.",
     footerNoWarranty: "Предоставляется «как есть», только в образовательных целях, без каких-либо гарантий — на свой риск.",
+    footerSource: "Исходный код",
+    footerContactLink: "Контакты и фидбек",
     githubLink: "Исходный код на GitHub ↗",
+    contactTitle: "Контакты и фидбек",
+    contactIntro: "Есть несколько способов связаться:",
+    contactGithub: (<>Открыть <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue на GitHub</a> — подходит для вопросов и предложений (issues публичны, ответы могут пригодиться другим).</>),
+    contactEmailLine: (<>Почта: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    contactFormTitle: "Написать сообщение",
+    contactEmailLabel: "Ваш email",
+    contactEmailHint: "Чтобы я мог ответить",
+    contactHumanLabel: "Сколько будет 4 + 5?",
+    contactHumanHint: "Просто проверка, что вы человек",
+    contactMsgLabel: "Сообщение",
+    contactSend: "Отправить",
+    contactClose: "Закрыть",
+    contactErrHuman: "Неверный ответ на проверку.",
+    contactErrMsg: "Введите сообщение.",
+    contactNote: "Откроется ваш почтовый клиент с готовым письмом — сайт статический и сам письма не отправляет.",
     yrAxis: "г",
     modeSti: "🦠 ЗППП",
     modePreg: "🤰 Беременность",
@@ -724,7 +758,7 @@ const I18N = {
     perYear: "/god",
     noActivePartners: "Nema aktivnih partnera — dodaj nekoga u karticama levo da bi video/la razradu.",
     thContactsInfo: (<><b data-hi>Polnih akata sa jednim partnerom</b> ovog tipa tokom perioda.<br />Formula: <span data-f>seks/ned × 52/12 × trajanje (mes)</span>; partner za jednu noć = 1 akt.</>),
-    thTransPerActInfo: (<><b data-hi>Prenos u jednom kontaktu</b>, ako je partner zaražen.<br />Sabira izabrane vrste seksa; već uračunava kondom i vakcinu ovog tipa.<br />Formula: <span data-f>1 − ∏(1 − β·praksa·(1 − kondom·e))</span> po izabranim praksama.</>),
+    thTransPerActInfo: (<><b data-hi>Prenos u jednom kontaktu</b>, ako je partner zaražen.<br />Već uračunava kondom i vakcinu ovog tipa.<br />Svaka izabrana vrsta seksa ima svoj prenos: <span data-f>prenos&#8209;po&#8209;aktu × množilac&#8209;vrste × (1 − udeo&#8209;sa&#8209;kondomom × zaštita&#8209;kondoma)</span>.<br />Vrste se objedinjuju: <span data-f>1 − proizvod po vrstama (1 − prenos&#8209;vrste)</span>.</>),
     thChanceInfInfo: (<><b data-hi>Šansa da je partner već zaražen.</b><br />Formula: <span data-f>rasprostranjenost × sredina × pul × (1 − testirani)</span>.</>),
     thRiskHorInfo: (<><b data-hi>Rizik od ovog tipa tokom perioda.</b><br />Od jednog partnera: <span data-f>1 − (1 − šansa_zaražen × prenos_po_svim_kontaktima)</span>, stepenuje se brojem partnera.<br />Zatim se tipovi objedinjuju u redu „Ukupno“ ispod.</>),
     thTotal: "Ukupno",
@@ -742,7 +776,24 @@ const I18N = {
     assumSources: (<>Izvori: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>povremeni vs stalni ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>prevalencija kod jednokratnih ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>asortativno mešanje ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>kondom po tipu veze (NATSAL, Britanija) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>SZO ↗</a></>),
     footerDisclaimer: "Ovo je amaterski edukativni model, a ne medicinska prognoza ni osnov za medicinske odluke.",
     footerNoWarranty: "Pruža se „kao takvo“, samo u edukativne svrhe, bez ikakvih garancija — na sopstveni rizik.",
+    footerSource: "Izvorni kod",
+    footerContactLink: "Kontakt i utisci",
     githubLink: "Izvorni kod na GitHub-u ↗",
+    contactTitle: "Kontakt i utisci",
+    contactIntro: "Postoji nekoliko načina da me kontaktirate:",
+    contactGithub: (<>Otvorite <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue na GitHub-u</a> — pogodno za pitanja i predloge (issues su javni, odgovori mogu pomoći drugima).</>),
+    contactEmailLine: (<>Imejl: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    contactFormTitle: "Pošaljite poruku",
+    contactEmailLabel: "Vaš imejl",
+    contactEmailHint: "Da bih mogao da odgovorim",
+    contactHumanLabel: "Koliko je 4 + 5?",
+    contactHumanHint: "Samo provera da ste čovek",
+    contactMsgLabel: "Poruka",
+    contactSend: "Pošalji",
+    contactClose: "Zatvori",
+    contactErrHuman: "Pogrešan odgovor na proveru.",
+    contactErrMsg: "Unesite poruku.",
+    contactNote: "Otvoriće se vaš imejl klijent sa spremnom porukom — sajt je statičan i sam ne šalje poštu.",
     yrAxis: "g",
     modeSti: "🦠 PPI",
     modePreg: "🤰 Trudnoća",
@@ -1891,6 +1942,67 @@ function Tour({ step, setStep, L }) {
   );
 }
 
+// Модалка «Контакты и фидбек». Сайт статический — форма не шлёт на сервер,
+// а собирает письмо и открывает почтовый клиент через mailto.
+function ContactModal({ L, onClose }) {
+  const [email, setEmail] = useState("");
+  const [human, setHuman] = useState("");
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  const send = () => {
+    if (human.trim() !== "9") { setErr(L.contactErrHuman); return; }
+    if (!msg.trim()) { setErr(L.contactErrMsg); return; }
+    const body = (email.trim() ? `From: ${email.trim()}\n\n` : "") + msg.trim();
+    window.location.href = `mailto:contact@sexhealth.info?subject=${encodeURIComponent("Safe Sex — feedback")}&body=${encodeURIComponent(body)}`;
+    onClose();
+  };
+  const field = { width: "100%", boxSizing: "border-box", background: C.panel, color: C.hi, border: `1px solid ${C.border}`, borderRadius: 8, padding: "9px 11px", fontSize: 14, outline: "none" };
+  const lab = { display: "block", color: C.mid, fontSize: 12.5, marginBottom: 6 };
+  const hint = { color: C.dim, fontSize: 11, marginTop: 5 };
+  return (
+    <div onMouseDown={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 2000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "5vh 16px", overflowY: "auto" }}>
+      <div className="fade-in" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()} style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 14, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", width: "100%", maxWidth: 460, padding: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
+          <h2 style={{ margin: 0, color: C.hi, fontSize: 18, fontWeight: 700 }}>{L.contactTitle}</h2>
+          <button onClick={onClose} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 22, lineHeight: 1, cursor: "pointer", padding: 4 }}>×</button>
+        </div>
+        <p style={{ color: C.mid, fontSize: 13.5, margin: "0 0 8px" }}>{L.contactIntro}</p>
+        <ul style={{ color: C.mid, fontSize: 13.5, lineHeight: 1.5, margin: "0 0 16px", paddingLeft: 20 }}>
+          <li style={{ marginBottom: 5 }}>{L.contactGithub}</li>
+          <li>{L.contactEmailLine}</li>
+        </ul>
+        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 16 }}>
+          <div style={{ color: C.hi, fontSize: 14, fontWeight: 600, marginBottom: 12 }}>{L.contactFormTitle}</div>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 12 }}>
+            <div style={{ flex: "1 1 180px" }}>
+              <label style={lab}>{L.contactEmailLabel}</label>
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} style={field} />
+              <div style={hint}>{L.contactEmailHint}</div>
+            </div>
+            <div style={{ flex: "1 1 120px" }}>
+              <label style={lab}>{L.contactHumanLabel}</label>
+              <input value={human} onChange={(e) => setHuman(e.target.value)} style={field} />
+              <div style={hint}>{L.contactHumanHint}</div>
+            </div>
+          </div>
+          <label style={lab}>{L.contactMsgLabel}</label>
+          <textarea value={msg} onChange={(e) => setMsg(e.target.value)} rows={5} style={{ ...field, resize: "vertical" }} />
+          {err && <div style={{ color: "#ff7b73", fontSize: 12.5, marginTop: 8 }}>{err}</div>}
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
+            <button onClick={send} style={{ background: C.accent, color: "#0f141a", border: "none", borderRadius: 8, padding: "9px 20px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>{L.contactSend}</button>
+          </div>
+          <p style={{ color: C.dim, fontSize: 11, lineHeight: 1.5, margin: "12px 0 0" }}>{L.contactNote}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
     if (SHARE_INIT && SHARE_INIT.lang && LANGS.includes(SHARE_INIT.lang)) return SHARE_INIT.lang;
@@ -1927,6 +2039,17 @@ export default function App() {
   const [tourStep, setTourStep] = useState(() => { if (!TOUR_ENABLED) return -1; try { return localStorage.getItem("tour_done") ? -1 : 0; } catch (e) { return -1; } });
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
+  const [contactOpen, setContactOpen] = useState(false);
+  // На мобильном при прокрутке вниз залипающий график сжимается (прячет слайдеры, легенду, строку-итог).
+  const [condensed, setCondensed] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width:879px)");
+    const onScroll = () => { setCondensed(mq.matches && window.scrollY > 60); };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+  }, []);
   const [mode, setMode] = useState(SHARE_INIT?.mode ?? "sti");
   const [pregWho, setPregWho] = useState(SHARE_INIT?.who ?? "woman");
   // Состояние беременности поднято в App — чтобы «Поделиться» сериализовал и его.
@@ -2027,6 +2150,8 @@ export default function App() {
         .chk { width:17px; height:17px; cursor:pointer; }
         .studio { display:grid; grid-template-columns:1fr; gap:14px; align-items:start; margin-bottom:14px; }
         .studio-chart { position:sticky; top:0; z-index:5; order:-1; box-shadow:0 8px 16px -6px rgba(0,0,0,.55); }
+        .chart-extra { overflow:hidden; max-height:260px; transition:max-height .35s ease, opacity .25s ease, margin .35s ease; }
+        .studio-chart.condensed .chart-extra { max-height:0; opacity:0; margin-top:0 !important; margin-bottom:0 !important; pointer-events:none; }
         .chartbox { height:150px; }
         @media (min-width:880px) {
           .studio { grid-template-columns:360px minmax(0,1fr); }
@@ -2114,12 +2239,12 @@ export default function App() {
             </div>
           </div>
 
-          <div className="studio-chart" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
-            <div style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
+          <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
+            <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
               <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
               <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
             </div>
-            <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
+            <div className="chart-extra" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
               {STIS.filter((s) => !hidden[s.key]).map((s) => (<span key={s.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${s.grounded ? "solid" : "dashed"} ${s.color}`, display: "inline-block" }} />{s.label[lang]}</span>))}
             </div>
             <div className="chartbox" data-tour="chart">
@@ -2134,7 +2259,7 @@ export default function App() {
               </ResponsiveContainer>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
-              <div style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], pctVal(riskPct(top, horizonM), lang), top.color) : L.enableOne}</div>
+              <div className="chart-extra" style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], pctVal(riskPct(top, horizonM), lang), top.color) : L.enableOne}</div>
               <div data-tour="env" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                 <span style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.5, marginRight: 2 }}>{L.envLabel}</span>
                 {[["normal", L.envNormal], ["high", L.envHigh], ["outbreak", L.envOutbreak]].map(([k, lab]) => (
@@ -2253,8 +2378,13 @@ export default function App() {
 
         <p style={{ color: C.dim, fontSize: 12, lineHeight: 1.6, textAlign: "center", margin: 0 }}>{L.footerDisclaimer}</p>
         <p style={{ color: C.dim, fontSize: 11, lineHeight: 1.5, textAlign: "center", margin: "2px 0 0" }}>{L.footerNoWarranty}</p>
-        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "8px 0 0" }}><a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.githubLink}</a></p>
+        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "8px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.footerSource}</a>
+          <span style={{ color: C.border }}>|</span>
+          <button onClick={() => setContactOpen(true)} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 12, cursor: "pointer", padding: 0, fontFamily: "inherit" }}>{L.footerContactLink}</button>
+        </p>
       </div>
+      {contactOpen && <ContactModal L={L} onClose={() => setContactOpen(false)} />}
     </div>
   );
 }
