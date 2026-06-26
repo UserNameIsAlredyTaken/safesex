@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
@@ -21,7 +21,28 @@ const CS = { bg:"#0f141a", panel:"#161d26", panel2:"#1b2430", border:"#283442", 
 const CP = { bg:"#0f141a", panel:"#161d26", panel2:"#1b2430", border:"#283442", hi:"#e8edf2", mid:"#9fb0c0", dim:"#64748b", accent:"#a78bfa" };
 let C = CS; // активная палитра — переключается по режиму в App
 let PREG = C.accent; // тематический цвет беременности = активный C.accent
+
+// Цифры и математика — основной публичный режим (показываются всем).
+// Флаг оставлен, чтобы при желании можно было снова спрятать числа одной строкой (DEV = false).
+let DEV = true;
+// Донат-строка в подвале временно скрыта. Чтобы вернуть — поставь true (и впиши свои ссылки Ko-fi/Liberapay).
+let DONATE_ENABLED = false;
 const SEV = { 5:"#ff3b3b", 4:"#ff7b00", 3:"#ffc300", 2:"#b5d600", 1:"#38d9a9" };
+
+// === Тайминги анимации сценария «Риск ВИЧ» (мс) — НАСТРАИВАЙ ЗДЕСЬ руками ===
+// Можно менять и вживую из консоли браузера: например `HIV_FX.ribbon = 2000`.
+const HIV_FX = {
+  intro: 260,           // пауза после клика «Риск ВИЧ» перед первым контролом
+  scroll: 850,          // длительность плавной (eased) докрутки к контролу
+  afterScroll: 120,     // пауза после докрутки, перед запуском рибона
+  ribbon: 600,         // длительность полёта рибона до настройки
+  ribbonFade: 300,      // затухание рибона после прилёта
+  betweenSteps: 300,   // пауза после подсветки контрола — перед следующим
+  moreFade: 1000,        // длительность анимации ПОЯВЛЕНИЯ надписи «Подробнее» (плавный въезд)
+  condomDrop: 900,      // плавное опускание ползунка презерватива до 0
+  highlightHold: 20000, // сколько держится подсветка контрола (кольцо/ручка)
+};
+if (typeof window !== "undefined") window.HIV_FX = HIV_FX; // доступ для ручной правки из консоли
 
 const CDC = "CDC";
 const WHO = { en: "WHO", ru: "ВОЗ", sr: "SZO" };
@@ -203,7 +224,7 @@ const STIS = [
 // Инфекции концентрируются в сексуальных сетях, поэтому локальная p бывает много выше средней. Оценки (порядок величины).
 const WHO_STI = "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)";
 const ENV = {
-  hiv: { high: 3, out: 25,
+  hiv: { high: 22, out: 65,
     note: { en: "Average ~0.2%, but HIV concentrates in networks: in key groups (men who have sex with men, people who inject drugs) and high-burden regions a high-activity partner reaches 15–27%.",
       ru: "В среднем ~0,2%, но ВИЧ концентрируется в сетях: в ключевых группах (мужчины, имеющие секс с мужчинами; люди, употребляющие инъекционные наркотики) и регионах с высоким бременем у активного партнёра достигает 15–27%.",
       sr: "U proseku ~0,2%, ali HIV se koncentriše u mrežama: u ključnim grupama (muškarci koji imaju seks sa muškarcima; ljudi koji koriste injekcione droge) i regionima sa visokim teretom kod aktivnog partnera dostiže 15–27%." },
@@ -213,32 +234,32 @@ const ENV = {
       ru: "Уже распространён крайне широко (~25% в каждый момент, ~80% за жизнь), поэтому расти почти некуда — быстро упирается в потолок.",
       sr: "Već izuzetno raširen (~25% u svakom trenutku, ~80% tokom života), pa ima malo prostora za rast i brzo se zasiti." },
     src: { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/human-papilloma-virus-and-cancer" } },
-  hbv: { high: 2.5, out: 6,
+  hbv: { high: 5, out: 15,
     note: { en: "In unvaccinated groups and endemic regions chronic hepatitis B reaches 5–10% and above.",
       ru: "В непривитых группах и эндемичных регионах хронический гепатит B достигает 5–10% и выше.",
       sr: "U nevakcinisanim grupama i endemskim regionima hronični hepatitis B dostiže 5–10% i više." },
     src: { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hepatitis-b" } },
-  hcv: { high: 3, out: 20,
+  hcv: { high: 17, out: 50,
     note: { en: "Explosive in networks of people who inject drugs, where prevalence runs 30–60%.",
       ru: "Взрывной в сетях инъекционных потребителей, где распространённость 30–60%.",
       sr: "Eksplozivan u mrežama injekcionih korisnika, gde je rasprostranjenost 30–60%." },
     src: { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hepatitis-c" } },
-  syp: { high: 2.5, out: 6,
+  syp: { high: 5, out: 14,
     note: { en: "Resurgent in MSM sexual networks, where prevalence reaches 5–15% during outbreaks.",
       ru: "На подъёме в сексуальных сетях МСМ, где во время вспышек достигает 5–15%.",
       sr: "U porastu u seksualnim mrežama MSM, gde tokom izbijanja dostiže 5–15%." },
     src: { label: WHO, url: WHO_STI } },
-  gon: { high: 2, out: 4,
+  gon: { high: 4, out: 11,
     note: { en: "Outbreak-prone in dense sexual networks (5–15%); antibiotic resistance prolongs spread.",
       ru: "Склонна к вспышкам в плотных сексуальных сетях (5–15%); устойчивость к антибиотикам продлевает распространение.",
       sr: "Sklona izbijanjima u gustim seksualnim mrežama (5–15%); otpornost na antibiotike produžava širenje." },
     src: { label: WHO, url: WHO_STI } },
-  chl: { high: 1.2, out: 1.5,
+  chl: { high: 1.5, out: 2,
     note: { en: "Already common (~4.5%); in active young networks 10–15%, so the multiplier is modest.",
       ru: "Уже частый (~4,5%); в активных молодёжных сетях 10–15%, поэтому множитель скромный.",
       sr: "Već čest (~4,5%); u aktivnim mladim mrežama 10–15%, pa je množilac skroman." },
     src: { label: WHO, url: WHO_STI } },
-  tri: { high: 1.5, out: 2,
+  tri: { high: 2, out: 5,
     note: { en: "Concentrated in specific populations, where prevalence reaches 10–20%.",
       ru: "Концентрируется в отдельных группах, где распространённость достигает 10–20%.",
       sr: "Koncentriše se u određenim grupama, gde rasprostranjenost dostiže 10–20%." },
@@ -246,10 +267,20 @@ const ENV = {
 };
 // Множитель среды для инфекции (1 / high / outbreak).
 const envMulOf = (s, level) => { const e = ENV[s.key]; return e ? (level === "high" ? e.high : level === "outbreak" ? e.out : 1) : 1; };
-// Подменяем s.p эффективной распространённостью среды — не трогая survivalAt/Breakdown.
+// Масштабирование распространённости множителем в пространстве ШАНСОВ (odds), а не вероятности.
+// odds = p/(1−p); ×M; обратно p = o/(1+o). Результат всегда в (0,1) — не вылетает за 100%
+// (в отличие от наивного p×M). При малом p ≈ p×M. Множители (среда, пул) — это odds ratio,
+// и перемножаются именно в odds-пространстве (это форма теоремы Байеса: шансы × LR).
+const oddsScale = (p, M) => {
+  if (p <= 0) return 0;
+  if (p >= 1) return 1;
+  const o = (p / (1 - p)) * M;
+  return o / (1 + o);
+};
+// Подменяем s.p эффективной распространённостью среды (в odds-пространстве) — не трогая survivalAt/Breakdown.
 const withEnv = (s, level) => {
   const mul = envMulOf(s, level);
-  return mul === 1 ? s : { ...s, p: s.p * mul };
+  return mul === 1 ? s : { ...s, p: oddsScale(s.p, mul) };
 };
 
 const ACC_COLOR = { "high": "#38d9a9", "low-mid": "#ffc300", "low": "#ff7b00" };
@@ -328,6 +359,8 @@ const I18N = {
     protection: "Protection and immunity",
     vaxHpv: "Vaccinated against HPV",
     vaxHbv: "Vaccinated against hepatitis B",
+    stiCof: "Untreated STIs (affects HIV)",
+    stiCofInfo: (<><b data-hi>Untreated STIs.</b> An active untreated infection (ulcers/inflammation) raises the chance of acquiring <b data-hi>HIV</b>.<br /><br />From meta-analyses the risk multiplier is: herpes ~2.7×, gonorrhea ~2.8×, syphilis ~1.7×, chlamydia and trichomoniasis ~1.5×. We use a single <span data-f>×2.5</span> — applied to HIV only (uniquely susceptible to this).<br /><br />Accuracy is low: estimates come mostly from women but are applied to everyone in the model.<br /><br />Sources: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
     vaccinated: "vaccinated",
     addBtn: "+ add",
     removeCard: "remove (count → 0)",
@@ -354,8 +387,19 @@ const I18N = {
     scaleHint: "",
     atLeastOne: "at least one of the enabled",
     envLabel: "Environment",
-    envNormal: "normal", envHigh: "high background", envOutbreak: "outbreak",
+    envNormal: "safe", envHigh: "high background", envOutbreak: "outbreak",
     envInfo: (<>Infections cluster in sexual networks, so a partner is likelier infected than the population average. The switch scales each infection's prevalence — its own factor, see the disease card.<br /><br /><b>High background</b> — a more active, higher-risk circle.<br /><b>Outbreak</b> — a concentrated network during an active epidemic.<br /><br />The multiplier estimates are big assumptions, not a prediction.</>),
+    hivBtn: "HIV risk",
+    hivTitle: "HIV risk isn't uniform",
+    hivP1: "In everyday life HIV risk is low, but in a local outbreak inside a sexual network it can become very high. An outbreak flares up unnoticed — you may not know about it until it's too late.",
+    hivP2: "Parallel untreated STIs raise the per-act chance of passing HIV: sores and inflammation open a 'gateway' and bring target cells to the mucosa.",
+    hivP3: "Barrier contraception (a condom) sharply lowers the chance of infection — especially for HIV.",
+    hivChanged: "The scenario set:",
+    hivChip1: "Environment → outbreak",
+    hivChip2: "Untreated STIs → on",
+    hivChip3: "Acts with a condom → 0%",
+    hivBannerText: "Elevated HIV-risk scenario",
+    hivBannerMore: "Details",
     envGuideLabel: "Risk environment",
     anyLabel: "At least one",
     topRiskLine: (years, yw, name, col) => (<>Over {years} {yw} of active sex life, the highest risk is <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
@@ -399,14 +443,14 @@ const I18N = {
     thTotalInfo: (<><b data-hi>The final risk — the height of the curve.</b><br />The types are independent, so they combine: <span data-f>total = 1 − product of «not infected» across all types</span>.</>),
     assumTitle: "Assumptions and how this is computed",
     assumP1: (<>Only for <b data-hi>HIV</b> are per-act transmission and condom effectiveness taken from research (solid line). For the others there are no reliable numbers — these are order-of-magnitude estimates (dashed) based on CDC and WHO; the source for each infection is in the «Source» column of the table.</>),
-    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring and one-night partners. For each you can separately set how often a condom is used and how much you know about partners' test status. Each type also has its own multiplier for the chance a partner is already infected — different partners come from circles of different activity: steady ×1, recurring ×2, one-night ×4. Estimated from surveys: among casual and once-off partners prevalence runs several times higher than among steady ones (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>). The multiplier is relative — the overall community level is set by «Environment», and the two multiply without double-counting.</>),
+    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring and one-night partners. For each you can separately set how often a condom is used and how much you know about partners' test status. The multiplier «how likely the partner is already infected» is relative to an average random partner (from surveillance data): a steady partner ≈ that average (×1), while non-steady ones — both recurring and one-night — are roughly twice as likely to be infected (×2). Direct «casual vs steady» estimates are weak and vary (about ×1.5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>), so we take a conservative ×2. The difference between «several meetings» and «one night» is carried not by this multiplier but by the number of partners and acts with each. The multiplier is relative — the overall community level is set by «Environment», and the two multiply in odds-space without double-counting.</>),
     assumP3: (<><b data-hi>Sex acts add up.</b> We assume every selected practice is present in each contact, so adding one only raises the risk (a simplification — not always true in reality). The risk ratios rely on HIV; for other infections this is a rough approximation.</>),
     assumP4: (<><b data-hi>Tested share.</b> A test has a «window» between infection and a positive result, so even 100% tested does not guarantee zero — it's an estimate.</>),
     assumP5: (<><b data-hi>Partner pool.</b> Estimates how much more active this type's circle is, and therefore how much likelier the partner is already infected. Relative multipliers (steady &lt; recurring &lt; hookups), not exact values.</>),
     assumP6: (<><b data-hi>How it's computed.</b> Per type the number of contacts is <span data-f>k = frequency × duration</span> (one-night = 1). The chance of catching it from a partner grows with k and is multiplied by the chance the partner is infected. The contributions of all types multiply → cumulative risk rises over time. The exact per-column formulas are in the breakdown tooltips.</>),
-    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the whole community baseline: normal / high background / outbreak — its own multiplier on each infection's prevalence (values and sources on the disease cards). The type picks the partner's circle, the environment sets the overall level; together they give «chance the partner is infected» = <span data-f>prevalence × environment × pool</span>, with no double-counting. Example (HIV): in an outbreak, core-group prevalence is roughly 100× the average, but part of that is already carried by the partner-type multiplier (one-night ×4), so for the environment we use ×25 — together <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>). If <span data-f>prevalence × environment × pool</span> exceeds 100%, the «chance the partner is infected» is capped at 100% — a rough assumption.</>),
+    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the baseline of the whole community: safe / high background / outbreak — its own multiplier on each infection's prevalence (values and sources on the disease cards). The type picks the partner's circle, the environment sets the overall level. Both multipliers are odds ratios and are applied to prevalence <b data-hi>in odds-space</b>: <span data-f>odds = p/(1−p)</span>, multiply by environment and pool, convert back <span data-f>p = o/(1+o)</span>. So the «chance the partner is infected» never exceeds 100%: for common infections it saturates gently, for rare ones it's almost like plain multiplication. Example (HIV): in an outbreak, core-group prevalence is roughly 130× the average; part of that is already carried by the partner-type multiplier (non-steady ×2), so for the environment we use ×65 — together <span data-f>×65 × 2 = ×130</span> in odds-space (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>). This is essentially a form of Bayes' theorem: odds × likelihood ratio.</>),
     assumExTitle: "Example: how environment and pool combine",
-    assumExFormula: (<>Chance a partner is already infected = <span data-f>prevalence × environment × pool</span>.</>),
+    assumExFormula: (<>Chance a partner is already infected = prevalence multiplied by environment and pool <span data-f>in odds-space (odds × environment × pool)</span>.</>),
     assumSources: (<>Sources: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>casual vs steady ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>once-off prevalence ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>assortative mixing ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>condom by partnership (NATSAL, Britain) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>WHO ↗</a></>),
     footerDisclaimer: "This is an amateur educational model, not a medical forecast and not a basis for medical decisions.",
     footerNoWarranty: "Provided “as is”, for educational use only, without any warranty — use at your own risk.",
@@ -417,6 +461,13 @@ const I18N = {
     contactIntro: "There are a few ways to get in touch:",
     contactGithub: (<>Open an <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue on GitHub</a> — good for questions and suggestions (issues are public, answers may help others).</>),
     contactEmailLine: (<>Email: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    donateCta: "Support the project",
+    donateWhy: "— free, no ads or trackers",
+    donateTitle: "Support the project",
+    donateIntro: "Any amount helps keep it running and ad-free. Thank you!",
+    donateKofi: (<>One-time or monthly — <a href="https://ko-fi.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Ko-fi</a></>),
+    donateLiberapay: (<>Recurring (weekly) — <a href="https://liberapay.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Liberapay</a></>),
+    donateGithub: (<>Via <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Close",
     yrAxis: "y",
     // ── Режим / Mode switcher ──
@@ -503,6 +554,8 @@ const I18N = {
     protection: "Защита и иммунитет",
     vaxHpv: "Привит от ВПЧ",
     vaxHbv: "Привит от гепатита B",
+    stiCof: "Не пролеченные ЗППП (влияет на ВИЧ)",
+    stiCofInfo: (<><b data-hi>Не пролеченные ЗППП.</b> Активная нелеченая инфекция (язвы/воспаление) повышает шанс заразиться <b data-hi>ВИЧ</b>.<br /><br />По мета-анализам множитель риска: герпес ~2,7×, гонорея ~2,8×, сифилис ~1,7×, хламидия и трихомониаз ~1,5×. Берём единый <span data-f>×2,5</span> — действует только на ВИЧ (он уникально чувствителен к этому).<br /><br />Точность низкая: оценки в основном по женщинам, но в модели применяются ко всем.<br /><br />Источники: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
     vaccinated: "привит",
     addBtn: "+ добавить",
     removeCard: "убрать (количество → 0)",
@@ -529,8 +582,19 @@ const I18N = {
     scaleHint: "",
     atLeastOne: "хотя бы одна из включённых",
     envLabel: "Среда",
-    envNormal: "обычная", envHigh: "высокий фон", envOutbreak: "вспышка",
+    envNormal: "безопасная", envHigh: "высокий фон", envOutbreak: "вспышка",
     envInfo: (<>Инфекции концентрируются в сексуальных сетях, поэтому партнёр заражён чаще, чем по средней распространённости. Переключатель множит распространённость каждой инфекции — свой множитель, см. карточку болезни.<br /><br /><b>Высокий фон</b> — более активный, рисковый круг.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии.<br /><br />Оценки множителей — большие допущения, а не прогноз.</>),
+    hivBtn: "Риск ВИЧ",
+    hivTitle: "Риск ВИЧ — не равномерен",
+    hivP1: "В обычной жизни риск ВИЧ низкий, но в локальной вспышке внутри сексуальной сети он может стать очень высоким. Вспышка разгорается незаметно — ты можешь не знать о ней, пока не станет поздно.",
+    hivP2: "Параллельные нелеченые ЗППП повышают шанс передачи ВИЧ за акт: язвы и воспаление дают «ворота» и подвозят к слизистой клетки-мишени.",
+    hivP3: "Барьерная контрацепция (презерватив) сильно снижает шанс заразиться — для ВИЧ особенно.",
+    hivChanged: "Сценарий выставил:",
+    hivChip1: "Среда → вспышка",
+    hivChip2: "Не пролеченные ЗППП → вкл",
+    hivChip3: "Актов в презервативе → 0%",
+    hivBannerText: "Сценарий повышенного риска ВИЧ",
+    hivBannerMore: "Подробнее",
     envGuideLabel: "Среда риска",
     anyLabel: "Хотя бы одна",
     topRiskLine: (years, yw, name, col) => (<>За {years} {yw} активной половой жизни выше всего риск <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
@@ -574,14 +638,14 @@ const I18N = {
     thTotalInfo: (<><b data-hi>Итоговый риск — высота кривой.</b><br />Типы независимы, поэтому объединяются: <span data-f>всего = 1 − произведение «не заразиться» по всем типам</span>.</>),
     assumTitle: "Допущения и как это считается",
     assumP1: (<>Только для <b data-hi>ВИЧ</b> передача за акт и эффективность презерватива взяты из исследований (сплошная линия). Для остальных инфекций надёжных чисел нет — это правдоподобные оценки по порядку величины (пунктир) на основе данных CDC и ВОЗ; источник по каждой инфекции — в колонке «Источник» таблицы.</>),
-    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие и партнёры на одну ночь. У каждого можно отдельно настроить, как часто используется презерватив и насколько ты знаешь о справках партнёров. У каждого типа также свой множитель вероятности, что партнёр уже заражён — разные партнёры существуют в кругах разной активности: постоянные ×1, приходящие ×2, на одну ночь ×4. Оценка по опросам: у случайных и разовых партнёров распространённость в разы выше, чем у постоянных (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>). Множитель относительный — общий уровень сообщества задаёт «Среда», и они перемножаются, не дублируя друг друга.</>),
+    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие и партнёры на одну ночь. У каждого можно отдельно настроить, как часто используется презерватив и насколько ты знаешь о справках партнёров. Множитель «насколько вероятно, что партнёр уже заражён» отсчитывается от среднего случайного партнёра (по данным надзора): постоянный ≈ такой средний (×1), а непостоянные — и приходящие, и на одну ночь — примерно вдвое вероятнее заражены (×2). Прямые оценки «казуальный vs постоянный» слабые и разнятся (примерно ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>), поэтому берём консервативную ×2. Разницу между «несколькими встречами» и «одной ночью» учитывает не этот множитель, а число партнёров и актов с каждым. Множитель относительный — общий уровень сообщества задаёт «Среда», и они перемножаются в пространстве шансов, не дублируя друг друга.</>),
     assumP3: (<><b data-hi>Виды секса складываются.</b> Считаем, что в каждом контакте присутствуют все выбранные практики, поэтому каждая добавленная только повышает риск (упрощение — в реальности не всегда так). Соотношения рисков опираются на ВИЧ; для остальных инфекций это грубое приближение.</>),
     assumP4: (<><b data-hi>Проверенность.</b> У теста есть «окно» между заражением и положительным результатом, поэтому даже 100% проверенных не гарантируют ноль — это оценка.</>),
     assumP5: (<><b data-hi>Пул партнёров.</b> Оценивает, насколько активнее круг этого типа и потому вероятнее уже заражён партнёр. Относительные множители (постоянные &lt; приходящие &lt; хукапы), не точные величины.</>),
     assumP6: (<><b data-hi>Как считается.</b> Для типа число контактов <span data-f>k = частота × длительность</span> (на одну ночь = 1). Шанс заразиться от партнёра растёт с k и умножается на шанс, что партнёр заражён. Вклады всех типов перемножаются → кумулятивный риск растёт во времени. Точные формулы по столбцам — в подсказках таблицы разбора.</>),
-    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: обычная / высокий фон / вспышка — свой множитель к распространённости каждой инфекции (значения и источники — в карточках болезней). Тип выбирает круг партнёра, среда задаёт общий уровень; вместе они дают «шанс, что партнёр заражён» = <span data-f>распространённость × среда × пул</span>, без двойного счёта. Пример (ВИЧ): во вспышку распространённость в «кор-группе» примерно в 100 раз выше средней, но часть этого уже несёт множитель типа партнёра (на одну ночь ×4), поэтому для среды берём ×25 — вместе <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>). Если произведение <span data-f>распространённость × среда × пул</span> выходит за 100%, «шанс, что партнёр заражён» ограничивается 100% — это грубое допущение.</>),
+    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: безопасная / высокий фон / вспышка — свой множитель к распространённости каждой инфекции (значения и источники — в карточках болезней). Тип выбирает круг партнёра, среда задаёт общий уровень. Оба множителя — это отношения шансов (odds ratio) и применяются к распространённости <b data-hi>в пространстве шансов</b>: <span data-f>odds = p/(1−p)</span>, умножаем на среду и пул, возвращаем обратно <span data-f>p = o/(1+o)</span>. Поэтому «шанс, что партнёр заражён» никогда не превышает 100%: для частых инфекций он мягко насыщается, для редких — почти как обычное умножение. Пример (ВИЧ): во вспышку распространённость в «кор-группе» примерно в 130 раз выше средней; часть уже несёт множитель типа партнёра (непостоянный ×2), поэтому для среды берём ×65 — вместе <span data-f>×65 × 2 = ×130</span> в odds-пространстве (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>). По сути это форма теоремы Байеса: шансы × отношение правдоподобия.</>),
     assumExTitle: "Пример: как комбинируются среда и пул",
-    assumExFormula: (<>Шанс, что партнёр уже заражён = <span data-f>распространённость × среда × пул</span>.</>),
+    assumExFormula: (<>Шанс, что партнёр уже заражён = распространённость, домноженная на среду и пул <span data-f>в пространстве шансов (odds × среда × пул)</span>.</>),
     assumSources: (<>Источники: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>казуальные vs постоянные ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>распространённость у разовых ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ассортативное смешивание ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>презерватив по типу связи (NATSAL, Британия) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ВОЗ ↗</a></>),
     footerDisclaimer: "Это любительская образовательная модель, а не медицинский прогноз и не основание для медицинских решений.",
     footerNoWarranty: "Предоставляется «как есть», только в образовательных целях, без каких-либо гарантий — на свой риск.",
@@ -592,6 +656,13 @@ const I18N = {
     contactIntro: "Есть несколько способов связаться:",
     contactGithub: (<>Открыть <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue на GitHub</a> — подходит для вопросов и предложений (issues публичны, ответы могут пригодиться другим).</>),
     contactEmailLine: (<>Почта: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    donateCta: "Поддержать проект",
+    donateWhy: "— бесплатно, без рекламы и трекеров",
+    donateTitle: "Поддержать проект",
+    donateIntro: "Любая сумма помогает держать сайт живым и без рекламы. Спасибо!",
+    donateKofi: (<>Разово или подпиской — <a href="https://ko-fi.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Ko-fi</a></>),
+    donateLiberapay: (<>Регулярно (раз в неделю) — <a href="https://liberapay.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Liberapay</a></>),
+    donateGithub: (<>Через <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Закрыть",
     yrAxis: "г",
     modeSti: "🦠 ЗППП",
@@ -674,6 +745,8 @@ const I18N = {
     protection: "Zaštita i imunitet",
     vaxHpv: "Vakcinisan/a protiv HPV-a",
     vaxHbv: "Vakcinisan/a protiv hepatitisa B",
+    stiCof: "Nelečene PPI (utiče na HIV)",
+    stiCofInfo: (<><b data-hi>Nelečene PPI.</b> Aktivna nelečena infekcija (rane/upala) povećava šansu da se zarazite <b data-hi>HIV-om</b>.<br /><br />Po meta-analizama množilac rizika: herpes ~2,7×, gonoreja ~2,8×, sifilis ~1,7×, hlamidija i trihomonijaza ~1,5×. Uzimamo jedinstven <span data-f>×2,5</span> — deluje samo na HIV (jedinstveno osetljiv na ovo).<br /><br />Tačnost je niska: procene su uglavnom iz podataka o ženama, ali se u modelu primenjuju na sve.<br /><br />Izvori: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
     vaccinated: "vakcinisan/a",
     addBtn: "+ dodaj",
     removeCard: "ukloni (broj → 0)",
@@ -700,8 +773,19 @@ const I18N = {
     scaleHint: "",
     atLeastOne: "bar jedna od uključenih",
     envLabel: "Sredina",
-    envNormal: "obična", envHigh: "visok fon", envOutbreak: "epidemija",
+    envNormal: "bezbedna", envHigh: "visok fon", envOutbreak: "epidemija",
     envInfo: (<>Infekcije se koncentrišu u seksualnim mrežama, pa je partner zaražen češće nego po prosečnoj rasprostranjenosti. Prekidač množi rasprostranjenost svake infekcije — sopstveni množilac, vidi karticu bolesti.<br /><br /><b>Visok fon</b> — aktivniji, rizičniji krug.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije.<br /><br />Procene množilaca su velike pretpostavke, a ne predviđanje.</>),
+    hivBtn: "Rizik od HIV-a",
+    hivTitle: "Rizik od HIV-a nije ravnomeran",
+    hivP1: "U svakodnevnom životu rizik od HIV-a je nizak, ali u lokalnoj epidemiji unutar seksualne mreže može postati vrlo visok. Epidemija se razbukti neprimetno — možda nećeš znati za nju dok ne bude kasno.",
+    hivP2: "Paralelne nelečene PPI povećavaju šansu prenosa HIV-a po aktu: rane i upala otvaraju „vrata“ i dovode ciljne ćelije do sluzokože.",
+    hivP3: "Barijerna kontracepcija (kondom) snažno smanjuje šansu zaražavanja — naročito za HIV.",
+    hivChanged: "Scenario je postavio:",
+    hivChip1: "Sredina → epidemija",
+    hivChip2: "Nelečene PPI → uključeno",
+    hivChip3: "Akata sa kondomom → 0%",
+    hivBannerText: "Scenario povišenog rizika od HIV-a",
+    hivBannerMore: "Detalji",
     envGuideLabel: "Rizik sredine",
     anyLabel: "Bar jedna",
     topRiskLine: (years, yw, name, col) => (<>Tokom {years} {yw} aktivnog polnog života najviši rizik je <span style={{ color: col, fontWeight: 600 }}>{name}</span>.</>),
@@ -745,14 +829,14 @@ const I18N = {
     thTotalInfo: (<><b data-hi>Konačni rizik — visina krive.</b><br />Tipovi su nezavisni, pa se objedinjuju: <span data-f>ukupno = 1 − proizvod „ne zaraziti se“ po svim tipovima</span>.</>),
     assumTitle: "Pretpostavke i kako se ovo računa",
     assumP1: (<>Samo za <b data-hi>HIV</b> su prenos po aktu i efikasnost kondoma uzeti iz istraživanja (puna linija). Za ostale infekcije nema pouzdanih brojeva — to su procene reda veličine (isprekidana) na osnovu CDC i SZO; izvor za svaku infekciju je u koloni „Izvor“ tabele.</>),
-    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni i partneri za jednu noć. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko znaš o testovima partnera. Svaki tip ima i svoj množilac verovatnoće da je partner već zaražen — različiti partneri dolaze iz krugova različite aktivnosti: stalni ×1, povremeni ×2, za jednu noć ×4. Procena iz anketa: kod povremenih i jednokratnih partnera prevalencija je višestruko viša nego kod stalnih (≈×3–7; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>). Množilac je relativan — opšti nivo zajednice zadaje „Sredina“, i oni se množe bez dvostrukog brojanja.</>),
+    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni i partneri za jednu noć. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko znaš o testovima partnera. Množilac „koliko je verovatno da je partner već zaražen“ računa se u odnosu na prosečnog slučajnog partnera (iz podataka nadzora): stalni ≈ taj prosek (×1), dok su nestalni — i povremeni i za jednu noć — otprilike dvostruko verovatnije zaraženi (×2). Direktne procene „povremeni vs stalni“ su slabe i variraju (oko ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>), pa uzimamo konzervativnih ×2. Razliku između „nekoliko susreta“ i „jedne noći“ ne nosi ovaj množilac, već broj partnera i akata sa svakim. Množilac je relativan — opšti nivo zajednice zadaje „Sredina“, i množe se u prostoru šansi, bez dvostrukog brojanja.</>),
     assumP3: (<><b data-hi>Vrste seksa se sabiraju.</b> Smatramo da je u svakom kontaktu prisutna svaka izabrana praksa, pa dodavanje samo povećava rizik (pojednostavljenje — u stvarnosti nije uvek tako). Odnosi rizika oslanjaju se na HIV; za ostale infekcije to je gruba aproksimacija.</>),
     assumP4: (<><b data-hi>Udeo testiranih.</b> Test ima „prozor“ između zaraze i pozitivnog rezultata, pa čak ni 100% testiranih ne garantuje nulu — to je procena.</>),
     assumP5: (<><b data-hi>Pul partnera.</b> Procenjuje koliko je aktivniji krug ovog tipa i zato verovatnije da je partner već zaražen. Relativni množioci (stalni &lt; povremeni &lt; avanture), ne tačne vrednosti.</>),
     assumP6: (<><b data-hi>Kako se računa.</b> Po tipu broj kontakata je <span data-f>k = učestalost × trajanje</span> (jedna noć = 1). Šansa za zarazu od partnera raste sa k i množi se šansom da je partner zaražen. Doprinosi svih tipova se množe → kumulativni rizik raste tokom vremena. Tačne formule po kolonama su u podsetnicima tabele razrade.</>),
-    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: obična / visok fon / epidemija — sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori na karticama bolesti). Tip bira krug partnera, sredina zadaje opšti nivo; zajedno daju „šansu da je partner zaražen“ = <span data-f>rasprostranjenost × sredina × pul</span>, bez dvostrukog brojanja. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 100× viša od proseka, ali deo toga već nosi množilac tipa partnera (za jednu noć ×4), pa za sredinu uzimamo ×25 — zajedno <span data-f>×25 × 4 = ×100</span> (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>). Ako <span data-f>rasprostranjenost × sredina × pul</span> pređe 100%, „šansa da je partner zaražen“ se ograničava na 100% — gruba pretpostavka.</>),
+    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: bezbedna / visok fon / epidemija — sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori na karticama bolesti). Tip bira krug partnera, sredina zadaje opšti nivo. Oba množioca su odnosi šansi (odds ratio) i primenjuju se na rasprostranjenost <b data-hi>u prostoru šansi</b>: <span data-f>odds = p/(1−p)</span>, množimo sredinom i pulom, vraćamo nazad <span data-f>p = o/(1+o)</span>. Zato „šansa da je partner zaražen“ nikada ne prelazi 100%: za česte infekcije se blago zasiti, za retke je skoro kao obično množenje. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 130× viša od proseka; deo toga već nosi množilac tipa partnera (nestalni ×2), pa za sredinu uzimamo ×65 — zajedno <span data-f>×65 × 2 = ×130</span> u prostoru šansi (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>). To je u suštini oblik Bajesove teoreme: šanse × odnos verodostojnosti.</>),
     assumExTitle: "Primer: kako se kombinuju sredina i pul",
-    assumExFormula: (<>Šansa da je partner već zaražen = <span data-f>prevalencija × sredina × pul</span>.</>),
+    assumExFormula: (<>Šansa da je partner već zaražen = rasprostranjenost pomnožena sredinom i pulom <span data-f>u prostoru šansi (odds × sredina × pul)</span>.</>),
     assumSources: (<>Izvori: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>povremeni vs stalni ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>prevalencija kod jednokratnih ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>asortativno mešanje ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>kondom po tipu veze (NATSAL, Britanija) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>SZO ↗</a></>),
     footerDisclaimer: "Ovo je amaterski edukativni model, a ne medicinska prognoza ni osnov za medicinske odluke.",
     footerNoWarranty: "Pruža se „kao takvo“, samo u edukativne svrhe, bez ikakvih garancija — na sopstveni rizik.",
@@ -763,6 +847,13 @@ const I18N = {
     contactIntro: "Postoji nekoliko načina da me kontaktirate:",
     contactGithub: (<>Otvorite <a href="https://github.com/UserNameIsAlredyTaken/safesex/issues" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>issue na GitHub-u</a> — pogodno za pitanja i predloge (issues su javni, odgovori mogu pomoći drugima).</>),
     contactEmailLine: (<>Imejl: <a href="mailto:contact@sexhealth.info" style={{ color: C.accent, textDecoration: "underline" }}>contact@sexhealth.info</a></>),
+    donateCta: "Podrži projekat",
+    donateWhy: "— besplatno, bez reklama i trekera",
+    donateTitle: "Podrži projekat",
+    donateIntro: "Bilo koji iznos pomaže da sajt živi i bez reklama. Hvala!",
+    donateKofi: (<>Jednokratno ili mesečno — <a href="https://ko-fi.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Ko-fi</a></>),
+    donateLiberapay: (<>Redovno (nedeljno) — <a href="https://liberapay.com/sexhealth" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>Liberapay</a></>),
+    donateGithub: (<>Preko <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Zatvori",
     yrAxis: "g",
     modeSti: "🦠 PPI",
@@ -835,7 +926,7 @@ const TYPES = [
 const BASE = {
   steady: { count:1, condom:100, perWeek:2.5, dur:0,   tested:0, poolMul:1.0 },
   casual: { count:2, condom:100, perWeek:1,   dur:2.5, tested:0, poolMul:2.0 },
-  hookup: { count:2, condom:100, perWeek:0,   dur:0,   tested:0, poolMul:4.0 },
+  hookup: { count:2, condom:100, perWeek:0,   dur:0,   tested:0, poolMul:2.0 },
 };
 const mkCfg = (over = {}) => ({
   steady: { ...BASE.steady, ...(over.steady || { count: 0 }) },
@@ -853,16 +944,27 @@ const PRESETS = [
   { key:"core", label:{ en:"Core group", ru:"Core group", sr:"Core grupa" }, casual:{count:2,perWeek:1,dur:1}, hookup:{count:30} },
 ];
 
-const veMulOf = (s, vaxHpv, vaxHbv) => {
+// Кофактор: активная нелеченая ЗППП повышает передачу ВИЧ за акт (язвы/воспаление → ворота + клетки-мишени).
+// Единый множитель к β ТОЛЬКО для ВИЧ (он уникально чувствителен). β мал → odds-формула не нужна, βeff клампится.
+const HIV_COFACTOR = 2.5;
+// Фактор к β: прививка (снижает HPV/HBV) и кофактор ЗППП (повышает ВИЧ). veMul по историческим причинам.
+const veMulOf = (s, vaxHpv, vaxHbv, stiCof) => {
   const vacc = (s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv);
-  return s.vax && vacc ? (1 - s.vax.ve) : 1;
+  const ve = s.vax && vacc ? (1 - s.vax.ve) : 1;
+  const cof = (s.key === "hiv" && stiCof) ? HIV_COFACTOR : 1;
+  return ve * cof;
 };
 
 // Множитель передачи на акт по виду секса, относительно рецептивного вагинального (=1).
 // Опорные значения по ВИЧ (Patel 2014, CDC, на 10 000 экспозиций): рец.ваг 8, ввод.ваг 4,
 // рец.анал 138, ввод.анал 11, оральный — очень низкий. Для не-ВИЧ — грубое приближение.
-const ACT_MUL = { vagR: 1, vagI: 0.5, analR: 17, analI: 1.4, oralR: 0.1, oralI: 0.02 };
-const ACT_KEYS = ["vagR", "vagI", "analR", "analI", "oralR", "oralI"];
+// vagVV — вульва к вульве (трибадизм), непроникающий контакт слизистых. Для ВИЧ (анкер) риск
+// очень низкий (только описания случаев, per-act оценок нет) → ставим низкий множитель. ВАЖНО: для
+// ВПЧ/герпеса/трихомониаза это, наоборот, основной путь, но HIV-анкерная модель его не отражает —
+// помечено как грубое приближение (см. принципы честности). vagVV в конце ACT_KEYS — чтобы не ломать
+// старые share-ссылки (биты маски 0–5 сохранены).
+const ACT_MUL = { vagR: 1, vagI: 0.5, analR: 17, analI: 1.4, oralR: 0.1, oralI: 0.02, vagVV: 0.1 };
+const ACT_KEYS = ["vagR", "vagI", "analR", "analI", "oralR", "oralI", "vagVV"];
 const actSelOf = (acts) => ACT_KEYS.filter((k) => acts[k]).map((k) => ACT_MUL[k]);
 
 // Аддитивная модель видов секса: в каждом контакте практикуется каждая выбранная практика
@@ -882,7 +984,7 @@ function survivalAt(s, t, cfg, veMul, actSel = [1]) {
     if (cnt <= 0) return;
     const encSurv = encSurvOf(s, actSel, (1 - (T.condom / 100) * s.e) * veMul);
     const k = key === "hookup" ? 1 : Math.max(1, T.perWeek * (52 / 12) * T.dur);
-    const pEff = Math.min(1, s.p * T.poolMul * (1 - T.tested / 100));
+    const pEff = oddsScale(s.p, T.poolMul) * (1 - T.tested / 100);
     const transmit = 1 - Math.pow(encSurv, k);
     Srec *= Math.pow(1 - pEff * transmit, cnt);
   });
@@ -892,7 +994,7 @@ function survivalAt(s, t, cfg, veMul, actSel = [1]) {
   if (sc > 0) {
     const encSurv = encSurvOf(s, actSel, (1 - (ST.condom / 100) * s.e) * veMul);
     const k = Math.max(1, ST.perWeek * (52 / 12) * t);
-    const pEff = Math.min(1, s.p * ST.poolMul * (1 - ST.tested / 100));
+    const pEff = oddsScale(s.p, ST.poolMul) * (1 - ST.tested / 100);
     const transmit = 1 - Math.pow(encSurv, k);
     steadySurv = Math.pow(1 - pEff * transmit, sc);
   }
@@ -920,14 +1022,22 @@ function CellTip({ children, f }) {
 const RECV = { en: "receptive", ru: "принимающий", sr: "receptivni" };
 const INS = { en: "insertive", ru: "вводящий", sr: "insertivni" };
 const GIVE = { en: "giving", ru: "отдающий", sr: "aktivni" };
+const VV = { en: "vulva-to-vulva", ru: "вульва к вульве", sr: "vulva uz vulvu" };
 const SEXACTS = [
-  { grp: { en: "Vaginal", ru: "Вагинальный", sr: "Vaginalni" }, excl: true, items: [["vagR", RECV], ["vagI", INS]] },
+  { grp: { en: "Vaginal", ru: "Вагинальный", sr: "Vaginalni" }, excl: true, items: [["vagR", RECV], ["vagI", INS], ["vagVV", VV]] },
   { grp: { en: "Anal", ru: "Анальный", sr: "Analni" }, excl: false, items: [["analR", RECV], ["analI", INS]] },
   { grp: { en: "Oral", ru: "Оральный", sr: "Oralni" }, excl: false, items: [["oralR", RECV], ["oralI", GIVE]] },
 ];
 // Анатомические противоречия: рецептивный вагинальный требует вагины, вводящие акты — пениса.
 // Поэтому рец. вагинальный взаимоисключается с вводящим вагинальным И вводящим анальным.
-const ACT_CONFLICTS = { vagR: ["vagI", "analI"], vagI: ["vagR"], analI: ["vagR"] };
+// vagVV (вульва к вульве) тоже требует вульву — ведёт себя как vagR: совместим с принимающими
+// актами (рец. вагинальный/анальный), исключает только акты с пенисом (вводящий ваг./анал.).
+const ACT_CONFLICTS = {
+  vagR: ["vagI", "analI"],
+  vagI: ["vagR", "vagVV"],
+  analI: ["vagR", "vagVV"],
+  vagVV: ["vagI", "analI"],
+};
 function SexActs({ acts, setActs, lang }) {
   const toggle = (grp, key) => setActs((a) => {
     const next = { ...a, [key]: !a[key] };
@@ -937,9 +1047,9 @@ function SexActs({ acts, setActs, lang }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
       {SEXACTS.map((grp) => (
-        <div key={grp.grp.en} style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ color: C.mid, fontSize: 12.5, width: 96, flex: "0 0 96px" }}>{grp.grp[lang]}</span>
-          <div style={{ display: "flex", gap: 6 }}>
+        <div key={grp.grp.en} style={{ display: "flex", alignItems: "flex-start", gap: 8, flexWrap: "wrap" }}>
+          <span style={{ color: C.mid, fontSize: 12.5, width: 96, flex: "0 0 96px", paddingTop: 6 }}>{grp.grp[lang]}</span>
+          <div style={{ display: "flex", gap: 6, rowGap: 6, flexWrap: "wrap", flex: "1 1 230px" }}>
             {grp.items.map(([key, lab]) => {
               const on = !!acts[key];
               return (
@@ -1106,7 +1216,7 @@ function ChartTooltip({ active, payload, label, hidden, lang, L }) {
   return (
     <div style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 12px", fontSize: 12 }}>
       <div style={{ color: C.mid, marginBottom: 6 }}>{yrs > 0 ? yrs + " " + yrShort(lang) + " " : ""}{mos} {moWord(lang)}</div>
-      {rows.map((e) => { const s = STIS.find((x) => x.key === e.dataKey); return (<div key={e.dataKey} style={{ color: C.hi }}><span style={{ color: e.stroke }}>●</span> {s ? s.label[lang] : L.anyLabel}</div>); })}
+      {rows.map((e) => { const s = STIS.find((x) => x.key === e.dataKey); return (<div key={e.dataKey} style={{ display: DEV ? "flex" : "block", justifyContent: "space-between", gap: 18, color: C.hi }}><span><span style={{ color: e.stroke }}>●</span> {s ? s.label[lang] : L.anyLabel}</span>{DEV && <span>{pctVal(e.value, lang)}</span>}</div>); })}
     </div>
   );
 }
@@ -1123,7 +1233,7 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
     const encSurv = encSurvOf(s, actSel, (1 - (T.condom / 100) * s.e) * veMul);
     const actEff = 1 - encSurv; // передача за один контакт (все практики), если партнёр заражён
     const k = meta.kind === "oneoff" ? 1 : meta.kind === "ongoing" ? Math.max(1, T.perWeek * (52 / 12) * horizonM) : Math.max(1, T.perWeek * (52 / 12) * T.dur);
-    const pEff = Math.min(1, s.p * T.poolMul * (1 - T.tested / 100));
+    const pEff = oddsScale(s.p, T.poolMul) * (1 - T.tested / 100);
     const transmit = 1 - Math.pow(encSurv, k);
     const perPartner = pEff * transmit;
     const toHorizon = meta.kind === "ongoing" ? 1 - Math.pow(1 - perPartner, cnt) : 1 - Math.pow(Math.pow(1 - perPartner, cnt), years);
@@ -1134,10 +1244,10 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
     const factor = (1 - (T.condom / 100) * s.e) * veMul;
     const betas = actSel.map((m) => Math.min(0.999, s.beta * m * factor));
     const fAct = betas.length ? `1 − ${betas.map((b) => `(1 − ${pctAct(b, lang)})`).join("")} = ${pctAct(actEff, lang)}` : "= 0%";
-    // Распространённость и среда — раздельно (s.p уже включает среду, делим обратно).
-    const basePrev = s.p / envMul;
-    const rawChance = s.p * T.poolMul * (1 - T.tested / 100);
-    const fChance = `${pp(basePrev)} × ${D(envMul)} × ${D(T.poolMul)} × (1 − ${T.tested}%) = ${rawChance > 1 ? pp(rawChance) + " → 100%" : pp(pEff)}`;
+    // Распространённость и среда — раздельно (s.p уже включает среду в odds-пространстве; делим обратно тоже в odds).
+    const basePrev = oddsScale(s.p, 1 / envMul);
+    const pEffNoTest = oddsScale(s.p, T.poolMul); // = oddsScale(basePrev, envMul·poolMul)
+    const fChance = `odds(${pp(basePrev)}) × ${D(envMul)} × ${D(T.poolMul)} → ${pp(pEffNoTest)}, × (1 − ${T.tested}%) = ${pp(pEff)}`;
     const fRisk = meta.kind === "ongoing" ? `1 − (1 − ${fmtP(perPartner)})^${cnt} = ${fmtP(toHorizon)}` : `1 − ((1 − ${fmtP(perPartner)})^${D(cnt)})^${years} = ${fmtP(toHorizon)}`;
     return { meta, T, cnt, actEff, k, pEff, toHorizon, fK, fAct, fChance, fRisk };
   });
@@ -1169,21 +1279,66 @@ function Breakdown({ s, envMul = 1, cfg, years, veMul, actSel = [1], lang, L }) 
             <div style={{ fontSize: 12, color: C.dim, marginBottom: 6 }}>{row.lab}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
               <div style={{ flex: 1, height: 16, background: C.panel2, borderRadius: 4, overflow: "hidden" }}><div style={{ width: `${Math.max(2, (row.a / max) * 100)}%`, height: "100%", background: "#ff7b73" }} /></div>
+              {DEV && <span className="num" style={{ width: 56, textAlign: "right", fontSize: 12.5, color: C.hi, fontWeight: 600 }}>{row.fmt(row.a)}</span>}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ flex: 1, height: 16, background: C.panel2, borderRadius: 4, overflow: "hidden" }}><div style={{ width: `${Math.max(2, (row.b / max) * 100)}%`, height: "100%", background: "#4dd4ac" }} /></div>
+              {DEV && <span className="num" style={{ width: 56, textAlign: "right", fontSize: 12.5, color: C.hi, fontWeight: 600 }}>{row.fmt(row.b)}</span>}
             </div>
           </div>
         ); })}
         <div className="rich" style={{ fontSize: 12.5, color: C.mid, lineHeight: 1.55, marginTop: 6 }}>
-          {cutAct - cutHor >= 4 ? L.satDrop(years, yw) : L.satFlat(years, yw)}
+          {cutAct - cutHor >= 4 ? L.satDrop(years, yw) : L.satFlat(years, yw)}{DEV && <span style={{ color: C.dim }}> [1 акт: {cutAct}%, {years} {yw}: {cutHor}%]</span>}
         </div>
       </div>
+      {DEV && (<>
+      <div style={{ borderTop: `1px solid ${C.border}`, margin: "4px 0 14px" }} />
+      <div className="rich" style={{ fontSize: 13, color: C.mid, lineHeight: 1.6, marginBottom: 12 }}>{L.contribIntro(years, yw)}</div>
+      <div style={{ overflowX: "auto" }}>
+        <table className="inf" style={{ minWidth: 560 }}>
+          <thead><tr><th>{L.thType}</th><th>{L.thPartners}</th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thContacts}<Info dn text={L.thContactsInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thTransPerAct}<Info dn text={L.thTransPerActInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thChanceInf}<Info dn text={L.thChanceInfInfo} /></span></th><th><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thRiskHor(years, yw)}<Info dn text={L.thRiskHorInfo} /></span></th></tr></thead>
+          <tbody>
+            {rows.map((r) => r.inactive ? (
+              <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}55`, color: C.dim }}>
+                <td style={{ whiteSpace: "nowrap", color: C.dim }}><span style={{ color: `${r.meta.color}77`, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
+                <td className="num">0</td>
+                <td className="num">0</td>
+                <td className="num">0%</td>
+                <td className="num">0%</td>
+                <td className="num">0%</td>
+              </tr>
+            ) : (
+              <tr key={r.meta.key} style={{ borderLeft: `3px solid ${r.meta.color}` }}>
+                <td style={{ whiteSpace: "nowrap", color: C.hi }}><span style={{ color: r.meta.color, marginRight: 6 }}>●</span>{r.meta.label[lang]}</td>
+                <td className="num">{dec((Math.round(r.cnt * 10) / 10).toString(), lang)}{r.meta.kind !== "ongoing" ? L.perYear : ""}</td>
+                <td className="num"><CellTip f={r.fK}>{Math.round(r.k)}</CellTip></td>
+                <td className="num"><CellTip f={r.fAct}>{pctAct(r.actEff, lang)}</CellTip></td>
+                <td className="num"><CellTip f={r.fChance}>{pp(r.pEff)}</CellTip></td>
+                <td className="num" style={{ color: C.hi, fontWeight: 600 }}><CellTip f={r.fRisk}>{fmtP(r.toHorizon)}</CellTip></td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr style={{ borderTop: `2px solid ${C.border}` }}>
+              <td colSpan={5} style={{ color: C.hi, fontWeight: 600 }}><span style={{ display: "inline-flex", alignItems: "center", whiteSpace: "nowrap" }}>{L.thTotal}<Info dn text={L.thTotalInfo} /></span></td>
+              <td className="num" style={{ color: s.color, fontWeight: 700 }}><CellTip f={fTotal}>{fmtP(totalRisk)}</CellTip></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      </>)}
     </div>
   );
 }
 
 const ONS = PRESETS.find((p) => p.key === "ons");
+// Дефолтная стартовая конфигурация (по запросу): только «приходящие» — count 0.4, презерватив 0%,
+// секс 3/нед, длительность 24 мес; постоянные и хукапы выключены; среда — «вспышка».
+const DEFAULT_CFG = {
+  steady: { ...BASE.steady, count: 0 },
+  casual: { ...BASE.casual, count: 0.4, condom: 0, perWeek: 3, dur: 24, tested: 0 },
+  hookup: { ...BASE.hookup, count: 0 },
+};
 
 // ───────────────────────── МОДЕЛЬ БЕРЕМЕННОСТИ (отдельный движок) ─────────────────────────
 // Единица — менструальный цикл (≈месяц). Кумулятив P = 1 − (1 − годовой_отказ)^лет.
@@ -1721,6 +1876,7 @@ function buildShare(s) {
   const hm = hiddenToMask(s.hidden); if (hm) o.h = hm;
   if (s.vaxHpv) o.vh = 1;
   if (s.vaxHbv) o.vb = 1;
+  if (s.sti) o.st = 1;
   if (s.selected !== "chl" && STI_KEYS.indexOf(s.selected) >= 0) o.s = STI_KEYS.indexOf(s.selected);
   if (s.env && s.env !== "normal") o.e = s.env === "high" ? 1 : 2;
   // Беременность — девушка
@@ -1747,6 +1903,7 @@ function parseShare(o) {
   if (o.h) r.hidden = maskToHidden(o.h);
   if (o.vh) r.vaxHpv = true;
   if (o.vb) r.vaxHbv = true;
+  if (o.st) r.sti = true;
   if (typeof o.s === "number" && STI_KEYS[o.s]) r.selected = STI_KEYS[o.s];
   if (o.e === 1) r.env = "high"; else if (o.e === 2) r.env = "outbreak";
   if (typeof o.wa === "number" || typeof o.wf === "number") r.w = { age: o.wa ?? 26, perWeek: o.wf ?? 3 };
@@ -1777,6 +1934,17 @@ const mergeTypes = (base, over) => over ? {
   hookup: { ...base.hookup, ...(over.hookup || {}) },
 } : base;
 const SHARE_INIT = decodeShare();
+// Прямая ссылка на раздел: «#preg» (или ?preg / ?mode=preg) открывает подсайт беременности сразу,
+// без полного профиля. Полный шэр (#c=…) и так несёт режим (o.m) — у него приоритет.
+const MODE_FROM_URL = (() => {
+  if (SHARE_INIT && SHARE_INIT.mode) return SHARE_INIT.mode;
+  try {
+    const h = (window.location.hash || "").toLowerCase();
+    const s = (window.location.search || "").toLowerCase();
+    if (h === "#preg" || h === "#pregnancy" || /[?&](preg|mode=preg)(=1)?(&|$)/.test(s)) return "preg";
+  } catch {}
+  return "sti";
+})();
 
 // Кнопка «Поделиться»: копирует ссылку с текущими настройками в буфер, с явным визуальным фидбеком.
 function ShareButton({ snapshot, L }) {
@@ -1902,6 +2070,65 @@ function ContactPopover({ L, onClose }) {
   );
 }
 
+// Поповер доната — список платформ. URL-ы — ПЛЕЙСХОЛДЕРЫ: впиши свои хэндлы Ko-fi/Liberapay
+// (в i18n: donateKofi/donateLiberapay; GitHub Sponsors — уже на ник владельца репо).
+function DonatePopover({ L, onClose }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    const onDown = (e) => { const box = ref.current && ref.current.parentElement; if (box && !box.contains(e.target)) onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("mousedown", onDown);
+    return () => { document.removeEventListener("keydown", onKey); document.removeEventListener("mousedown", onDown); };
+  }, [onClose]);
+  return (
+    <div ref={ref} className="fade-in" role="dialog" style={{ position: "absolute", bottom: "calc(100% + 8px)", left: "50%", transform: "translateX(-50%)", width: 280, maxWidth: "calc(100vw - 24px)", boxSizing: "border-box", background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 12, boxShadow: "0 14px 38px rgba(0,0,0,0.55)", padding: "14px 16px", zIndex: 100, textAlign: "left", cursor: "default" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+        <span style={{ color: C.hi, fontSize: 14, fontWeight: 700 }}>{L.donateTitle}</span>
+        <button onClick={onClose} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 20, lineHeight: 1, cursor: "pointer", padding: 2 }}>×</button>
+      </div>
+      <p style={{ color: C.mid, fontSize: 12.5, lineHeight: 1.5, margin: "0 0 8px" }}>{L.donateIntro}</p>
+      <ul style={{ color: C.mid, fontSize: 12.5, lineHeight: 1.6, margin: 0, paddingLeft: 18 }}>
+        <li style={{ marginBottom: 5 }}>{L.donateKofi}</li>
+        <li style={{ marginBottom: 5 }}>{L.donateLiberapay}</li>
+        <li>{L.donateGithub}</li>
+      </ul>
+    </div>
+  );
+}
+
+// Окно «Риск ВИЧ»: объясняет неравномерность риска (вспышки, кофактор ЗППП, презерватив)
+// и показывает, какие параметры выставил сценарий.
+function HivRiskModal({ L, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  const p = { color: C.mid, fontSize: 13.5, lineHeight: 1.6, margin: "0 0 10px" };
+  return (
+    <div onMouseDown={onClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 2000, display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "6vh 16px", overflowY: "auto" }}>
+      <div className="fade-in" role="dialog" aria-modal="true" onMouseDown={(e) => e.stopPropagation()} style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 14, boxShadow: "0 18px 50px rgba(0,0,0,0.6)", width: "100%", maxWidth: 480, padding: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <h2 style={{ margin: 0, color: C.hi, fontSize: 18, fontWeight: 700 }}>{L.hivTitle}</h2>
+          <button onClick={onClose} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.mid, fontSize: 22, lineHeight: 1, cursor: "pointer", padding: 4 }}>×</button>
+        </div>
+        <p style={p}>{L.hivP1}</p>
+        <p style={p}>{L.hivP2}</p>
+        <p style={{ ...p, marginBottom: 16 }}>{L.hivP3}</p>
+        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 14 }}>
+          <div style={{ color: C.dim, fontSize: 12, marginBottom: 9 }}>{L.hivChanged}</div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {[L.hivChip1, L.hivChip2, L.hivChip3].map((c, i) => (
+              <span key={i} style={{ background: `${C.accent}1f`, border: `1px solid ${C.accent}`, color: C.hi, borderRadius: 8, padding: "5px 11px", fontSize: 12.5 }}>{c}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState(() => {
     if (SHARE_INIT && SHARE_INIT.lang && LANGS.includes(SHARE_INIT.lang)) return SHARE_INIT.lang;
@@ -1914,11 +2141,11 @@ export default function App() {
   }, [lang]);
   const L = I18N[lang];
 
-  const [cfg, setCfg] = useState(() => mergeTypes(mkCfg(ONS), SHARE_INIT && SHARE_INIT.cfg));
+  const [cfg, setCfg] = useState(() => mergeTypes(DEFAULT_CFG, SHARE_INIT && SHARE_INIT.cfg));
   const [years, setYears] = useState(SHARE_INIT?.years ?? 10);
   const [yMax, setYMax] = useState(SHARE_INIT?.yMax ?? 100);
   const [hidden, setHidden] = useState(SHARE_INIT?.hidden ?? {});
-  const [env, setEnv] = useState(SHARE_INIT?.env ?? "normal");
+  const [env, setEnv] = useState(SHARE_INIT?.env ?? "outbreak");
   // Анимация кривых: только при дискретных изменениях (кнопки). Слайдеры тянут значение плавно сами —
   // их изменения применяем к графику без анимации, иначе кривые отстают/дёргаются.
   const [chartAnim, setChartAnim] = useState(true);
@@ -1933,12 +2160,165 @@ export default function App() {
   const [selected, setSelected] = useState(SHARE_INIT?.selected ?? "chl");
   const [vaxHpv, setVaxHpv] = useState(SHARE_INIT?.vaxHpv ?? false);
   const [vaxHbv, setVaxHbv] = useState(SHARE_INIT?.vaxHbv ?? false);
-  const [acts, setActs] = useState(SHARE_INIT?.acts ?? { vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true });
-  const [activePreset, setActivePreset] = useState(SHARE_INIT ? (SHARE_INIT.preset ?? null) : "ons");
+  const [stiCof, setStiCof] = useState(SHARE_INIT?.sti ?? false);
+  const [acts, setActs] = useState(SHARE_INIT?.acts ?? { vagR: true, vagI: false, analR: false, analI: false, oralR: true, oralI: true, vagVV: false });
+  const [activePreset, setActivePreset] = useState(SHARE_INIT ? (SHARE_INIT.preset ?? null) : null);
   const [tourStep, setTourStep] = useState(() => { if (!TOUR_ENABLED) return -1; try { return localStorage.getItem("tour_done") ? -1 : 0; } catch (e) { return -1; } });
   const [open, setOpen] = useState({});
   const [guideOpen, setGuideOpen] = useState({});
   const [contactOpen, setContactOpen] = useState(false);
+  const [donateOpen, setDonateOpen] = useState(false);
+  const [hivModal, setHivModal] = useState(false);   // опциональное окно-объяснение (по «Подробнее»)
+  const [hivBanner, setHivBanner] = useState(false); // тонкий баннер над графиком
+  const [hivFxTick, setHivFxTick] = useState(0);     // триггер анимации частиц + скролла
+  const [hivFxDone, setHivFxDone] = useState(false); // все рибоны прилетели → показать «Подробнее»
+
+  // Подсветить контрол на 20 c после «прилёта» рибона. cls: hl-ring (кольцо вокруг кнопки) или hl-thumb (свечение ручки слайдера).
+  const flashTarget = (el, cls = "hl-ring") => {
+    if (!el) return;
+    el.classList.remove(cls);
+    void el.offsetWidth; // рестарт анимации, если класс уже был
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), HIV_FX.highlightHold);
+  };
+
+  // Сценарий «Риск ВИЧ» — ПОСЛЕДОВАТЕЛЬНЫЙ показ: по очереди докручиваем к каждому изменённому контролу,
+  // пускаем ОДИН рибон к его конкретной настройке, подсвечиваем на 20 c, пауза — и следующий. По одному,
+  // чтобы пользователь успевал проследить (и потому что под залипающим графиком соседний контрол может быть скрыт).
+  const hivFxRun = useRef(0);
+  const runHivFx = async () => {
+    const myRun = ++hivFxRun.current;
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const alive = () => hivFxRun.current === myRun && hivOpenRef.current; // прервать при закрытии плашки/перезапуске
+    const src = document.querySelector('[data-hl="hivsrc"]'); // источник — кнопка/плашка «Риск ВИЧ»
+    const center = (el) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+    // точка на ползунке, соответствующая его значению (для презерватива 0% — у левого края)
+    const thumb = (inp) => { const r = inp.getBoundingClientRect(); const v = +inp.value, mn = +inp.min, mx = +inp.max; const f = mx > mn ? (v - mn) / (mx - mn) : 0; return { x: r.left + 8 + f * (r.width - 16), y: r.top + r.height / 2 }; };
+    const envOut = document.querySelector('[data-hl="env"] [data-env="outbreak"]'); // целим в пилюлю «вспышка»
+    const cof = document.querySelector('[data-hl="cofactor"]');
+    const condWrap = document.querySelector('[data-tour="condom"]');
+    const condInput = condWrap && condWrap.querySelector('input[type="range"]');
+    const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // плавно опустить презерватив до 0 (если он ещё не 0) — НЕ скачком
+    const animateCondom = (inp) => {
+      const startVal = +inp.value; if (startVal <= 0) return;
+      const dur = HIV_FX.condomDrop; let t0 = null; const ease = (k) => 1 - Math.pow(1 - k, 3);
+      const step = (t) => {
+        if (!alive()) return;
+        if (t0 === null) t0 = t;
+        const k = Math.min(1, (t - t0) / dur);
+        setType("casual", { condom: Math.round(startVal * (1 - ease(k))) });
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    };
+    // hl — что подсветить (cls: hl-ring вокруг кнопки / hl-thumb свечение ручки); point() — куда рибон; apply() — что переключить по прилёте
+    const targets = [
+      envOut && { hl: envOut, cls: "hl-ring", point: () => center(envOut), apply: () => setEnv("outbreak") },
+      cof && { hl: cof, cls: "hl-ring", point: () => center(cof), apply: () => setStiCof(true) },
+      condInput && { hl: condWrap, cls: "hl-thumb", point: () => thumb(condInput), apply: () => animateCondom(condInput) }, // класс на обёртке (input React пере-рендерит и сбрасывает className)
+    ].filter(Boolean);
+    if (!src || !targets.length) return;
+
+    // точка на границе прямоугольника rect в направлении toward (чтобы рибон стартовал от КРАЯ источника, не из-под текста)
+    const edgePt = (rect, toward) => {
+      const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+      const dx = toward.x - cx, dy2 = toward.y - cy;
+      if (!dx && !dy2) return { x: cx, y: cy };
+      const s = Math.min(dx ? (rect.width / 2) / Math.abs(dx) : Infinity, dy2 ? (rect.height / 2) / Math.abs(dy2) : Infinity);
+      return { x: cx + dx * s, y: cy + dy2 * s }; // на самой границе источника
+    };
+    // один рибон от источника к конкретной настройке; промис резолвится, когда долетел
+    const fireOne = (tg, side) => new Promise((resolve) => {
+      const to = tg.point();
+      const from = edgePt(src.getBoundingClientRect(), to); // старт от края источника, не из-под текста
+      const NS = "http://www.w3.org/2000/svg";
+      document.querySelectorAll("svg[data-hivfx]").forEach((s) => s.remove());
+      const svg = document.createElementNS(NS, "svg");
+      svg.setAttribute("data-hivfx", "1");
+      svg.style.cssText = "position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:3000;overflow:visible";
+      document.body.appendChild(svg);
+      const safety = setTimeout(() => { svg.remove(); resolve(); }, 4000);
+      const mx = (from.x + to.x) / 2, my = (from.y + to.y) / 2;
+      const dx = to.x - from.x, dyy = to.y - from.y;
+      const len = Math.hypot(dx, dyy) || 1;
+      const bow = Math.min(130, len * 0.3) * side; // изгиб дуги, сторону чередуем
+      const cx = mx + (-dyy / len) * bow, cy = my + (dx / len) * bow;
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("d", `M ${from.x} ${from.y} Q ${cx} ${cy} ${to.x} ${to.y}`);
+      path.setAttribute("fill", "none");
+      path.setAttribute("stroke", "#ff5b5b");
+      path.setAttribute("stroke-width", "3.5");
+      path.setAttribute("stroke-linecap", "round");
+      path.style.filter = "drop-shadow(0 0 5px rgba(255,91,91,.85))";
+      svg.appendChild(path);
+      const L = path.getTotalLength();
+      path.style.strokeDasharray = L;
+      path.style.strokeDashoffset = L;
+      const draw = path.animate([{ strokeDashoffset: L }, { strokeDashoffset: 0 }], { duration: HIV_FX.ribbon, easing: "cubic-bezier(.45,0,.2,1)", fill: "forwards" });
+      const done = () => {
+        clearTimeout(safety);
+        const fade = path.animate([{ opacity: 1 }, { opacity: 0 }], { duration: HIV_FX.ribbonFade, fill: "forwards" });
+        const rm = () => svg.remove();
+        fade.onfinish = rm; fade.oncancel = rm;
+        resolve();
+      };
+      draw.onfinish = done; draw.oncancel = done;
+    });
+
+    // плавная докрутка с easing (мягче нативного smooth) — центрируем контрол; резолвится по завершении
+    const smoothScrollToEl = (el, dur = 850) => new Promise((resolve) => {
+      const r = el.getBoundingClientRect();
+      const startY = window.scrollY;
+      const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      const targetY = Math.max(0, Math.min(maxY, startY + r.top - window.innerHeight / 2 + r.height / 2));
+      const dist = targetY - startY;
+      if (Math.abs(dist) < 2) { resolve(); return; }
+      let t0 = null;
+      const ease = (k) => (k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2); // ease-in-out quad
+      const step = (t) => {
+        if (!alive()) { resolve(); return; }
+        if (t0 === null) t0 = t;
+        const k = Math.min(1, (t - t0) / dur);
+        window.scrollTo(0, startY + dist * ease(k));
+        if (k < 1) requestAnimationFrame(step); else resolve();
+      };
+      requestAnimationFrame(step);
+    });
+
+    await wait(reduce ? 0 : HIV_FX.intro); // дать пресету примениться/карточкам раскрыться
+    for (let i = 0; i < targets.length; i++) {
+      if (!alive()) return;
+      const tg = targets[i];
+      if (reduce) tg.hl.scrollIntoView({ block: "center" });
+      else await smoothScrollToEl(tg.hl, HIV_FX.scroll); // плавная докрутка к контролу (ждём завершения)
+      await wait(reduce ? 0 : HIV_FX.afterScroll);       // короткая пауза после докрутки
+      if (!alive()) return;
+      if (!reduce) await fireOne(tg, i % 2 ? -1 : 1);    // один рибон, ждём прилёта
+      if (!alive()) return;
+      tg.apply();                            // переключаем контрол ТОЛЬКО после прилёта рибона
+      flashTarget(tg.hl, tg.cls);            // и подсвечиваем (кольцо/ручка)
+      await wait(reduce ? 300 : HIV_FX.betweenSteps); // пауза перед следующим
+    }
+    if (alive()) setHivFxDone(true); // все рибоны прилетели — показать «Подробнее» (всё выставлено)
+  };
+
+  useEffect(() => {
+    if (!hivFxTick) return;
+    const id = setTimeout(runHivFx, 360); // дождаться применения пресета и перерисовки DOM
+    return () => clearTimeout(id);
+  }, [hivFxTick]);
+
+  // Плашка открыта? — зеркало hivBanner в ref, чтобы runHivFx (замыкание) мог проверять актуальность (alive).
+  const hivOpenRef = useRef(false);
+  useEffect(() => { hivOpenRef.current = hivBanner; }, [hivBanner]);
+  // Полностью остановить сценарий «Риск ВИЧ»: прервать последовательность, убрать рибоны и все подсветки.
+  const stopHivFx = () => {
+    hivFxRun.current++; // инвалидируем текущий прогон → alive() станет false, анимация остановится
+    document.querySelectorAll("svg[data-hivfx]").forEach((s) => s.remove());
+    document.querySelectorAll(".hl-ring, .hl-thumb").forEach((e) => e.classList.remove("hl-ring", "hl-thumb"));
+  };
+  const closeHivPlate = () => { setHivBanner(false); stopHivFx(); }; // закрытие плашки = стоп всей анимации
   // На мобильном при прокрутке вниз залипающий график сжимается (прячет слайдеры, легенду, строку-итог).
   const [condensed, setCondensed] = useState(false);
   useEffect(() => {
@@ -1949,7 +2329,15 @@ export default function App() {
     window.addEventListener("resize", onScroll);
     return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
-  const [mode, setMode] = useState(SHARE_INIT?.mode ?? "sti");
+  const [mode, setMode] = useState(MODE_FROM_URL);
+  // Переключение раздела отражаем в адресной строке: беременность → «#preg» (ссылку можно слать отдельно), ЗППП → чистый URL.
+  const switchMode = (m) => {
+    setMode(m);
+    try {
+      const base = window.location.href.split("#")[0].split("?")[0];
+      window.history.replaceState(null, "", m === "preg" ? base + "#preg" : base);
+    } catch {}
+  };
   const [pregWho, setPregWho] = useState(SHARE_INIT?.who ?? "woman");
   // Состояние беременности поднято в App — чтобы «Поделиться» сериализовал и его.
   const [w, setW] = useState(() => SHARE_INIT?.w ?? { age: 26, perWeek: 3 });
@@ -1963,7 +2351,7 @@ export default function App() {
   const actSel = useMemo(() => actSelOf(acts), [acts]);
 
   // Снимок всех настроек для ссылки «Поделиться» (актуален на момент клика).
-  const snapshot = () => ({ v: 1, lang, mode, who: pregWho, cfg, years, yMax, hidden, env, selected, vaxHpv, vaxHbv, acts, preset: activePreset, w, meth, mcfg, manAge, preg: activePreg });
+  const snapshot = () => ({ v: 1, lang, mode, who: pregWho, cfg, years, yMax, hidden, env, selected, vaxHpv, vaxHbv, sti: stiCof, acts, preset: activePreset, w, meth, mcfg, manAge, preg: activePreg });
 
   // Всплывашки .box у кнопок «i»: position:fixed + зажим в границы экрана.
   // Fixed не расширяет документ, поэтому всплывашка не порождает скролл и не вылезает за край.
@@ -2000,9 +2388,23 @@ export default function App() {
   const horizonM = years * 12;
   const setType = (key, patch) => { setCfg((c) => ({ ...c, [key]: { ...c[key], ...patch } })); setActivePreset(null); };
   const applyPreset = (pr) => { setCfg(mkCfg(pr)); setActivePreset(pr.key); };
+  // «Риск ВИЧ»: сценарий максимального риска ВИЧ — вспышка + нелеченые ЗППП + без презерватива,
+  // показана только кривая ВИЧ. Открывает окно с объяснением и подсветкой изменённых параметров.
+  const applyHivRisk = () => {
+    // casual-пресет, но СОХРАНЯЕМ текущий презерватив — его опустим ПЛАВНО по прилёте рибона
+    setCfg((c) => ({ ...DEFAULT_CFG, casual: { ...DEFAULT_CFG.casual, condom: c.casual.condom } }));
+    setHidden({ hpv: true, hbv: true, hcv: true, syp: true, gon: true, chl: true, tri: true });
+    setSelected("hiv");
+    setActivePreset(null);
+    setHivBanner(true);
+    setHivFxDone(false);          // «Подробнее» появится только в конце, после всех рибонов
+    setHivFxTick((n) => n + 1);
+    // env, «нелеченые ЗППП» и презерватив НЕ трогаем здесь — они переключаются по очереди
+    // в runHivFx, каждый только когда до него долетит свой рибон (см. ниже).
+  };
   const toggle = (k) => setHidden((h) => ({ ...h, [k]: !h[k] }));
 
-  const riskPct = (s, t) => (1 - survivalAt(withEnv(s, env), t, cfg, veMulOf(s, vaxHpv, vaxHbv), actSel)) * 100;
+  const riskPct = (s, t) => (1 - survivalAt(withEnv(s, env), t, cfg, veMulOf(s, vaxHpv, vaxHbv, stiCof), actSel)) * 100;
 
   const chartData = useMemo(() => {
     const st = Math.max(1, Math.ceil(horizonM / 170));
@@ -2010,13 +2412,13 @@ export default function App() {
     for (let t = 0; t <= horizonM; t += st) {
       const row = { t };
       STIS.forEach((s) => {
-        const sv = survivalAt(withEnv(s, env), t, cfg, veMulOf(s, vaxHpv, vaxHbv), actSel);
+        const sv = survivalAt(withEnv(s, env), t, cfg, veMulOf(s, vaxHpv, vaxHbv, stiCof), actSel);
         row[s.key] = (1 - sv) * 100;
       });
       pts.push(row);
     }
     return pts;
-  }, [cfg, years, vaxHpv, vaxHbv, actSel, env]);
+  }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env]);
 
   const built = useMemo(() => buildPartnersTyped(cfg, horizonM), [cfg, horizonM]);
   const packed = useMemo(() => packLanes(built.list), [built]);
@@ -2071,6 +2473,8 @@ export default function App() {
         table.inf tbody tr.inf-row:hover { background:#ffffff0a; }
         table.inf tbody tr.inf-row.on { background:#ffffff12; }
         table.inf tbody tr.inf-row.on:hover { background:#ffffff16; }
+        .leg-item { transition:background .12s, border-color .12s; }
+        .leg-item:hover { background:#ffffff0d; border-color:${C.mid} !important; }
         .rich [data-hi] { color:${C.hi}; }
         .rich [data-grn] { color:#4dd4ac; }
         .rich [data-red] { color:#ff7b73; }
@@ -2083,14 +2487,34 @@ export default function App() {
         @keyframes fadeSoft { from { opacity:0; } to { opacity:1; } }
         .fade-soft { animation: fadeSoft .45s ease both; }
         .tour-hole { transition: x .42s ease, y .42s ease, width .42s ease, height .42s ease; }
+        @keyframes hivpulse { 0%,100% { box-shadow:0 0 0 0 rgba(255,91,91,0); } 50% { box-shadow:0 0 0 4px rgba(255,91,91,0.22); } }
+        /* кнопка «Риск ВИЧ» — красная пилюля на строке среды, справа */
+        .hiv-btn-pill { background:#ff5b5b; color:#fff; border:none; border-radius:999px; padding:6px 14px; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap; animation: hivpulse 2.1s ease-in-out infinite; }
+        .hiv-btn-pill:hover { filter:brightness(1.08); }
+        /* инфо-плашка (красная, в стиле дисклеймера) — отдельной строкой по центру; въезжает по диагонали от кнопки (сверху-справа) */
+        @keyframes plateInD { from { opacity:0; transform: translate(34px,-10px) scale(.95); } to { opacity:1; transform:none; } }
+        .hiv-plate-card { display:inline-flex; align-items:center; gap:7px; background:#ff5b5b1a; border:1px solid #ff5b5b; border-radius:10px; padding:6px 10px; max-width:100%; animation: plateInD .42s cubic-bezier(.2,.7,.3,1) both; }
+        /* «Подробнее» появляется в конце (после всех рибонов) — только мягкий въезд, без мигания */
+        @keyframes moreIn { from { opacity:0; transform: translateX(-8px); } to { opacity:1; transform:none; } }
+        .more-cta { animation: moreIn .35s ease both; }
+        .hiv-bang { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:#ff5b5b; color:#fff; font-size:11px; font-weight:800; line-height:1; flex:0 0 auto; }
+        /* подсветка контрола после «прилёта» рибона из кнопки «Риск ВИЧ» — мягкая пульсация ~10 c (класс снимает JS) */
+        @keyframes hlpulse { 0%,100% { box-shadow:0 0 0 0 rgba(255,91,91,0); } 50% { box-shadow:0 0 0 5px rgba(255,91,91,.55); } }
+        .hl-ring { border-radius:10px; animation: hlpulse 1.5s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .hl-ring { animation:none; box-shadow:0 0 0 3px rgba(255,91,91,.5); } }
+        /* для слайдера подсвечиваем САМУ РУЧКУ (не всю строку — иначе кольцо пересекает соседние элементы) */
+        @keyframes thumbglow { 0%,100% { box-shadow:0 0 0 1px ${C.accent}, 0 0 0 2px rgba(255,91,91,0); } 50% { box-shadow:0 0 0 1px ${C.accent}, 0 0 0 7px rgba(255,91,91,.5); } }
+        .hl-thumb .rng::-webkit-slider-thumb { animation: thumbglow 1.4s ease-in-out infinite; }
+        .hl-thumb .rng::-moz-range-thumb { box-shadow:0 0 0 6px rgba(255,91,91,.45); animation: thumbglow 1.4s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .hl-thumb .rng::-webkit-slider-thumb { animation:none; box-shadow:0 0 0 1px ${C.accent}, 0 0 0 5px rgba(255,91,91,.5); } }
       `}</style>
 
       <div style={{ maxWidth: 940, margin: "0 auto", position: "relative" }}>
         {TOUR_ENABLED && mode === "sti" && <Tour step={tourStep} setStep={setTourStep} L={L} />}
         <LangSwitch lang={lang} setLang={setLang} />
         <div style={{ display: "flex", gap: 8, marginBottom: 18, flexWrap: "wrap" }}>
-          <button onClick={() => setMode("sti")} style={SEG(mode === "sti")}>{L.modeSti}</button>
-          <button onClick={() => setMode("preg")} style={SEG(mode === "preg")}>{L.modePreg}</button>
+          <button onClick={() => switchMode("sti")} style={SEG(mode === "sti")}>{L.modeSti}</button>
+          <button onClick={() => switchMode("preg")} style={SEG(mode === "preg")}>{L.modePreg}</button>
         </div>
 
         <div style={{ marginBottom: 22 }}>
@@ -2128,12 +2552,18 @@ export default function App() {
               {actSel.length === 0 && <div style={{ color: "#ff922b", fontSize: 12, marginTop: 10 }}>{L.noActs}</div>}
 
               <div style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.6, margin: "16px 0 10px" }}>{L.protection}</div>
-              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                 {[{ k: "hpv", on: vaxHpv, set: setVaxHpv, lab: L.vaxHpv }, { k: "hbv", on: vaxHbv, set: setVaxHbv, lab: L.vaxHbv }].map((v) => (
                   <button key={v.k} onClick={() => v.set((x) => !x)} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: v.on ? `${C.accent}22` : "transparent", border: `1px solid ${v.on ? C.accent : C.border}`, color: v.on ? C.hi : C.mid, padding: "8px 13px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
-                    <span style={{ width: 16, height: 16, borderRadius: 4, border: `1px solid ${v.on ? C.accent : C.dim}`, background: v.on ? C.accent : "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", color: C.bg, fontSize: 11, fontWeight: 700 }}>{v.on ? "✓" : ""}</span>{v.lab}
+                    <span style={{ width: 16, height: 16, borderRadius: 4, border: `1px solid ${v.on ? C.accent : C.dim}`, background: v.on ? C.accent : "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", color: C.bg, fontSize: 11, fontWeight: 700 }}>{v.on ? "✓" : ""}</span><span style={{ whiteSpace: "nowrap" }}>{v.lab}<span style={{ fontWeight: 700, marginLeft: 4 }}>↑</span></span>
                   </button>
                 ))}
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  <button data-hl="cofactor" onClick={() => setStiCof((x) => !x)} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: stiCof ? "#cf667922" : "transparent", border: `1px solid ${stiCof ? "#cf6679" : C.border}`, color: stiCof ? C.hi : C.mid, padding: "8px 13px", borderRadius: 8, cursor: "pointer", fontSize: 13 }}>
+                    <span style={{ width: 16, height: 16, borderRadius: 4, border: `1px solid ${stiCof ? "#cf6679" : C.dim}`, background: stiCof ? "#cf6679" : "transparent", display: "inline-flex", alignItems: "center", justifyContent: "center", color: C.bg, fontSize: 11, fontWeight: 700 }}>{stiCof ? "✓" : ""}</span><span style={{ whiteSpace: "nowrap" }}>{L.stiCof}<span style={{ fontWeight: 700, marginLeft: 4 }}>↓</span></span>
+                  </button>
+                  <Info text={L.stiCofInfo} />
+                </span>
               </div>
             </div>
           </div>
@@ -2141,29 +2571,55 @@ export default function App() {
           <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
             <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
               <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
-              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText="" hint={L.scaleHint} subtle />
+              <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={DEV ? `${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%` : ""} hint={L.scaleHint} subtle />
             </div>
-            <div className="chart-extra" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
-              {STIS.filter((s) => !hidden[s.key]).map((s) => (<span key={s.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${s.grounded ? "solid" : "dashed"} ${s.color}`, display: "inline-block" }} />{s.label[lang]}</span>))}
+            <div className="chart-extra" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+              {STIS.map((s) => { const off = hidden[s.key]; return (
+                <span key={s.key} className="leg-item" onClick={() => toggle(s.key)} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: off ? C.dim : C.mid, cursor: "pointer", userSelect: "none", padding: "2px 8px", borderRadius: 6, border: `1px solid ${C.border}`, opacity: off ? 0.5 : 1 }}>
+                  <span style={{ width: 14, height: 0, borderTop: `3px ${s.grounded ? "solid" : "dashed"} ${off ? C.dim : s.color}`, display: "inline-block" }} />{s.label[lang]}
+                </span>
+              ); })}
             </div>
             <div className="chartbox" data-tour="chart">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: 8 }}>
+                <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }}>
+                  {DEV && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
-                  <YAxis hide domain={[0, yMax]} allowDataOverflow />
+                  {DEV
+                    ? <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
+                    : <YAxis hide domain={[0, yMax]} allowDataOverflow />}
                   <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
                   {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
                 </LineChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
-              <div className="chart-extra" style={{ color: C.mid, fontSize: 13 }}>{top ? L.topRiskLine(years, yearsWord(years, lang), top.label[lang], top.color) : L.enableOne}</div>
-              <div data-tour="env" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.5, marginRight: 2 }}>{L.envLabel}</span>
-                {[["normal", L.envNormal], ["high", L.envHigh], ["outbreak", L.envOutbreak]].map(([k, lab]) => (
-                  <button key={k} className={"pill " + (env === k ? "on" : "")} onClick={() => setEnv(k)}>{lab}</button>
-                ))}
-                <Info text={L.envInfo} />
+              <div className="chart-extra" style={{ color: C.mid, fontSize: 13 }}>{top ? (<>{L.topRiskLine(years, yearsWord(years, lang), top.label[lang], top.color)}{DEV && <> — <b style={{ color: C.hi }}>{pctVal(riskPct(top, horizonM), lang)}</b></>}</>) : L.enableOne}</div>
+              <div data-tour="env" style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", flexBasis: "100%" }}>
+                <span data-hl="env" style={{ display: "inline-flex", alignItems: "center", gap: 6, flexWrap: "wrap", borderRadius: 8, padding: 2 }}>
+                  <span style={{ fontSize: 11, color: C.dim, textTransform: "uppercase", letterSpacing: 0.5, marginRight: 2 }}>{L.envLabel}</span>
+                  {[["normal", L.envNormal], ["high", L.envHigh], ["outbreak", L.envOutbreak]].map(([k, lab]) => (
+                    <button key={k} data-env={k} className={"pill " + (env === k ? "on" : "")} onClick={() => setEnv(k)}>{lab}</button>
+                  ))}
+                  <Info text={L.envInfo} />
+                </span>
+                {/* кнопка «Риск ВИЧ» — на строке среды, справа. При нажатии прячется, а ниже по центру выезжает плашка. */}
+                {!hivBanner && (
+                  <button data-hl="hivsrc" className="hiv-btn-pill" onClick={applyHivRisk} style={{ marginLeft: "auto", flexShrink: 0 }}>{L.hivBtn}</button>
+                )}
+              </div>
+            </div>
+            {/* инфо-плашка: отдельной строкой ПО ЦЕНТРУ, плавно разворачивающаяся высота (grid) + диагональный въезд */}
+            <div style={{ display: "grid", gridTemplateRows: hivBanner ? "1fr" : "0fr", transition: "grid-template-rows .4s ease, margin-top .4s ease", marginTop: hivBanner ? 8 : 0 }}>
+              <div style={{ overflow: "hidden", minHeight: 0, display: "flex", justifyContent: "flex-start" }}>
+                {hivBanner && (
+                  <span data-hl="hivsrc" className="hiv-plate-card">
+                    <span className="hiv-bang" aria-hidden>!</span>
+                    <span style={{ color: C.hi, fontSize: 12, fontWeight: 600, whiteSpace: "nowrap" }}>{L.hivBannerText}</span>
+                    {hivFxDone && <button className="more-cta" onClick={() => setHivModal(true)} style={{ background: "transparent", border: "none", color: "#ff9a9a", fontSize: 12, fontWeight: 600, cursor: "pointer", padding: "2px 4px", whiteSpace: "nowrap", animationDuration: HIV_FX.moreFade + "ms" }}>{L.hivBannerMore} ▸</button>}
+                    <button onClick={closeHivPlate} aria-label={L.contactClose} style={{ background: "transparent", border: "none", color: C.dim, fontSize: 16, lineHeight: 1, cursor: "pointer", padding: "0 4px" }}>×</button>
+                  </span>
+                )}
               </div>
             </div>
           </div>
@@ -2183,19 +2639,19 @@ export default function App() {
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "6px 6px", marginBottom: 14 }}>
           <div className="tbl-wrap">
             <table className="inf">
-              <thead><tr><th style={{ width: 34 }}></th><th>{L.thInfection}</th><th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th><th style={{ width: 60, textAlign: "right" }}>{L.thSource}</th></tr></thead>
+              <thead><tr><th>{L.thInfection}</th>{DEV && <th>{L.thRisk(years, yearsWord(years, lang))}</th>}<th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th><th style={{ width: 60, textAlign: "right" }}>{L.thSource}</th></tr></thead>
               <tbody>
                 {STIS.flatMap((s) => {
                   const exp = !!guideOpen[s.key];
                   const accLab = L.acc[s.acc];
                   const rows = [
                   <tr key={s.key} className={"inf-row" + ((selected === s.key || exp) ? " on" : "")} onClick={() => { setSelected(s.key); setGuideOpen((g) => ({ ...g, [s.key]: !g[s.key] })); }} title={exp ? L.collapseGuide : L.openGuide} style={{ borderLeft: `3px solid ${SEV[s.sev]}`, opacity: hidden[s.key] ? 0.45 : 1 }}>
-                    <td onClick={(e) => e.stopPropagation()}><input className="chk" type="checkbox" checked={!hidden[s.key]} onChange={() => toggle(s.key)} style={{ accentColor: s.color }} /></td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <span style={{ color: s.color, marginRight: 7 }}>{s.grounded ? "●" : "◌"}</span>{s.label[lang]}
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note[lang]} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>{L.vaccinated}</span>}
                       <span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span>
                     </td>
+                    {DEV && <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>}
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1), lang)} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e), lang)}</td>
                     <td><span style={{ background: `${SEV[s.sev]}22`, color: SEV[s.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{s.treat[lang]}</span></td>
                     <td style={{ color: C.mid, fontSize: 12.5 }}>{s.cons[lang]}</td>
@@ -2204,7 +2660,7 @@ export default function App() {
                   ];
                   rows.push(
                     <tr key={s.key + "-g"} style={{ borderLeft: `3px solid ${s.color}` }}>
-                      <td colSpan={6} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
+                      <td colSpan={DEV ? 6 : 5} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
                        <Collapse open={exp} style={{ position: "sticky", left: 0, width: "calc(100vw - 84px)", maxWidth: 860, boxSizing: "border-box" }}>
                        <div style={{ padding: "14px 16px" }}>
                         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
@@ -2215,6 +2671,16 @@ export default function App() {
                         {ENV[s.key] && (
                           <div style={{ marginTop: 14 }}>
                             <div className="ghd">{L.envGuideLabel}</div>
+                            {DEV && (
+                              <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "7px 0 9px" }}>
+                                {[[L.envNormal, 1], [L.envHigh, ENV[s.key].high], [L.envOutbreak, ENV[s.key].out]].map(([lab, mul], i) => (
+                                  <span key={i} style={{ display: "inline-flex", alignItems: "baseline", gap: 6, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 10px" }}>
+                                    <span style={{ fontSize: 11, color: C.dim }}>{lab}</span>
+                                    <span className="num" style={{ fontSize: 12.5, color: C.mid }}>×{dec(String(mul), lang)}</span>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                             <div className="gtx" style={{ marginTop: 7 }}>{ENV[s.key].note[lang]} <a href={ENV[s.key].src.url} target="_blank" rel="noopener noreferrer" style={{ color: s.color, textDecoration: "none" }}>{ENV[s.key].src.label[lang]} ↗</a></div>
                           </div>
                         )}
@@ -2237,7 +2703,7 @@ export default function App() {
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 14, marginBottom: 16 }}>
             {STIS.map((s) => (<button key={s.key} onClick={() => setSelected(s.key)} style={{ border: `1px solid ${selected === s.key ? s.color : C.border}`, background: selected === s.key ? `${s.color}22` : "transparent", color: selected === s.key ? C.hi : C.mid, padding: "6px 12px", borderRadius: 999, fontSize: 12.5, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}><span style={{ color: s.color }}>●</span>{s.label[lang]}</button>))}
           </div>
-          <Breakdown s={withEnv(selSti, env)} envMul={envMulOf(selSti, env)} cfg={cfg} years={years} veMul={veMulOf(selSti, vaxHpv, vaxHbv)} actSel={actSel} lang={lang} L={L} />
+          <Breakdown s={withEnv(selSti, env)} envMul={envMulOf(selSti, env)} cfg={cfg} years={years} veMul={veMulOf(selSti, vaxHpv, vaxHbv, stiCof)} actSel={actSel} lang={lang} L={L} />
         </details>
 
         <details style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 14 }}>
@@ -2249,12 +2715,12 @@ export default function App() {
             <div style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "12px 14px", marginBottom: 13 }}>
               <div className="ghd" style={{ marginBottom: 5 }}>{L.assumExTitle}</div>
               <div style={{ fontSize: 12.5, color: C.dim, marginBottom: 8 }}>{L.assumExFormula}</div>
-              {[["hiv", "outbreak", "hookup", 4], ["hiv", "outbreak", "steady", 1], ["hiv", "normal", "hookup", 4], ["chl", "normal", "hookup", 4], ["syp", "outbreak", "hookup", 4]].map(([k, envk, poolk, pm], i) => {
-                const s = STIS.find((x) => x.key === k); const em = envk === "outbreak" ? ENV[k].out : 1; const res = Math.min(1, s.p * em * pm);
+              {[["hiv", "outbreak", "hookup", 2], ["hiv", "outbreak", "steady", 1], ["hiv", "normal", "hookup", 2], ["chl", "normal", "hookup", 2], ["syp", "outbreak", "hookup", 2]].map(([k, envk, poolk, pm], i) => {
+                const s = STIS.find((x) => x.key === k); const em = envk === "outbreak" ? ENV[k].out : 1; const res = oddsScale(s.p, em * pm);
                 const pp = (x) => dec(x * 100 < 10 ? (x * 100).toFixed(1).replace(/\.0$/, "") : String(Math.round(x * 100)), lang) + "%";
                 return (<div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 10, padding: "4px 0", borderTop: i ? `1px solid ${C.border}` : "none", flexWrap: "wrap" }}>
                   <span><span style={{ color: s.color }}>●</span> {s.label[lang]} · {envk === "outbreak" ? L.envOutbreak : L.envNormal} · {poolk === "hookup" ? L.legHookup : L.legSteady}</span>
-                  <span className="num" data-f style={{ whiteSpace: "nowrap" }}>{pp(s.p)} × {dec(String(em), lang)} × {pm} = <b style={{ color: C.hi }}>{pp(res)}</b></span>
+                  <span className="num" data-f style={{ whiteSpace: "nowrap" }}>odds({pp(s.p)}) × {dec(String(em), lang)}·{pm} = <b style={{ color: C.hi }}>{pp(res)}</b></span>
                 </div>);
               })}
             </div>
@@ -2267,6 +2733,16 @@ export default function App() {
 
         <p style={{ color: C.dim, fontSize: 12, lineHeight: 1.6, textAlign: "center", margin: 0 }}>{L.footerDisclaimer}</p>
         <p style={{ color: C.dim, fontSize: 11, lineHeight: 1.5, textAlign: "center", margin: "2px 0 0" }}>{L.footerNoWarranty}</p>
+        {/* Донат: «почему» (надпись) видна сразу, без клика; платформы — в поповере по «Поддержать». Скрыто за флагом DONATE_ENABLED. */}
+        {DONATE_ENABLED && <p style={{ fontSize: 12.5, textAlign: "center", margin: "12px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <button onClick={() => setDonateOpen((v) => !v)} style={{ background: "transparent", border: "none", color: C.accent, fontSize: 12.5, fontWeight: 600, cursor: "pointer", padding: 0, fontFamily: "inherit", display: "inline-flex", alignItems: "center", gap: 5 }}>
+              <span aria-hidden style={{ fontSize: 13 }}>♥</span>{L.donateCta}
+            </button>
+            {donateOpen && <DonatePopover L={L} onClose={() => setDonateOpen(false)} />}
+          </span>
+          <span style={{ color: C.dim }}>{L.donateWhy}</span>
+        </p>}
         <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "8px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.footerSource}</a>
           <span style={{ color: C.border }}>|</span>
@@ -2276,6 +2752,7 @@ export default function App() {
           </span>
         </p>
       </div>
+      {hivModal && <HivRiskModal L={L} onClose={() => setHivModal(false)} />}
     </div>
   );
 }
