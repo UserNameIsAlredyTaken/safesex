@@ -389,7 +389,7 @@ const I18N = {
     badge: "illustrative model",
     intro: "",
     warnTitle: "This is an amateur calculator, not a medical tool.",
-    warnBody: (<>The real probabilities are <b style={{ color: C.accent }}>almost certainly inexact</b>, because the model relies on many assumptions and estimates with wide spreads. Its main use is comparing how different parameters may affect the chance of infection. Don't make medical decisions based on the model — consult a specialist.</>),
+    warnBody: (<>The real probabilities are <b style={{ color: C.accent }}>almost certainly inexact</b>, because the model relies on many assumptions and estimates with wide spreads. The author has no medical training — consult a specialist. The model's main use is comparing how different parameters may affect the chance of infection.</>),
     preset: "Behavior preset",
     tourStart: "Tour", tourNext: "Next", tourSkip: "Skip", tourDone: "Done",
     tour1: "Pick a relationship style — it fills the partner cards below.",
@@ -510,6 +510,7 @@ const I18N = {
     footerDisclaimer: "This is an amateur educational model, not a medical forecast and not a basis for medical decisions.",
     footerNoWarranty: "Provided “as is”, for educational use only, without any warranty — use at your own risk.",
     footerSource: "Source code",
+    footerFree: "Free · no cookies · open source",
     footerContactLink: "Contact & feedback",
     githubLink: "Source code on GitHub ↗",
     contactTitle: "Contact & feedback",
@@ -715,6 +716,7 @@ const I18N = {
     footerDisclaimer: "Это любительская образовательная модель, а не медицинский прогноз и не основание для медицинских решений.",
     footerNoWarranty: "Предоставляется «как есть», только в образовательных целях, без каких-либо гарантий — на свой риск.",
     footerSource: "Исходный код",
+    footerFree: "Бесплатно · без куки · открытый код",
     footerContactLink: "Контакты и фидбек",
     githubLink: "Исходный код на GitHub ↗",
     contactTitle: "Контакты и фидбек",
@@ -795,7 +797,7 @@ const I18N = {
     badge: "ilustrativni model",
     intro: "",
     warnTitle: "Ovo je amaterski kalkulator, a ne medicinski alat.",
-    warnBody: (<>Stvarne verovatnoće su <b style={{ color: C.accent }}>gotovo sigurno netačne</b>, jer model koristi mnogo pretpostavki i procena sa velikim rasponima. Glavna korist je poređenje kako različiti parametri mogu uticati na verovatnoću zaraze. Ne donosi medicinske odluke na osnovu modela — posavetuj se sa stručnjakom.</>),
+    warnBody: (<>Stvarne verovatnoće su <b style={{ color: C.accent }}>gotovo sigurno netačne</b>, jer model koristi mnogo pretpostavki i procena sa velikim rasponima. Autor nema medicinsko obrazovanje — posavetuj se sa stručnjakom. Glavna korist modela je poređenje kako različiti parametri mogu uticati na verovatnoću zaraze.</>),
     preset: "Preset ponašanja",
     tourStart: "Tura", tourNext: "Dalje", tourSkip: "Preskoči", tourDone: "Gotovo",
     tour1: "Izaberi stil odnosa — popuniće kartice partnera ispod.",
@@ -916,6 +918,7 @@ const I18N = {
     footerDisclaimer: "Ovo je amaterski edukativni model, a ne medicinska prognoza ni osnov za medicinske odluke.",
     footerNoWarranty: "Pruža se „kao takvo“, samo u edukativne svrhe, bez ikakvih garancija — na sopstveni rizik.",
     footerSource: "Izvorni kod",
+    footerFree: "Besplatno · bez kolačića · otvoren kod",
     footerContactLink: "Kontakt i utisci",
     githubLink: "Izvorni kod na GitHub-u ↗",
     contactTitle: "Kontakt i utisci",
@@ -2962,7 +2965,8 @@ export default function App() {
           </span>
           <span style={{ color: C.dim }}>{L.donateWhy}</span>
         </p>}
-        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "8px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "10px 0 0" }}>{L.footerFree}</p>
+        <p style={{ color: C.dim, fontSize: 12, textAlign: "center", margin: "4px 0 0", display: "flex", justifyContent: "center", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           <a href="https://github.com/UserNameIsAlredyTaken/safesex" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "none" }}>{L.footerSource}</a>
           <span style={{ color: C.border }}>|</span>
           <span style={{ position: "relative", display: "inline-block" }}>
