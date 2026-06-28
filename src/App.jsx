@@ -572,7 +572,7 @@ const I18N = {
     thPerfect: "Perfect",
     thTypical: "Typical",
     pregPerYear: "% preg./yr",
-    typicalInfo: "This is the share of women who got pregnant during the first year of use. «Perfect» — if the method is always used correctly; «Typical» — real-world use with misses and mistakes, as for most people.",
+    typicalInfo: (<>This is the share of women who got pregnant during the first year of use.<br /><br />«Perfect» — if the method is always used correctly.<br />«Typical» — real-world use with misses and mistakes, as for most people.</>),
     thSideFx: "Side effects",
     howWorks: "How it works",
     sideRisks: "Side effects and risks",
@@ -596,7 +596,7 @@ const I18N = {
     badge: "иллюстративная модель",
     intro: "",
     warnTitle: "Это любительский калькулятор, а не медицинский инструмент.",
-    warnBody: (<>Реальные вероятности <b style={{ color: C.accent }}>практически гарантированно не точные</b>, так как использовано много допущений и оценок с большими разбросами. Автор не имеет медицинского образования — консультируйтесь со специалистом. Основная польза модели — сравнение того, как разные параметры могут влиять на вероятность заражения.</>),
+    warnBody: (<>Реальные вероятности <b style={{ color: C.accent }}>практически гарантированно не точные</b>, так как использовано много допущений и оценок с большими разбросами. Автор не имеет медицинского образования — не принимайте на основе этой модели медицинских решений и консультируйтесь со специалистом. Основная польза этой модели — сравнение того, как разные параметры могут влиять на вероятность заражения.</>),
     preset: "Пресет поведения",
     tourStart: "Тур", tourNext: "Далее", tourSkip: "Пропустить", tourDone: "Готово",
     tour1: "Выбери стиль отношений — он заполнит карточки партнёров ниже.",
@@ -717,7 +717,7 @@ const I18N = {
     footerDisclaimer: "Это любительская образовательная модель, а не медицинский прогноз и не основание для медицинских решений.",
     footerNoWarranty: "Предоставляется «как есть», только в образовательных целях, без каких-либо гарантий — на свой риск.",
     footerSource: "Исходный код",
-    footerFree: "Бесплатно · без куки · открытый код",
+    footerFree: "Не коммерческий любительский образовательный проект без куки и с открытым кодом",
     footerContactLink: "Контакты и фидбек",
     githubLink: "Исходный код на GitHub ↗",
     contactTitle: "Контакты и фидбек",
@@ -738,15 +738,15 @@ const I18N = {
     pregTitle: "Вероятность беременности во времени",
     pregIntro: "",
     pregWarnTitle: "Это любительский калькулятор, а не медицинский инструмент.",
-    pregWarnBody: "Модель использует грубые приближения вперемешку с надёжными данными. Не используйте её для планирования беременности, выбора контрацепции или при проблемах с зачатием — обратитесь к специалисту.",
+    pregWarnBody: "Модель использует грубые приближения вперемешку с надёжными данными. Не используйте её для планирования беременности, выбора контрацепции или при проблемах с зачатием. Автор не имеет медицинского образования — обратитесь к специалисту.",
     pregWoman: "👩 Девушка / пара",
     pregMan: "👨 Парень",
-    pregWomanExpl: (<><b data-hi>Модель «Девушка» эквивалентна модели «Пара».</b> Забеременеть можно максимум раз за цикл. Партнёры <b>не суммируются</b>: важно только суммарное количество секса и контрацепция, а не число партнёров.</>),
+    pregWomanExpl: (<>Забеременеть можно максимум раз за цикл. Разные партнёры <b>не суммируются</b>: в модели важно только суммарное количество секса и контрацепция, а не число уникальных партнёров.</>),
     pregManExpl: (<>Считаем «хотя бы одна беременность среди партнёрш»: здесь партнёрши <b>суммируются</b> (больше партнёрш/актов → выше шанс ≥1 события).</>),
     pregProfile: "Профиль",
     pregWomanAge: "Возраст женщины",
-    pregWomanAgeInfo: "Главный фактор фертильности; резкий спад после 35. Значения по возрасту — оценка тренда (ASRM/Dunson/NICE).",
-    pregFreqInfo: "Частота влияет через попадание в фертильное окно; плато ~через день. Форма зависимости — оценка.",
+    pregWomanAgeInfo: "Главный фактор фертильности. В изспользуемой модели резкий спад после 35. (ASRM/Dunson/NICE).",
+    pregFreqInfo: "Частота влияет через вероятность попадания в фертильное окно. Плато ~через день.",
     pregLineWoman: "Вероятность беременности",
     pregLineNoContra: "без контрацепции",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>За {years} {yw} вероятность забеременеть ≈ <b data-hi>{pct}</b>{hasContra ? " с выбранной контрацепцией" : " без контрацепции"}.</>),
@@ -764,7 +764,7 @@ const I18N = {
     pregRelCap: (d) => `связь ${d}`,
     pregNoPartnersF: "Нет партнёрш — добавь в карточках слева.",
     contraLabel: "Контрацепция",
-    contraInfo: "Добавляй методы, которыми пользуешься — можно сколько угодно и сочетать. У методов «на каждый акт» (презерватив и т.п.) ползунок задаёт долю актов. Подробности и источники — в справке ниже.",
+    contraInfo: "При добавлении методов в модели считается что все они используются одновременно каждый акт. У методов которые нужно применять каждый акт есть ползунок частоты использования.",
     addMethod: "+ добавить метод",
     allMethodsAdded: "Все методы добавлены",
     sevTitle: "серьёзность побочек (оценка)",
@@ -775,20 +775,20 @@ const I18N = {
     thMethod: "Метод",
     thPerfect: "Идеальное",
     thTypical: "Реальное",
-    pregPerYear: "% берем./год",
-    typicalInfo: "Это доля женщин, забеременевших за первый год использования метода. «Идеальное» — если применять метод всегда и правильно; «Реальное» — реальное использование с пропусками и ошибками, как у большинства.",
+    pregPerYear: "% бер./год",
+    typicalInfo: (<>Это доля женщин, забеременевших за первый год использования метода.<br /><br />«Идеальное» — если применять метод всегда и правильно.<br />«Реальное» — реальное использование с пропусками и ошибками, как у большинства.</>),
     thSideFx: "Побочки",
     howWorks: "Как работает",
     sideRisks: "Побочки и риски",
     whoFor: "Кому / противопоказания",
     contraSourcesTail: "— справочно, не назначение.",
     pregAssumTitle: "Допущения и логика",
-    pregAssum1: (<><b data-hi>Единица — цикл (≈месяц).</b> Кумулятив <span data-f>P(t) = 1 − (1 − годовой_отказ)^лет</span> — та же «выживаемостная» логика, что в режиме ЗППП.</>),
-    pregAssum2: (<><b data-hi>Фертильность зависит от возраста.</b> Молодая пара ~20–25% за цикл, резкий спад после 35. Берём усреднённые популяционные значения (ASRM, Dunson, NICE) — это оценка тренда, не личная вероятность; индивидуальный разброс большой.</>),
+    pregAssum1: (<><b data-hi>Вероятность забеременеть</b> накапливается во временем <span data-f>P(t) = 1 − (1 − годовой_отказ)^лет</span>.</>),
+    pregAssum2: (<><b data-hi>Фертильность зависит от возраста.</b> Молодая пара имеет вероятность забеременеть ~20–25% за цикл, и после 35 происходит спад. Берём усреднённые популяционные значения (ASRM, Dunson, NICE), хотя индивидуальный разброс вероятности большой.</>),
     pregAssum3: (<><b data-hi>Только зачатие.</b> Модель оценивает вероятность зачатия, а не рождения ребёнка: выкидыши, внематочную беременность и прочие исходы не учитывает.</>),
-    pregAssum4: (<><b data-hi>Случайный день цикла.</b> Если фертильное окно не отслеживается, считаем, что акты происходят в случайные дни — базовая фертильность усреднена по всему циклу.</>),
-    pregAssum5: (<><b data-hi>Контрацепция.</b> Берётся таблица типичного использования (<a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC/Trussell ↗</a>). Несколько методов сочетаются перемножением (оценка снизу).</>),
-    pregAssum6: (<><b data-hi>Девушка и парень.</b> У девушки партнёры не суммируются — одно зачатие за цикл. У парня считаем «хотя бы одну беременность среди партнёрш»: больше партнёрш и секса без контрацепции → выше шанс.</>),
+    pregAssum4: (<><b data-hi>Случайный день цикла.</b> Если фертильное окно не отслеживается, считаем, что акты происходят в случайные дни — базовая фертильность в модели усредняется по всему циклу.</>),
+    pregAssum5: (<><b data-hi>Контрацепция.</b> Берётся таблица типичного использования (<a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC/Trussell ↗</a>). Несколько методов сочетаются перемножением эффективности.</>),
+    pregAssum6: (<><b data-hi>Девушка и парень.</b> В модели рассчитывающей веростность забеременеть девушки партнёры не суммируются, а в каждый цикл возможно только одно зачатие. У парня модель считает «хотя бы одну беременность среди всех партнёрш». Тоесть больше партнёрш и секса без контрацепции → выше шанс что хоть одна из них забеременеет.</>),
     pregAssum7: (<><b data-hi>Парень = ЗППП-логика.</b> «Хотя бы одна беременность среди партнёрш»: вклад каждого типа перемножается. Постоянные — по циклам весь период; приходящие — связь длительностью dur, обновляется за год; хукапы — один акт (per-act ≈ ⅕ от цикловой f — грубая оценка).</>),
     pregAssum8: (<><b data-hi>Почему у парня важно число партнёрш.</b> Каждая партнёрша — отдельный «розыгрыш»: забеременеть она может независимо от других, поэтому считаем не «сколько всего детей», а шанс, что произойдёт <b>хотя бы одна</b> беременность. Чем больше партнёрш и чем больше с каждой секса без надёжной контрацепции — тем выше этот шанс, потому что независимые возможности складываются. Для каждой партнёрши берём вероятность «не забеременела» и перемножаем их; единица минус это произведение и есть «хотя бы одна». У девушки наоборот: партнёры не складываются, потому что её цикл — общее узкое место (одно зачатие за цикл).</>),
     pregAssumSources: (<>Источники: <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>CDC / Trussell (контрацепция) ↗</a> · <a href="https://www.nice.org.uk/guidance/cg156" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NICE (фертильность и возраст) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/infertility" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ВОЗ (бесплодие) ↗</a></>),
@@ -979,7 +979,7 @@ const I18N = {
     thPerfect: "Idealno",
     thTypical: "Stvarno",
     pregPerYear: "% trud./god.",
-    typicalInfo: "Ovo je udeo žena koje su zatrudnele tokom prve godine korišćenja metoda. „Idealno“ — ako se metod uvek koristi pravilno; „Stvarno“ — stvarno korišćenje sa propustima i greškama, kao kod većine.",
+    typicalInfo: (<>Ovo je udeo žena koje su zatrudnele tokom prve godine korišćenja metoda.<br /><br />„Idealno“ — ako se metod uvek koristi pravilno.<br />„Stvarno“ — stvarno korišćenje sa propustima i greškama, kao kod većine.</>),
     thSideFx: "Neželjeni efekti",
     howWorks: "Kako radi",
     sideRisks: "Neželjeni efekti i rizici",
@@ -1605,79 +1605,79 @@ function kFreq(perWeek) { return lerpTable(perWeek, F_FREQ_PTS); }
 const CONTRA = [
   { key: "none", label: { en: "No method", ru: "Без метода", sr: "Bez metoda" }, perfect: 0.85, typical: 0.85, sev: 1, control: "toggle",
     side: { en: "No side effects, but the maximum chance of pregnancy and zero protection from STIs.", ru: "Побочек нет, но максимальный шанс беременности и ноль защиты от ИППП.", sr: "Nema neželjenih efekata, ali maksimalna šansa za trudnoću i nula zaštite od PPI." },
-    guide: { how: { en: "No contraception is used. Baseline: ~85 of 100 couples conceive within a year.", ru: "Контрацепция не используется. Базовая линия: ~85 из 100 пар беременеют за год.", sr: "Kontracepcija se ne koristi. Osnovna linija: ~85 od 100 parova zatrudni za godinu." }, side: { en: "There is no method as such; the risk is unwanted pregnancy and infections.", ru: "Метод как таковой отсутствует; риск — нежелательная беременность и инфекции.", sr: "Metoda kao takvog nema; rizik je neželjena trudnoća i infekcije." }, who: { en: "Only for those planning a pregnancy or ready for one.", ru: "Только для тех, кто планирует беременность или готов к ней.", sr: "Samo za one koji planiraju trudnoću ili su spremni na nju." } },
+    guide: { how: { en: "No contraception is used. Baseline: ~85 of 100 couples conceive within a year.", ru: "Контрацепция не используется. Базовая линия: ~85 из 100 пар беременеют за год.", sr: "Kontracepcija se ne koristi. Osnovna linija: ~85 od 100 parova zatrudni za godinu." }, side: { en: "There is no method as such; the risk is unwanted pregnancy and infections. Only for those planning a pregnancy or ready for one.", ru: "Метод как таковой отсутствует; риск — нежелательная беременность и инфекции. Только для тех, кто планирует беременность или готов к ней.", sr: "Metoda kao takvog nema; rizik je neželjena trudnoća i infekcije. Samo za one koji planiraju trudnoću ili su spremni na nju." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "withdrawal", label: { en: "Withdrawal", ru: "Прерванный акт", sr: "Prekinuti akt" }, perfect: 0.04, typical: 0.22, sev: 1, control: "perAct",
     side: { en: "Harmless in itself; high failure rate and zero protection from STIs.", ru: "Сам по себе безвреден; высокая частота ошибок и ноль защиты от ИППП.", sr: "Sam po sebi bezopasan; visoka stopa grešaka i nula zaštite od PPI." },
-    guide: { how: { en: "Withdrawing the penis before ejaculation.", ru: "Извлечение полового члена до эякуляции.", sr: "Izvlačenje penisa pre ejakulacije." }, side: { en: "No physical harm; depends on self-control, pre-ejaculate may contain sperm.", ru: "Физического вреда нет; зависит от самоконтроля, предэякулят может содержать сперматозоиды.", sr: "Nema fizičke štete; zavisi od samokontrole, predejakulat može sadržati spermatozoide." }, who: { en: "Cheap and always available, but one of the least reliable methods in typical use.", ru: "Дёшево и всегда доступно, но один из наименее надёжных методов при типичном использовании.", sr: "Jeftino i uvek dostupno, ali jedan od najmanje pouzdanih metoda pri tipičnom korišćenju." } },
+    guide: { how: { en: "Withdrawing the penis before ejaculation.", ru: "Извлечение полового члена до эякуляции.", sr: "Izvlačenje penisa pre ejakulacije." }, side: { en: "Needs self-control, but pre-ejaculate may still contain sperm. Cheap and always available, but one of the least reliable methods in typical use.", ru: "Необходим самоконтроль, но предэякулят всё равно может содержать сперматозоиды. Дёшево и всегда доступно, но один из наименее надёжных методов при типичном использовании.", sr: "Potrebna je samokontrola, ali predejakulat ipak može sadržati spermatozoide. Jeftino i uvek dostupno, ali jedan od najmanje pouzdanih metoda pri tipičnom korišćenju." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "fam", label: { en: "Calendar / fertile window", ru: "Календарь / фертильное окно", sr: "Kalendar / plodni prozor" }, perfect: 0.004, typical: 0.24, sev: 1, control: "perAct",
-    side: { en: "No side effects; needs discipline, the gap between perfect and typical is huge.", ru: "Без побочек; нужна дисциплина, разрыв идеального и типичного огромен.", sr: "Bez neželjenih efekata; potrebna disciplina, jaz između idealnog i tipičnog je ogroman." },
-    guide: { how: { en: "Tracking fertility signs (temperature, mucus, calendar) and abstinence/barrier on fertile days.", ru: "Отслеживание признаков фертильности (температура, слизь, календарь) и воздержание/барьер в фертильные дни.", sr: "Praćenje znakova plodnosti (temperatura, sluz, kalendar) i uzdržavanje/barijera u plodnim danima." }, side: { en: "No harm; the cost is self-discipline and abstinence; errors in recognizing the window lead to pregnancy.", ru: "Вреда нет; цена — самодисциплина и воздержание; ошибки распознавания окна ведут к беременности.", sr: "Nema štete; cena je samodisciplina i uzdržavanje; greške u prepoznavanju prozora vode trudnoći." }, who: { en: "Perfect use (symptothermal) is very effective, typical use is one of the least reliable. The ideal depends on the method (symptothermal ~0.4%, calendar ~5%).", ru: "Идеальное использование (симптотермальный) очень эффективно, типичное — одно из самых ненадёжных. Идеал зависит от метода (символотермальный ~0,4%, календарный ~5%).", sr: "Idealno korišćenje (simptotermalni) je veoma efikasno, tipično — jedno od najmanje pouzdanih. Idealno zavisi od metoda (simptotermalni ~0,4%, kalendarski ~5%)." } },
+    side: { en: "No side effects; needs discipline, the gap between perfect and typical is huge.", ru: "Без побочек; нужна дисциплина, разрыв идеальной и типичной эффективности огромен.", sr: "Bez neželjenih efekata; potrebna disciplina, jaz između idealnog i tipičnog je ogroman." },
+    guide: { how: { en: "Tracking fertility signs (temperature, mucus, calendar) and abstinence/barrier on fertile days.", ru: "Отслеживание признаков фертильности (температура, слизь, календарь) и воздержание/барьер в фертильные дни.", sr: "Praćenje znakova plodnosti (temperatura, sluz, kalendar) i uzdržavanje/barijera u plodnim danima." }, side: { en: "No harm; self-discipline and abstinence are needed. Errors in recognizing the window lead to pregnancy.", ru: "Вреда нет, необходимы самодисциплина и воздержание. Ошибки распознавания окна ведут к беременности.", sr: "Nema štete; potrebni su samodisciplina i uzdržavanje. Greške u prepoznavanju prozora vode trudnoći." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
-  { key: "condom_m", label: { en: "Condom (male)", ru: "Презерватив (муж.)", sr: "Kondom (muški)" }, perfect: 0.02, typical: 0.18, sev: 1, control: "perAct",
-    side: { en: "Occasional latex allergy; may tear/slip. Protects from STIs.", ru: "Изредка аллергия на латекс; может порваться/соскользнуть. Защищает от ИППП.", sr: "Ponekad alergija na lateks; može pući/skliznuti. Štiti od PPI." },
-    guide: { how: { en: "A barrier on the penis that holds sperm. Also lowers STI risk.", ru: "Барьер на половом члене, удерживающий сперму. Снижает и риск ИППП.", sr: "Barijera na penisu koja zadržava spermu. Smanjuje i rizik od PPI." }, side: { en: "Possible latex allergy (polyurethane exists); risk of tearing/slipping.", ru: "Возможна аллергия на латекс (есть полиуретановые); риск разрыва/соскальзывания.", sr: "Moguća alergija na lateks (postoje poliuretanski); rizik od pucanja/klizanja." }, who: { en: "Suits almost everyone, no prescription. STI protection is a plus to any method. (Updated CDC gives typical 13% instead of 18%.)", ru: "Подходит почти всем, без рецепта. Защита от ИППП — плюс к любому методу. (Обновлённая CDC даёт типичное 13% вместо 18%.)", sr: "Odgovara skoro svima, bez recepta. Zaštita od PPI je plus uz svaki metod. (Ažurirani CDC daje tipično 13% umesto 18%.)" } },
+  { key: "condom_m", label: { en: "Condom (male)", ru: "Презерватив (муж.)", sr: "Kondom (muški)" }, perfect: 0.02, typical: 0.13, sev: 1, control: "perAct",
+    side: { en: "Occasional latex allergy; may tear/slip. Protects from STIs.", ru: "Изредка аллергия на латекс, может порваться или соскользнуть. Снижает риск ИППП.", sr: "Ponekad alergija na lateks; može pući/skliznuti. Štiti od PPI." },
+    guide: { how: { en: "A barrier on the penis that holds sperm. Also lowers STI risk.", ru: "Барьер на половом члене, удерживающий сперму. Снижает и риск ИППП.", sr: "Barijera na penisu koja zadržava spermu. Smanjuje i rizik od PPI." }, side: { en: "Possible latex allergy (polyurethane exists); risk of tearing/slipping. Suits almost everyone, no prescription. Lowers STI risk.", ru: "Возможна аллергия на латекс (есть полиуретановые). Риск разрыва или соскальзывания. Подходит почти всем, без рецепта. Снижает риск ИППП.", sr: "Moguća alergija na lateks (postoje poliuretanski); rizik od pucanja/klizanja. Odgovara skoro svima, bez recepta. Smanjuje rizik od PPI." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }, { label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }] },
   { key: "condom_f", label: { en: "Condom (female)", ru: "Презерватив (жен.)", sr: "Kondom (ženski)" }, perfect: 0.05, typical: 0.21, sev: 1, control: "perAct",
-    side: { en: "May shift/be noisy; protects from STIs.", ru: "Может смещаться/шуметь; защищает от ИППП.", sr: "Može se pomerati/biti bučan; štiti od PPI." },
-    guide: { how: { en: "A soft sleeve in the vagina with rings that holds sperm.", ru: "Мягкий рукав во влагалище с кольцами, задерживает сперму.", sr: "Mekani rukav u vagini sa prstenovima koji zadržava spermu." }, side: { en: "Sometimes shifting/discomfort; irritation is rare. Protects from STIs.", ru: "Иногда смещение/дискомфорт; раздражения редки. Защищает от ИППП.", sr: "Ponekad pomeranje/nelagodnost; iritacije su retke. Štiti od PPI." }, who: { en: "An alternative to the latex male one; gives the woman control over the barrier. No prescription.", ru: "Альтернатива латексному мужскому; даёт женщине контроль над барьером. Без рецепта.", sr: "Alternativa lateksu muškom; daje ženi kontrolu nad barijerom. Bez recepta." } },
+    side: { en: "May shift/be noisy; protects from STIs.", ru: "Может смещаться или шуметь. Снижает риск ИППП.", sr: "Može se pomerati/biti bučan; štiti od PPI." },
+    guide: { how: { en: "A soft sleeve in the vagina with rings that holds sperm.", ru: "Мягкий рукав во влагалище с кольцами, задерживает сперму.", sr: "Mekani rukav u vagini sa prstenovima koji zadržava spermu." }, side: { en: "Sometimes shifts or causes discomfort; irritation is rare. Lowers STI risk. An alternative to the male condom — gives the woman control over contraception. No prescription.", ru: "Иногда смещается или вызывает дискомфорт. Редко бывают раздражения. Снижает риск ИППП. Альтернатива мужскому презервативу — даёт женщине контроль над контрацепцией. Рецепта не требует.", sr: "Ponekad se pomera ili izaziva nelagodnost; iritacije su retke. Smanjuje rizik od PPI. Alternativa muškom kondomu — daje ženi kontrolu nad kontracepcijom. Bez recepta." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "diaphragm", label: { en: "Diaphragm / cap", ru: "Диафрагма / колпачок", sr: "Dijafragma / kapica" }, perfect: 0.06, typical: 0.12, sev: 1, control: "perAct",
-    side: { en: "Size fitting; slightly higher cystitis risk; used with spermicide.", ru: "Подбор по размеру; чуть выше риск цистита; со спермицидом.", sr: "Biranje veličine; malo veći rizik od cistitisa; sa spermicidom." },
-    guide: { how: { en: "A cup with spermicide covering the cervix; inserted before the act.", ru: "Чашечка со спермицидом, закрывающая шейку матки; вводится перед актом.", sr: "Čašica sa spermicidom koja pokriva grlić materice; uvodi se pre akta." }, side: { en: "More frequent cystitis, irritation from spermicide; needs fitting and training.", ru: "Учащённые циститы, раздражение от спермицида; нужен подбор и обучение.", sr: "Češći cistitisi, iritacija od spermicida; potrebno biranje i obuka." }, who: { en: "An option when hormones are contraindicated. For women who have given birth (and for the cap) effectiveness is notably lower.", ru: "Вариант при противопоказаниях к гормонам. У рожавших (и для колпачка) эффективность заметно ниже.", sr: "Opcija pri kontraindikacijama na hormone. Kod žena koje su rađale (i za kapicu) efikasnost je znatno niža." } },
+    side: { en: "Needs fitting by size; slightly higher cystitis risk.", ru: "Нужен подбор по размеру. Чуть выше риск цистита.", sr: "Potrebno biranje po veličini. Malo veći rizik od cistitisa." },
+    guide: { how: { en: "A cup with spermicide covering the cervix; inserted before the act.", ru: "Чашечка со спермицидом, закрывающая шейку матки. Вводится перед актом.", sr: "Čašica sa spermicidom koja pokriva grlić materice; uvodi se pre akta." }, side: { en: "More frequent cystitis, irritation from spermicide; needs fitting and training. An option when hormones are contraindicated. For women who have given birth (and for the cap) effectiveness is notably lower.", ru: "Учащённый цистит, раздражение от спермицида. Нужен подбор и обучение. Вариант при противопоказаниях к гормонам. У рожавших эффективность заметно ниже.", sr: "Češći cistitisi, iritacija od spermicida; potrebno biranje i obuka. Opcija pri kontraindikacijama na hormone. Kod žena koje su rađale (i za kapicu) efikasnost je znatno niža." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "spermicide", label: { en: "Spermicides", ru: "Спермициды", sr: "Spermicidi" }, perfect: 0.18, typical: 0.28, sev: 1, control: "perAct",
-    side: { en: "Mucosal irritation; frequent nonoxynol-9 may raise STI risk.", ru: "Раздражение слизистой; частый ноноксинол-9 может повышать риск ИППП.", sr: "Iritacija sluznice; čest nonoksinol-9 može povećati rizik od PPI." },
-    guide: { how: { en: "Gel/foam/suppositories with a substance that kills sperm; inserted before the act.", ru: "Гель/пена/свечи с веществом, убивающим сперматозоиды; вводятся перед актом.", sr: "Gel/pena/supozitorije sa supstancom koja ubija spermatozoide; uvode se pre akta." }, side: { en: "Irritation; with frequent use nonoxynol-9 damages the mucosa and may RAISE STI risk.", ru: "Раздражение; при частом применении ноноксинол-9 повреждает слизистую и может ПОВЫШАТЬ риск ИППП.", sr: "Iritacija; pri čestom korišćenju nonoksinol-9 oštećuje sluznicu i može POVEĆATI rizik od PPI." }, who: { en: "One of the least reliable alone; usually combined with a barrier. No prescription.", ru: "Один из наименее надёжных в одиночку; обычно сочетают с барьером. Без рецепта.", sr: "Jedan od najmanje pouzdanih samostalno; obično se kombinuje sa barijerom. Bez recepta." } },
+    side: { en: "Mucosal irritation; may raise STI risk.", ru: "Раздражение слизистой, может повышать риск ИППП.", sr: "Iritacija sluznice; može povećati rizik od PPI." },
+    guide: { how: { en: "Gel/foam/suppositories with a substance that kills sperm; inserted before the act.", ru: "Гель/пена/свечи с веществом, убивающим сперматозоиды. Вводятся перед актом.", sr: "Gel/pena/supozitorije sa supstancom koja ubija spermatozoide; uvode se pre akta." }, side: { en: "Irritation; with frequent use nonoxynol-9 damages the mucosa and may RAISE STI risk. One of the least reliable alone; usually combined with a barrier. No prescription.", ru: "Раздражение. При частом применении ноноксинол-9 повреждает слизистую и может ПОВЫШАТЬ риск ИППП. Один из наименее надёжных и обычно сочетают с барьером. Рецепт не требуется.", sr: "Iritacija; pri čestom korišćenju nonoksinol-9 oštećuje sluznicu i može POVEĆATI rizik od PPI. Jedan od najmanje pouzdanih samostalno; obično se kombinuje sa barijerom. Bez recepta." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "cok", label: { en: "Combined pill (COC)", ru: "КОК (таблетки)", sr: "Kombinovana pilula (KOK)" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
-    side: { en: "Estrogen: nausea, mood changes, rarely thrombosis; not with some risk factors.", ru: "Эстроген: тошнота, изменения настроения, редко тромбозы; не при ряде факторов риска.", sr: "Estrogen: mučnina, promene raspoloženja, retko tromboze; ne uz neke faktore rizika." },
-    guide: { how: { en: "Estrogen + progestin daily: suppress ovulation, thicken mucus.", ru: "Эстроген + прогестин ежедневно: подавляют овуляцию, сгущают слизь.", sr: "Estrogen + progestin dnevno: potiskuju ovulaciju, zgušnjavaju sluz." }, side: { en: "Nausea, breast tenderness, mood/libido changes, spotting. A rare but serious risk — venous thrombosis (higher in smokers 35+).", ru: "Тошнота, болезненность груди, изменения настроения/либидо, мажущие выделения. Редкий, но серьёзный риск — венозный тромбоз (выше у курящих 35+).", sr: "Mučnina, osetljivost grudi, promene raspoloženja/libida, krvarenje. Redak ali ozbiljan rizik — venska tromboza (veći kod pušača 35+)." }, who: { en: "Contraindicated in migraine with aura, thrombosis, smoking after 35, severe hypertension. Bonuses: regular cycle, less acne.", ru: "Противопоказаны при мигрени с аурой, тромбозах, курении после 35, тяжёлой гипертензии. Бонусы: регулярный цикл, меньше акне.", sr: "Kontraindikovane kod migrene sa aurom, tromboze, pušenja posle 35, teške hipertenzije. Bonusi: redovan ciklus, manje akni." } },
+    side: { en: "Nausea, mood changes, weight fluctuations, rarely thrombosis. Consultation with a doctor required.", ru: "Тошнота, изменения настроения, колебания веса, редко тромбозы. Требуется консультация с врачом.", sr: "Mučnina, promene raspoloženja, kolebanja težine, retko tromboze. Potrebna konsultacija sa lekarom." },
+    guide: { how: { en: "Estrogen + progestin daily: suppress ovulation, thicken mucus.", ru: "Приём эстрогена и прогестина ежедневно: подавляет овуляцию и сгущает слизь.", sr: "Estrogen + progestin dnevno: potiskuju ovulaciju, zgušnjavaju sluz." }, side: { en: "Nausea, breast tenderness, mood/libido changes, spotting. A rare but serious risk — venous thrombosis (higher in smokers 35+). Contraindicated in migraine with aura, thrombosis, smoking after 35, severe hypertension. Prescription required and a mandatory consultation with a doctor.", ru: "Тошнота, болезненность груди, изменения настроения/либидо, мажущие выделения. Редкий, но серьёзный риск — венозный тромбоз (выше у курящих 35+). Противопоказаны при мигрени с аурой, тромбозах, курении после 35, тяжёлой гипертензии. Нужен рецепт и обязательная консультация с врачом.", sr: "Mučnina, osetljivost grudi, promene raspoloženja/libida, krvarenje. Redak ali ozbiljan rizik — venska tromboza (veći kod pušača 35+). Kontraindikovane kod migrene sa aurom, tromboze, pušenja posle 35, teške hipertenzije. Potreban recept i obavezna konsultacija sa lekarom." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }, { label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }] },
   { key: "minipill", label: { en: "Mini-pill (progestin)", ru: "Мини-пили (прогестин)", sr: "Mini-pilula (progestin)" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
-    side: { en: "Require strict timing; irregular bleeding. (Numbers = same as COC — estimate.)", ru: "Требуют строгого времени приёма; нерегулярные кровотечения. (Числа = как у КОК — оценка.)", sr: "Zahtevaju strogo vreme uzimanja; nepravilna krvarenja. (Brojevi = kao KOK — procena.)" },
-    guide: { how: { en: "Progestin only daily; thickens mucus, partially suppresses ovulation. Strictly tied to dosing time.", ru: "Только прогестин ежедневно; сгущают слизь, частично подавляют овуляцию. Жёстко привязаны ко времени приёма.", sr: "Samo progestin dnevno; zgušnjava sluz, delimično potiskuje ovulaciju. Strogo vezana za vreme uzimanja." }, side: { en: "Irregular/spotting bleeding — the most common effect. Without estrogen — fewer thromboses.", ru: "Нерегулярные/мажущие кровотечения — самый частый эффект. Без эстрогена — меньше тромбозов.", sr: "Nepravilna/oskudna krvarenja — najčešći efekat. Bez estrogena — manje tromboza." }, who: { en: "An option when estrogen is contraindicated (breastfeeding, migraine with aura, smoking 35+). CDC gives a row shared with COC — no separate numbers, this is an estimate.", ru: "Вариант при противопоказаниях к эстрогену (ГВ, мигрень с аурой, курение 35+). CDC даёт общую с КОК строку — отдельных чисел нет, это оценка.", sr: "Opcija pri kontraindikacijama na estrogen (dojenje, migrena sa aurom, pušenje 35+). CDC daje red zajednički sa KOK — zasebnih brojeva nema, ovo je procena." } },
+    side: { en: "Require strict dosing timing. May cause irregular bleeding.", ru: "Требуют строгого времени приёма. Могут вызывать нерегулярные кровотечения.", sr: "Zahtevaju strogo vreme uzimanja. Mogu izazvati nepravilna krvarenja." },
+    guide: { how: { en: "Progestin only daily; thickens mucus, partially suppresses ovulation. Strictly tied to dosing time.", ru: "Прогестин ежедневно. Сгущают слизь, частично подавляют овуляцию. Жёстко привязаны ко времени приёма.", sr: "Samo progestin dnevno; zgušnjava sluz, delimično potiskuje ovulaciju. Strogo vezana za vreme uzimanja." }, side: { en: "Irregular/spotting bleeding — the most common effect. Contains no estrogen, so the chance of thrombosis is lower. An option when estrogen is contraindicated (breastfeeding, migraine with aura, smoking 35+). Available by prescription.", ru: "Нерегулярные/мажущие кровотечения — самый частый эффект. Не содержит эстрогена, поэтому ниже шанс тромбозов. Вариант при противопоказаниях к эстрогену (ГВ, мигрень с аурой, курение 35+). Отпускаются по рецепту.", sr: "Nepravilna/oskudna krvarenja — najčešći efekat. Ne sadrži estrogen, pa je šansa za trombozu niža. Opcija pri kontraindikacijama na estrogen (dojenje, migrena sa aurom, pušenje 35+). Izdaju se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "patch", label: { en: "Patch", ru: "Пластырь", sr: "Flaster" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
-    side: { en: "Like COC (estrogen); skin irritation under the patch.", ru: "Как у КОК (эстроген); раздражение кожи под пластырем.", sr: "Kao KOK (estrogen); iritacija kože ispod flastera." },
-    guide: { how: { en: "A skin patch with estrogen + progestin; changed once a week.", ru: "Накожный пластырь с эстрогеном + прогестином; меняется раз в неделю.", sr: "Flaster na koži sa estrogenom + progestinom; menja se jednom nedeljno." }, side: { en: "Profile like COC; skin irritation, risk of detaching. At ≥90 kg effectiveness may drop.", ru: "Профиль как у КОК; раздражение кожи, риск отклеивания. При весе ≥90 кг эффективность может снижаться.", sr: "Profil kao KOK; iritacija kože, rizik od odlepljivanja. Pri težini ≥90 kg efikasnost može opasti." }, who: { en: "Same contraindications as COC. Convenient for those who forget daily pills.", ru: "Те же противопоказания, что у КОК. Удобен забывающим ежедневные таблетки.", sr: "Iste kontraindikacije kao KOK. Pogodan za one koji zaboravljaju dnevne pilule." } },
+    side: { en: "Like COC (estrogen); skin irritation under the patch.", ru: "Побочки как у КОК (эстроген). Раздражение кожи под пластырем.", sr: "Kao KOK (estrogen); iritacija kože ispod flastera." },
+    guide: { how: { en: "A skin patch with estrogen + progestin; changed once a week.", ru: "Накожный пластырь с эстрогеном + прогестином. Меняется раз в неделю.", sr: "Flaster na koži sa estrogenom + progestinom; menja se jednom nedeljno." }, side: { en: "Profile like COC; skin irritation, risk of detaching. At ≥90 kg effectiveness may drop. Same contraindications as COC. Convenient for those who forget daily pills. Available by prescription.", ru: "Побочки как у КОК. Раздражение кожи, риск отклеивания. При весе ≥90 кг эффективность может снижаться. Те же противопоказания, что у КОК. Удобен забывающим ежедневные таблетки. Отпускается по рецепту.", sr: "Profil kao KOK; iritacija kože, rizik od odlepljivanja. Pri težini ≥90 kg efikasnost može opasti. Iste kontraindikacije kao KOK. Pogodan za one koji zaboravljaju dnevne pilule. Izdaje se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "ring", label: { en: "Vaginal ring", ru: "Вагинальное кольцо", sr: "Vaginalni prsten" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
     side: { en: "Like COC; sometimes discharge/irritation, may fall out.", ru: "Как у КОК; иногда выделения/раздражение, может выпадать.", sr: "Kao KOK; ponekad sekret/iritacija, može ispasti." },
-    guide: { how: { en: "A flexible ring in the vagina with estrogen + progestin; stays 3 weeks.", ru: "Гибкое кольцо во влагалище с эстрогеном + прогестином; стоит 3 недели.", sr: "Fleksibilni prsten u vagini sa estrogenom + progestinom; stoji 3 nedelje." }, side: { en: "Profile like COC; locally — discharge, irritation, rarely falling out.", ru: "Профиль как у КОК; локально — выделения, раздражение, изредка выпадение.", sr: "Profil kao KOK; lokalno — sekret, iritacija, retko ispadanje." }, who: { en: "Same contraindications as COC. Convenient: once a month, not daily.", ru: "Те же противопоказания, что у КОК. Удобно: раз в месяц, не ежедневно.", sr: "Iste kontraindikacije kao KOK. Pogodno: jednom mesečno, ne svakodnevno." } },
+    guide: { how: { en: "A flexible ring in the vagina with estrogen + progestin; stays 3 weeks.", ru: "Гибкое кольцо во влагалище с эстрогеном + прогестином. Стоит 3 недели.", sr: "Fleksibilni prsten u vagini sa estrogenom + progestinom; stoji 3 nedelje." }, side: { en: "Profile like COC; locally — discharge, irritation, rarely falling out. Same contraindications as COC. Convenient, since it is changed once a month. Available by prescription.", ru: "Побочки как у КОК. Выделения, раздражение, изредка выпадение. Те же противопоказания, что у КОК. Удобно, так как меняется раз в месяц. Отпускается по рецепту.", sr: "Profil kao KOK; lokalno — sekret, iritacija, retko ispadanje. Iste kontraindikacije kao KOK. Pogodno, jer se menja jednom mesečno. Izdaje se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "depo", label: { en: "Injection (Depo)", ru: "Инъекции (Депо)", sr: "Injekcija (Depo)" }, perfect: 0.002, typical: 0.06, sev: 3, control: "toggle",
-    side: { en: "Reversible bone-mass loss; irregular bleeding; slow return of fertility.", ru: "Обратимая потеря костной массы; нерегулярные кровотечения; долгий возврат фертильности.", sr: "Reverzibilni gubitak koštane mase; nepravilna krvarenja; spor povratak plodnosti." },
-    guide: { how: { en: "A progestin injection every ~3 months: suppresses ovulation.", ru: "Инъекция прогестина каждые ~3 месяца: подавляет овуляцию.", sr: "Injekcija progestina svaka ~3 meseca: potiskuje ovulaciju." }, side: { en: "Irregular bleeding (often amenorrhea), weight gain, reversible drop in bone density. Return of fertility — up to 9–12 mo after stopping.", ru: "Нерегулярные кровотечения (часто аменорея), набор веса, обратимое снижение костной плотности. Возврат фертильности — до 9–12 мес после отмены.", sr: "Nepravilna krvarenja (često amenoreja), dobijanje na težini, reverzibilno smanjenje koštane gustine. Povratak plodnosti — do 9–12 mes. nakon prestanka." }, who: { en: "Convenient for those suited by a quarterly shot. Caution with osteoporosis risk and near-term pregnancy planning.", ru: "Удобно тем, кому подходит укол раз в квартал. Осторожно при риске остеопороза и скором планировании беременности.", sr: "Pogodno onima kojima odgovara injekcija jednom kvartalno. Oprez kod rizika od osteoporoze i skorog planiranja trudnoće." } },
+    side: { en: "Reversible bone-mass loss; irregular bleeding; slow return of fertility.", ru: "Обратимая потеря костной массы, нерегулярные кровотечения, долгий возврат фертильности.", sr: "Reverzibilni gubitak koštane mase; nepravilna krvarenja; spor povratak plodnosti." },
+    guide: { how: { en: "A progestin injection every ~3 months: suppresses ovulation.", ru: "Инъекция прогестина каждые ~3 месяца: подавляет овуляцию.", sr: "Injekcija progestina svaka ~3 meseca: potiskuje ovulaciju." }, side: { en: "Irregular bleeding (often amenorrhea), weight gain, reversible drop in bone density. Return of fertility — up to 9–12 mo after stopping. Convenient for those suited by a quarterly shot. Caution with osteoporosis risk and near-term pregnancy planning. Available by prescription, the injection is given by a doctor.", ru: "Нерегулярные кровотечения (часто аменорея), набор веса, обратимое снижение костной плотности. Возврат фертильности — до 9–12 мес после отмены. Удобно тем, кому подходит укол раз в квартал. Использовать с осторожностью при риске остеопороза и скором планировании беременности. Отпускается по рецепту, инъекцию делает врач.", sr: "Nepravilna krvarenja (često amenoreja), dobijanje na težini, reverzibilno smanjenje koštane gustine. Povratak plodnosti — do 9–12 mes. nakon prestanka. Pogodno onima kojima odgovara injekcija jednom kvartalno. Oprez kod rizika od osteoporoze i skorog planiranja trudnoće. Izdaje se na recept, injekciju daje lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
-  { key: "iud_cu", label: { en: "Copper IUD", ru: "Медная ВМС", sr: "Bakarna spirala" }, perfect: 0.006, typical: 0.008, sev: 2, control: "toggle",
-    side: { en: "Heavier/more painful periods; insertion risk (rarely perforation).", ru: "Более обильные/болезненные месячные; риск при установке (редко перфорация).", sr: "Obilnije/bolnije menstruacije; rizik pri postavljanju (retko perforacija)." },
-    guide: { how: { en: "A T-shaped device in the uterus; copper is toxic to sperm. Hormone-free, up to 10–12 years.", ru: "Т-образное устройство в матке; медь токсична для сперматозоидов. Без гормонов, до 10–12 лет.", sr: "Uređaj u obliku slova T u materici; bakar je toksičan za spermatozoide. Bez hormona, do 10–12 godina." }, side: { en: "Heavier and more painful periods, especially the first months. On insertion — pain, rarely perforation/expulsion.", ru: "Более обильные и болезненные менструации, особенно первые месяцы. При установке — боль, редко перфорация/экспульсия.", sr: "Obilnije i bolnije menstruacije, naročito prvih meseci. Pri postavljanju — bol, retko perforacija/ekspulzija." }, who: { en: "A hormone-free long-term method; works as emergency contraception within the first 5 days. «Fit and forget» — perfect ≈ typical.", ru: "Негормональный долгий метод; годится как экстренная контрацепция в первые 5 дней. «Поставил и забыл» — идеальное≈типичное.", sr: "Nehormonski dugotrajni metod; služi kao hitna kontracepcija u prvih 5 dana. „Postavi i zaboravi“ — idealno≈tipično." } },
+  { key: "iud_cu", label: { en: "Copper IUD", ru: "Медная ВМС (внутриматочная спираль)", sr: "Bakarna spirala" }, perfect: 0.006, typical: 0.008, sev: 2, control: "toggle",
+    side: { en: "Heavier/more painful periods; insertion risk (rarely perforation).", ru: "Более обильные/болезненные месячные. Редкая перфорация при установке.", sr: "Obilnije/bolnije menstruacije; rizik pri postavljanju (retko perforacija)." },
+    guide: { how: { en: "A T-shaped device in the uterus; copper is toxic to sperm. Hormone-free. Works 5–10 years. Effectiveness does not depend on user error — fit and forget.", ru: "Т-образное устройство в матке. Медь токсична для сперматозоидов. Не использует гормоны. Работает 5–10 лет. Эффективность не зависит от ошибок пользователя — можно поставить и забыть.", sr: "Uređaj u obliku slova T u materici; bakar je toksičan za spermatozoide. Bez hormona. Radi 5–10 godina. Efikasnost ne zavisi od grešaka korisnika — postavi i zaboravi." }, side: { en: "Heavier and more painful periods, especially the first months. On insertion — pain, rarely perforation. Spontaneous expulsion of the device. A hormone-free long-term method. Can be used as emergency contraception within the first 5 days. Inserted and removed by a doctor.", ru: "Более обильные и болезненные менструации, особенно в первые месяцы. Риск при установке — боль и редко перфорация. Самопроизвольное выпадение спирали. Негормональный и долгосрочный метод. Можно использовать как экстренную контрацепцию в первые 5 дней. Устанавливает и удаляет врач.", sr: "Obilnije i bolnije menstruacije, naročito prvih meseci. Rizik pri postavljanju — bol, retko perforacija. Spontano ispadanje spirale. Nehormonski dugotrajni metod. Može se koristiti kao hitna kontracepcija u prvih 5 dana. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
-  { key: "iud_lng", label: { en: "Hormonal IUD", ru: "Гормональная ВМС", sr: "Hormonska spirala" }, perfect: 0.002, typical: 0.002, sev: 2, control: "toggle",
-    side: { en: "Irregular/scant bleeding the first months; insertion risks.", ru: "Нерегулярные/скудные кровотечения первые месяцы; риски при установке.", sr: "Nepravilna/oskudna krvarenja prvih meseci; rizici pri postavljanju." },
-    guide: { how: { en: "A T-shaped device releases progestin: thickens mucus, thins the endometrium. 3–8 years.", ru: "Т-образное устройство выделяет прогестин: сгущает слизь, истончает эндометрий. 3–8 лет.", sr: "Uređaj u obliku slova T oslobađa progestin: zgušnjava sluz, istanjuje endometrijum. 3–8 godina." }, side: { en: "Irregular spotting the first months, then often scant periods or amenorrhea. On insertion — pain, rarely perforation.", ru: "Нерегулярные мажущие выделения первые месяцы, затем часто скудные месячные или аменорея. При установке — боль, редко перфорация.", sr: "Nepravilna oskudna krvarenja prvih meseci, zatim često oskudne menstruacije ili amenoreja. Pri postavljanju — bol, retko perforacija." }, who: { en: "Very reliable, «fit and forget»; reduces heavy periods. Perfect = typical.", ru: "Очень надёжно, «поставил-забыл»; уменьшает обильные месячные. Идеальное=типичное.", sr: "Veoma pouzdano, „postavi i zaboravi“; smanjuje obilne menstruacije. Idealno=tipično." } },
+  { key: "iud_lng", label: { en: "Hormonal IUD", ru: "Гормональная ВМС (внутриматочная спираль)", sr: "Hormonska spirala" }, perfect: 0.002, typical: 0.002, sev: 2, control: "toggle",
+    side: { en: "Irregular/scant bleeding the first months; insertion risks.", ru: "Нерегулярные/скудные кровотечения в первые месяцы и риски при установке.", sr: "Nepravilna/oskudna krvarenja prvih meseci; rizici pri postavljanju." },
+    guide: { how: { en: "A T-shaped device releases progestin: thickens mucus, thins the endometrium. Works 3–8 years. A very reliable method of contraception that does not depend on user error. Fit and forget.", ru: "Т-образное устройство выделяет прогестин: сгущает слизь, истончает эндометрий. Работает 3–8 лет. Очень надёжное средство контрацепции и не зависит от ошибок пользователя. Можно поставить и забыть.", sr: "Uređaj u obliku slova T oslobađa progestin: zgušnjava sluz, istanjuje endometrijum. Radi 3–8 godina. Veoma pouzdano sredstvo kontracepcije koje ne zavisi od grešaka korisnika. Postavi i zaboravi." }, side: { en: "Irregular spotting the first months, then often scant periods or no menstruation. On insertion — pain, rarely perforation. Inserted and removed by a doctor.", ru: "Нерегулярные мажущие выделения в первые месяцы, затем часто скудные месячные или отсутствие менструаций. Риск при установке — боль и редко перфорация. Устанавливает и удаляет врач.", sr: "Nepravilna oskudna krvarenja prvih meseci, zatim često oskudne menstruacije ili izostanak menstruacija. Rizik pri postavljanju — bol, retko perforacija. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "implant", label: { en: "Implant", ru: "Имплант", sr: "Implant" }, perfect: 0.0005, typical: 0.0005, sev: 2, control: "toggle",
-    side: { en: "Unpredictable bleeding; insertion/removal — a minor subcutaneous procedure.", ru: "Непредсказуемые кровотечения; установка/удаление — малая процедура под кожей.", sr: "Nepredvidiva krvarenja; postavljanje/uklanjanje — mala potkožna procedura." },
-    guide: { how: { en: "A flexible rod with progestin under the upper-arm skin; suppresses ovulation. ~3–5 years.", ru: "Гибкий стержень с прогестином под кожей плеча; подавляет овуляцию. ~3–5 лет.", sr: "Fleksibilni štapić sa progestinom ispod kože nadlaktice; potiskuje ovulaciju. ~3–5 godina." }, side: { en: "Unpredictable bleeding — the main reason for discontinuation; possible acne, headaches. Insertion/removal — a minor procedure.", ru: "Непредсказуемые кровотечения — главная причина отказа; возможны акне, головные боли. Введение/удаление — мелкая процедура.", sr: "Nepredvidiva krvarenja — glavni razlog za prekid; mogući akne, glavobolje. Postavljanje/uklanjanje — mala procedura." }, who: { en: "The most effective reversible method; perfect = typical. Good for those who want «fit and forget».", ru: "Самый эффективный обратимый метод; идеальное=типичное. Хорош тем, кто хочет «поставить и забыть».", sr: "Najefikasniji reverzibilni metod; idealno=tipično. Dobar za one koji žele „postavi i zaboravi“." } },
+    side: { en: "Unpredictable bleeding; insertion/removal — a minor subcutaneous procedure.", ru: "Непредсказуемые кровотечения. Установка/удаление требуют малой процедуры под кожей.", sr: "Nepredvidiva krvarenja; postavljanje/uklanjanje — mala potkožna procedura." },
+    guide: { how: { en: "A flexible rod with progestin under the upper-arm skin; suppresses ovulation. Works ~3–5 years. The most effective reversible method that does not depend on user error. Fit and forget.", ru: "Гибкий стержень с прогестином под кожей плеча, подавляет овуляцию. Работает ~3–5 лет. Самый эффективный обратимый метод и не зависит от ошибок пользователя. Можно поставить и забыть.", sr: "Fleksibilni štapić sa progestinom ispod kože nadlaktice; potiskuje ovulaciju. Radi ~3–5 godina. Najefikasniji reverzibilni metod koji ne zavisi od grešaka korisnika. Postavi i zaboravi." }, side: { en: "Unpredictable bleeding, possible acne, headaches. Insertion and removal need a minor procedure under the skin. Inserted and removed by a doctor.", ru: "Непредсказуемые кровотечения, возможны акне, головные боли. Для введения и удаления нужна мелкая процедура под кожей. Ставит и удаляет врач.", sr: "Nepredvidiva krvarenja, mogući akne, glavobolje. Za postavljanje i uklanjanje potrebna je mala procedura ispod kože. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "steril_f", label: { en: "Female sterilization", ru: "Женская стерилизация", sr: "Ženska sterilizacija" }, perfect: 0.005, typical: 0.005, sev: 4, control: "toggle",
-    side: { en: "Surgery and anesthesia; considered irreversible; small ectopic risk on failure.", ru: "Хирургия и наркоз; считается необратимой; малый риск внематочной при отказе.", sr: "Hirurgija i anestezija; smatra se nepovratnom; mali rizik od vanmaterične pri neuspehu." },
-    guide: { how: { en: "Surgical blocking/removal of the fallopian tubes.", ru: "Хирургическое перекрытие/удаление маточных труб.", sr: "Hirurško zatvaranje/uklanjanje jajovoda." }, side: { en: "Surgical risks (anesthesia, bleeding, infection); on a rare failure a higher share of ectopic. Hormones unchanged.", ru: "Операционные риски (наркоз, кровотечение, инфекция); при редкой неудаче выше доля внематочной. Гормоны не меняются.", sr: "Hirurški rizici (anestezija, krvarenje, infekcija); pri retkom neuspehu veći udeo vanmaterične. Hormoni se ne menjaju." }, who: { en: "For those done with childbearing: the method is PERMANENT and irreversible. Weigh the decision in advance.", ru: "Для завершивших деторождение: метод ПОСТОЯННЫЙ и необратимый. Решение взвешивать заранее.", sr: "Za one koji su završili sa rađanjem: metod je TRAJAN i nepovratan. Odluku odvagati unapred." } },
+    side: { en: "Surgery and anesthesia; considered irreversible; small ectopic risk on failure.", ru: "Хирургия и наркоз. Считается необратимой. Существует малый риск внематочной беременности.", sr: "Hirurgija i anestezija; smatra se nepovratnom; mali rizik od vanmaterične pri neuspehu." },
+    guide: { how: { en: "Surgical blocking/removal of the fallopian tubes.", ru: "Хирургическое перекрытие/удаление маточных труб.", sr: "Hirurško zatvaranje/uklanjanje jajovoda." }, side: { en: "Surgical risks (anesthesia, bleeding, infection); on a rare failure a higher share of ectopic pregnancy. Hormones unchanged. The method is IRREVERSIBLE, so the decision must be weighed carefully in advance.", ru: "Операционные риски (наркоз, кровотечение, инфекция), при редкой неудаче выше доля внематочной беременности. Гормоны не меняются. Метод НЕОБРАТИМЫЙ, поэтому решение нужно тщательно взвешивать заранее.", sr: "Hirurški rizici (anestezija, krvarenje, infekcija); pri retkom neuspehu veći udeo vanmaterične trudnoće. Hormoni se ne menjaju. Metod je NEPOVRATAN, pa odluku treba pažljivo odvagati unapred." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "vasectomy", label: { en: "Vasectomy", ru: "Вазэктомия", sr: "Vazektomija" }, perfect: 0.001, typical: 0.0015, sev: 4, control: "toggle",
-    side: { en: "Minor surgery; not effective immediately (needs sperm check); considered irreversible.", ru: "Малая операция; не сразу эффективна (нужен контроль спермы); считается необратимой.", sr: "Mala operacija; nije odmah efikasna (potrebna provera sperme); smatra se nepovratnom." },
-    guide: { how: { en: "Cutting/tying the vas deferens — no sperm in the ejaculate.", ru: "Пересечение/перевязка семявыносящих протоков — в эякуляте нет сперматозоидов.", sr: "Presecanje/podvezivanje semenovoda — u ejakulatu nema spermatozoida." }, side: { en: "Minor surgery: pain, swelling, bruising, rarely chronic pain. The effect is not instant — a control sperm test is needed (~3 mo).", ru: "Малая операция: боль, отёк, синяк, редко хроническая боль. Эффект не мгновенный — нужен контрольный анализ спермы (~3 мес).", sr: "Mala operacija: bol, otok, modrica, retko hroničan bol. Efekat nije trenutan — potrebna kontrolna analiza sperme (~3 mes.)." }, who: { en: "A permanent method for men done with childbearing. Simpler than female sterilization, but just as irreversible.", ru: "Постоянный метод для мужчин, завершивших деторождение. Проще женской стерилизации, но столь же необратим.", sr: "Trajni metod za muškarce koji su završili sa rađanjem. Jednostavniji od ženske sterilizacije, ali jednako nepovratan." } },
+    side: { en: "Minor surgery. Not effective immediately. Reversibility is not guaranteed.", ru: "Малая операция. Не сразу эффективна. Обратимость не гарантирована.", sr: "Mala operacija. Nije odmah efikasna. Reverzibilnost nije zagarantovana." },
+    guide: { how: { en: "Cutting/tying the vas deferens — sperm no longer enters the ejaculate. The effect is lifelong, and the hormonal background does not change.", ru: "Пересечение/перевязка семявыносящих протоков — в эякулят больше не попадают сперматозоиды. Эффект пожизненный, и гормональный фон не меняется.", sr: "Presecanje/podvezivanje semenovoda — u ejakulat više ne dospevaju spermatozoidi. Efekat je doživotan, i hormonski balans se ne menja." }, side: { en: "Minor surgery, may cause pain, swelling, bruising, rarely chronic pain. The effect is not instant — a control sperm test is needed (~3 mo). Reversibility is not guaranteed.", ru: "Малая операция, может вызывать боль, отёк, синяк, редко хроническая боль. Эффект не мгновенный — нужен контрольный анализ спермы (~3 мес). Обратимость не гарантирована.", sr: "Mala operacija, može izazvati bol, otok, modricu, retko hroničan bol. Efekat nije trenutan — potrebna je kontrolna analiza sperme (~3 mes.). Reverzibilnost nije zagarantovana." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "lam", label: { en: "LAM (lactational amenorrhea)", ru: "LAM (лактационная аменорея)", sr: "LAM (laktaciona amenoreja)" }, perfect: 0.005, typical: 0.02, sev: 1, control: "toggle",
-    side: { en: "Works only the first ~6 mo under strict conditions; «breaks» easily. (6-mo numbers — estimate.)", ru: "Работает лишь первые ~6 мес при строгих условиях; легко «ломается». (Числа за 6 мес — оценка.)", sr: "Radi samo prvih ~6 mes. pod strogim uslovima; lako se „pokvari“. (Brojevi za 6 mes. — procena.)" },
-    guide: { how: { en: "Amenorrhea during exclusive breastfeeding suppresses ovulation. Only under all three conditions: baby <6 mo, no menstruation, exclusive breastfeeding.", ru: "Аменорея при исключительно грудном вскармливании подавляет овуляцию. Только при всех трёх условиях: ребёнку <6 мес, нет менструаций, кормление исключительно грудью.", sr: "Amenoreja pri isključivom dojenju potiskuje ovulaciju. Samo pod sva tri uslova: beba <6 mes., nema menstruacija, isključivo dojenje." }, side: { en: "No side effects; breaking any of the three conditions sharply lowers protection; after 6 mo or the first period it does not work.", ru: "Побочек нет; нарушение любого из трёх условий резко снижает защиту; после 6 мес или первой менструации не действует.", sr: "Nema neželjenih efekata; kršenje bilo kog od tri uslova naglo smanjuje zaštitu; posle 6 mes. ili prve menstruacije ne deluje." }, who: { en: "A temporary method for nursing mothers in the first half-year. Numbers are an estimate for 6 mo (Trussell/Cochrane), not a year.", ru: "Временный метод для кормящих в первые полгода. Числа — оценка за 6 мес (Trussell/Cochrane), не за год.", sr: "Privremeni metod za dojilje u prvih pola godine. Brojevi su procena za 6 mes. (Trussell/Cochrane), ne za godinu." } },
+    side: { en: "Works only the first ~6 mo under strict conditions.", ru: "Работает лишь первые ~6 мес при соблюдении строгих условий.", sr: "Radi samo prvih ~6 mes. pod strogim uslovima." },
+    guide: { how: { en: "Amenorrhea during exclusive breastfeeding suppresses ovulation. Only under all three conditions: baby <6 mo, no menstruation, exclusive breastfeeding.", ru: "Отсутствие менструации при исключительно грудном вскармливании подавляет овуляцию. Работает только при всех трёх условиях: ребёнку <6 мес, нет менструаций и кормление исключительно грудью.", sr: "Amenoreja pri isključivom dojenju potiskuje ovulaciju. Samo pod sva tri uslova: beba <6 mes., nema menstruacija, isključivo dojenje." }, side: { en: "No side effects, but breaking any of the three conditions sharply lowers protection. After 6 mo or the first period it does not work. A temporary method for nursing mothers in the first half-year. The effectiveness percentage shows the figure for 6 mo, not for a year as with the other methods.", ru: "Побочек нет, но нарушение любого из трёх условий резко снижает защиту. После 6 мес или первой менструации не действует. Временный метод для кормящих матерей в первые полгода. Процент эффективности показывает процент за 6 мес, а не за год как для остальных методов.", sr: "Nema neželjenih efekata, ali kršenje bilo kog od tri uslova naglo smanjuje zaštitu. Posle 6 mes. ili prve menstruacije ne deluje. Privremeni metod za dojilje u prvih pola godine. Procenat efikasnosti pokazuje vrednost za 6 mes., a ne za godinu kao kod ostalih metoda." } },
     sources: [{ label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }, { label: "Cochrane", url: "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD001329.pub2/full" }] },
   { key: "ec", label: { en: "Emergency contraception", ru: "Экстренная контрацепция", sr: "Hitna kontracepcija" }, oneOff: true, perfect: null, typical: null, sev: 2, control: "oneOff",
-    side: { en: "Nausea, cycle disruption; more effective the sooner taken. One-off — not on the curve.", ru: "Тошнота, сбой цикла; тем эффективнее, чем раньше принята. Разовая — не на кривую.", sr: "Mučnina, poremećaj ciklusa; efikasnija što se ranije uzme. Jednokratna — nije na krivi." },
-    guide: { how: { en: "A single dose after unprotected sex: levonorgestrel (up to 72 h) or ulipristal (up to 120 h) shifts ovulation; a copper IUD within 5 days is the most effective option.", ru: "Разовый приём после незащищённого акта: левоноргестрел (до 72 ч) или улипристал (до 120 ч) сдвигает овуляцию; медная ВМС в течение 5 дней — самый эффективный вариант.", sr: "Jednokratna doza posle nezaštićenog akta: levonorgestrel (do 72 h) ili ulipristal (do 120 h) pomera ovulaciju; bakarna spirala u roku od 5 dana — najefikasnija opcija." }, side: { en: "Nausea, headache, breast tenderness, temporary cycle disruption. Does not terminate an established pregnancy and does not protect during subsequent acts.", ru: "Тошнота, головная боль, болезненность груди, временный сбой цикла. Не прерывает наступившую беременность и не защищает при последующих актах.", sr: "Mučnina, glavobolja, osetljivost grudi, privremeni poremećaj ciklusa. Ne prekida nastalu trudnoću i ne štiti pri narednim aktima." }, who: { en: "A backup method «just in case», not for regular use. The sooner — the more effective. Levonorgestrel is less effective at high body weight.", ru: "Резервный метод «на случай», не для регулярного использования. Чем раньше — тем эффективнее. Левоноргестрел менее эффективен при высоком весе.", sr: "Rezervni metod „za svaki slučaj“, ne za redovnu upotrebu. Što ranije — to efikasnije. Levonorgestrel je manje efikasan pri visokoj telesnoj težini." } },
+    side: { en: "Nausea, vomiting, cycle disruption. Contains a large dose of hormones, so it is not used as a planned method of contraception.", ru: "Тошнота, рвота, сбой цикла. Содержит большую дозу гормонов, поэтому не применяется как запланированный способ контрацепции.", sr: "Mučnina, povraćanje, poremećaj ciklusa. Sadrži veliku dozu hormona, pa se ne koristi kao planirani metod kontracepcije." },
+    guide: { how: { en: "A single dose after unprotected sex: levonorgestrel (up to 72 h) or ulipristal (up to 120 h) shifts ovulation; a copper IUD within 5 days is the most effective option.", ru: "Разовый приём после незащищённого акта. Содержит левоноргестрел (до 72 ч) или улипристал (до 120 ч). Сдвигает овуляцию. Медная ВМС в течение 5 дней — самый эффективный вариант.", sr: "Jednokratna doza posle nezaštićenog akta: levonorgestrel (do 72 h) ili ulipristal (do 120 h) pomera ovulaciju; bakarna spirala u roku od 5 dana — najefikasnija opcija." }, side: { en: "Nausea, headache, breast tenderness, temporary cycle disruption. Does not terminate an established pregnancy and does not protect during subsequent acts. Used as a backup method «just in case» and not for regular use. The sooner it is taken, the more effectively it works.", ru: "Тошнота, головная боль, болезненность груди, временный сбой цикла. Не прерывает наступившую беременность и не защищает при последующих актах. Применяется как резервный метод «на всякий случай» и не применяется для регулярного использования. Чем раньше была принята, тем эффективнее работает.", sr: "Mučnina, glavobolja, osetljivost grudi, privremeni poremećaj ciklusa. Ne prekida nastalu trudnoću i ne štiti pri narednim aktima. Koristi se kao rezervni metod „za svaki slučaj“ i ne za redovnu upotrebu. Što je ranije uzeta, to efikasnije deluje." } },
     sources: [{ label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }] },
 ];
 const CONTRA_MAP = Object.fromEntries(CONTRA.map((m) => [m.key, m]));
@@ -1749,7 +1749,45 @@ function PregTip({ active, payload, label, lang }) {
     </div>
   );
 }
+// На мобильном при прокрутке вниз залипающий график сжимается (прячет .chart-extra: слайдеры,
+// легенду, строку-итог). Общий хук — используется и в графике ЗППП, и в графике беременности.
+function useCondensed() {
+  const [condensed, setCondensed] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width:879px)");
+    const onScroll = () => { setCondensed(mq.matches && window.scrollY > 60); };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+  }, []);
+  return condensed;
+}
+
+// Лёгкая разовая подсказка-анимация: включается, когда элемент впервые попадает на экран,
+// держится ms миллисекунд и больше не повторяется. Возвращает [ref, active].
+function useHintOnView(ms = 5000) {
+  const ref = useRef(null);
+  const [active, setActive] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    let timer;
+    const io = new IntersectionObserver((ents) => {
+      if (ents.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        setActive(true);
+        timer = setTimeout(() => setActive(false), ms);
+      }
+    }, { threshold: 0.6 });
+    io.observe(el);
+    return () => { io.disconnect(); clearTimeout(timer); };
+  }, [ms]);
+  return [ref, active];
+}
+
 function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline, lang, L }) {
+  const condensed = useCondensed();
   const horizonM = years * 12;
   const ts = years <= 12 ? 1 : years <= 30 ? 5 : 10;
   const ticks = []; for (let y = 0; y <= years; y += ts) ticks.push(y * 12);
@@ -1764,12 +1802,12 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
     return () => { document.removeEventListener("input", onInput, true); document.removeEventListener("click", onClick, true); };
   }, []);
   return (
-    <div className="studio-chart" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
-      <div style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
+    <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
+      <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
         <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
         <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
       </div>
-      <div style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
+      <div className="chart-extra" style={{ display: "flex", gap: 14, flexWrap: "wrap", marginBottom: 10 }}>
         {lines.map((ln) => (<span key={ln.key} style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: C.mid }}><span style={{ width: 14, height: 0, borderTop: `3px ${ln.dash ? "dashed" : "solid"} ${ln.color}`, display: "inline-block" }} />{ln.label}</span>))}
       </div>
       <div className="chartbox">
@@ -1783,7 +1821,7 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {headline && <div style={{ color: C.mid, fontSize: 13, marginTop: 8 }}>{headline}</div>}
+      {headline && <div className="chart-extra" style={{ color: C.mid, fontSize: 13, marginTop: 8 }}>{headline}</div>}
     </div>
   );
 }
@@ -1841,16 +1879,16 @@ function WomanMethods({ meth, setMeth, lang, L }) {
       <div>
         {usable.map((m) => (
           <Collapse key={m.key} open={m.key in meth}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "7px 10px", marginBottom: 8 }}>
-              <span style={{ width: 8, height: 8, borderRadius: "50%", background: SEV[m.sev], flex: "0 0 8px" }} title={L.sevTitle} />
-              <span style={{ color: C.hi, fontSize: 13 }}>{m.label[lang]}</span>
+            <div style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "7px 10px", marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: SEV[m.sev], flex: "0 0 8px" }} title={L.sevTitle} />
+                <span style={{ color: C.hi, fontSize: 13, flex: 1, minWidth: 0 }}>{m.label[lang]}</span>
+                {m.control === "perAct" && <span className="num" style={{ color: C.accent, fontSize: 12 }} title={L.shareOfActs}>{meth[m.key] || 0}%</span>}
+                <button onClick={() => rm(m.key)} title={L.removeMethod} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px" }}>×</button>
+              </div>
               {m.control === "perAct" && (
-                <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto", minWidth: 118 }} title={L.shareOfActs}>
-                  <input className="rng" type="range" min={0} max={100} step={5} value={meth[m.key] || 0} onChange={(e) => setMeth((s) => ({ ...s, [m.key]: parseFloat(e.target.value) }))} />
-                  <span className="num" style={{ color: C.accent, fontSize: 12, width: 34, textAlign: "right" }}>{meth[m.key] || 0}%</span>
-                </div>
+                <input className="rng" type="range" min={0} max={100} step={5} value={meth[m.key] || 0} onChange={(e) => setMeth((s) => ({ ...s, [m.key]: parseFloat(e.target.value) }))} style={{ marginTop: 8 }} title={L.shareOfActs} />
               )}
-              <button onClick={() => rm(m.key)} title={L.removeMethod} style={{ marginLeft: m.control === "perAct" ? 4 : "auto", background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px" }}>×</button>
             </div>
           </Collapse>
         ))}
@@ -1873,13 +1911,13 @@ function WomanMethods({ meth, setMeth, lang, L }) {
 
 // Разрыв «идеальное/реальное» по каждому методу — локализован.
 const GAP = {
-  withdrawal: { en: "The gap is huge: it's hard to always pull out in time, and pre-ejaculate may contain sperm.", ru: "Разрыв огромный: трудно всегда успеть вывести вовремя, а предэякулят может содержать сперматозоиды.", sr: "Jaz je ogroman: teško je uvek izvući na vreme, a predejakulat može sadržati spermatozoide." },
-  fam: { en: "The biggest gap: easy to misjudge fertile days or not resist sex in the risky window.", ru: "Самый большой разрыв: легко ошибиться в определении фертильных дней или не удержаться от секса в опасное окно.", sr: "Najveći jaz: lako je pogrešiti u određivanju plodnih dana ili ne odoleti seksu u opasnom prozoru." },
-  condom_m: { en: "Tears, slips, put on late, or not used every act.", ru: "Рвётся, слетает, надевается с опозданием или используется не на каждый акт.", sr: "Puca, sklizne, stavlja se sa zakašnjenjem ili se ne koristi pri svakom aktu." },
-  condom_f: { en: "Shifts, inserted wrong, or not used every time.", ru: "Смещается, вводится неправильно или используется не каждый раз.", sr: "Pomera se, uvodi se pogrešno ili se ne koristi svaki put." },
-  diaphragm: { en: "Wrong placement, shifting, no spermicide, or not every act.", ru: "Неправильная установка, смещение, без спермицида или не на каждый акт.", sr: "Pogrešno postavljanje, pomeranje, bez spermicida ili ne pri svakom aktu." },
-  spermicide: { en: "Not always applied in advance and correctly; even ideally the method is weak.", ru: "Применяют не всегда заранее и правильно; даже идеально метод слабый.", sr: "Ne nanosi se uvek unapred i pravilno; čak i idealno metod je slab." },
-  cok: { en: "The main cause of the gap — missed and late daily pills.", ru: "Главная причина разрыва — пропуски и опоздания в ежедневном приёме таблеток.", sr: "Glavni uzrok jaza — propusti i kašnjenja u dnevnom uzimanju pilula." },
+  withdrawal: { en: "The gap is huge: it's hard to always pull out in time, and pre-ejaculate may contain sperm.", ru: "При реалььном применении эффективность сильно ниже чем при идеальном: трудно всегда успеть вывести вовремя, а предэякулят может содержать сперматозоиды.", sr: "Jaz je ogroman: teško je uvek izvući na vreme, a predejakulat može sadržati spermatozoide." },
+  fam: { en: "The biggest gap: easy to misjudge fertile days or not resist sex in the risky window.", ru: "Самый большой разрыв эфективности: легко ошибиться в определении фертильных дней или не удержаться от секса в фертильное окно.", sr: "Najveći jaz: lako je pogrešiti u određivanju plodnih dana ili ne odoleti seksu u opasnom prozoru." },
+  condom_m: { en: "Tears, slips, put on late, or not used every act.", ru: "Рвётся, слетает, надевается с опозданием.", sr: "Puca, sklizne, stavlja se sa zakašnjenjem ili se ne koristi pri svakom aktu." },
+  condom_f: { en: "Shifts, inserted wrong, or not used every time.", ru: "Смещается или вводится неправильно.", sr: "Pomera se, uvodi se pogrešno ili se ne koristi svaki put." },
+  diaphragm: { en: "Wrong placement, shifting, no spermicide, or not every act.", ru: "Неправильная установка или смещение.", sr: "Pogrešno postavljanje, pomeranje, bez spermicida ili ne pri svakom aktu." },
+  spermicide: { en: "Not always applied in advance and correctly; even ideally the method is weak.", ru: "Применяют не всегда заранее и правильно; даже при идеальном использовании метод слабый.", sr: "Ne nanosi se uvek unapred i pravilno; čak i idealno metod je slab." },
+  cok: { en: "The main cause of the gap — missed and late daily pills.", ru: "Таблетки пропускаются или принимаются с опозданием.", sr: "Glavni uzrok jaza — propusti i kašnjenja u dnevnom uzimanju pilula." },
   minipill: { en: "Very sensitive to dosing time — even a small delay lowers protection.", ru: "Очень чувствительны ко времени приёма — даже небольшое опоздание снижает защиту.", sr: "Veoma osetljive na vreme uzimanja — čak i malo kašnjenje smanjuje zaštitu." },
   patch: { en: "Forgetting to change the patch on time or it peeling off.", ru: "Забывают вовремя поменять пластырь или он отклеивается.", sr: "Zaboravljaju da promene flaster na vreme ili se odlepi." },
   ring: { en: "Forgetting to insert or replace the ring on time.", ru: "Забывают вовремя поставить или сменить кольцо.", sr: "Zaboravljaju da postave ili promene prsten na vreme." },
@@ -1887,7 +1925,7 @@ const GAP = {
   iud_cu: { en: "Almost no difference — the method does not depend on the user («fit and forget»).", ru: "Почти нет разницы — метод не зависит от пользователя («поставил и забыл»).", sr: "Skoro nema razlike — metod ne zavisi od korisnika („postavi i zaboravi“)." },
   iud_lng: { en: "No difference — the method does not depend on the user.", ru: "Разницы нет — метод не зависит от пользователя.", sr: "Nema razlike — metod ne zavisi od korisnika." },
   implant: { en: "No difference — the method does not depend on the user.", ru: "Разницы нет — метод не зависит от пользователя.", sr: "Nema razlike — metod ne zavisi od korisnika." },
-  steril_f: { en: "Almost no difference — a permanent method, user error is impossible.", ru: "Разницы практически нет — постоянный метод, ошибка пользователя невозможна.", sr: "Praktično nema razlike — trajan metod, korisnička greška je nemoguća." },
+  steril_f: { en: "Almost no difference — a permanent method, user error is impossible.", ru: "Разницы нет — метод не зависит от пользователя.", sr: "Praktično nema razlike — trajan metod, korisnička greška je nemoguća." },
   vasectomy: { en: "Almost no difference; the only risk is sex before the control sperm test (~3 mo).", ru: "Почти нет разницы; единственный риск — секс до контрольного анализа спермы (~3 мес).", sr: "Skoro nema razlike; jedini rizik je seks pre kontrolne analize sperme (~3 mes.)." },
   lam: { en: "The gap comes from breaking the strict conditions: feeding regimen, baby under 6 mo, no menstruation.", ru: "Разрыв из-за нарушения строгих условий: режим кормления, возраст ребёнка до 6 мес, отсутствие менструаций.", sr: "Jaz zbog kršenja strogih uslova: režim dojenja, uzrast bebe do 6 mes., odsustvo menstruacija." },
   ec: { en: "A one-off remedy — there is no annual figure. Effectiveness depends on how quickly it's taken after the act.", ru: "Разовое средство — годового показателя нет. Эффективность зависит от того, насколько быстро принять после акта.", sr: "Jednokratno sredstvo — godišnjeg pokazatelja nema. Efikasnost zavisi od toga koliko brzo se uzme posle akta." },
@@ -1895,10 +1933,10 @@ const GAP = {
 
 function ContraTable({ lang, L }) {
   const [open, setOpen] = useState({});
+  const [hintRef, hint] = useHintOnView(); // разовая подсказка на шевроне первого метода
   const fmtP = (v) => (v == null ? "—" : pctAct(v, lang));
   return (
     <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "6px 6px", margin: "14px 0" }}>
-      <div style={{ padding: "12px 12px 6px", fontSize: 13, color: C.hi, fontWeight: 600 }}>{L.contraTableTitle}{L.contraTableSub && <span style={{ color: C.dim, fontWeight: 400, fontSize: 12 }}> {L.contraTableSub}</span>}</div>
       <div className="tbl-wrap">
         <table className="inf">
           <thead><tr>
@@ -1908,11 +1946,11 @@ function ContraTable({ lang, L }) {
             <th>{L.thSideFx}</th>
           </tr></thead>
           <tbody>
-            {CONTRA.filter((m) => m.key !== "none").flatMap((m) => {
+            {CONTRA.filter((m) => m.key !== "none").flatMap((m, mi) => {
               const exp = !!open[m.key];
               const rows = [
                 <tr key={m.key} className={"inf-row" + (exp ? " on" : "")} onClick={() => setOpen((o) => ({ ...o, [m.key]: !o[m.key] }))} title={exp ? L.collapseGuide : L.openGuide} style={{ borderLeft: `3px solid ${SEV[m.sev]}` }}>
-                  <td style={{ whiteSpace: "nowrap", color: C.hi }}>{m.label[lang]}<span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${PREG}22` : C.panel2, border: `1px solid ${exp ? PREG : C.border}`, color: exp ? PREG : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span></td>
+                  <td style={{ whiteSpace: "nowrap", color: C.hi }}>{m.label[lang]}<span aria-hidden ref={mi === 0 ? hintRef : undefined} className={mi === 0 && hint && !exp ? "hint-pulse" : undefined} style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${PREG}22` : C.panel2, border: `1px solid ${exp ? PREG : C.border}`, color: exp ? PREG : C.mid, fontSize: 11, verticalAlign: "middle", ["--hint-glow"]: `${PREG}aa` }}>{exp ? "▾" : "▸"}</span></td>
                   <td className="num">{fmtP(m.perfect)}</td>
                   <td className="num" style={{ whiteSpace: "nowrap" }}>{fmtP(m.typical)}{GAP[m.key] && <Info dn text={GAP[m.key][lang]} />}</td>
                   <td><span style={{ background: `${SEV[m.sev]}22`, color: SEV[m.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{m.side[lang]}</span></td>
@@ -1926,9 +1964,8 @@ function ContraTable({ lang, L }) {
                     <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
                       <div><div className="ghd">{L.howWorks}</div><div className="gtx">{m.guide.how[lang]}</div></div>
                       <div><div className="ghd">{L.sideRisks}</div><div className="gtx">{m.guide.side[lang]}</div></div>
-                      <div><div className="ghd">{L.whoFor}</div><div className="gtx">{m.guide.who[lang]}</div></div>
                     </div>
-                    <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>{L.sourcesLab}: {m.sources.map((s, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: PREG, textDecoration: "none" }}>{s.label} ↗</a></span>))} {L.contraSourcesTail}</div>
+                    <div style={{ marginTop: 12, fontSize: 12, color: C.dim }}>{L.sourcesLab}: {m.sources.map((s, i) => (<span key={i}>{i > 0 ? " · " : ""}<a href={s.url} target="_blank" rel="noopener noreferrer" style={{ color: PREG, textDecoration: "none" }}>{s.label} ↗</a></span>))}</div>
                     </div>
                    </Collapse>
                   </td>
@@ -1995,17 +2032,17 @@ function Pregnancy({ who, setWho, years, setYears, yMax, setYMax, lang, L, w, se
         <>
         <div className="studio">
           <div className="studio-controls">
+            <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
+              <Slider label={L.pregMyAge} value={manAge} set={setManAge} min={16} max={99} step={1} valueText={`${manAge}`} info={L.pregMyAgeInfo} />
+            </div>
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 14 }}>
               <div style={{ fontSize: 11, color: C.dim, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6, display: "inline-flex", alignItems: "center" }}>{L.pregBehaviorPreset}<Info text={L.pregPresetInfo} /></div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {PREG_PRESETS.map((pr) => (<button key={pr.key} onClick={() => applyPreg(pr)} className={"pill " + (activePreg === pr.key ? "on" : "")}>{pr.label[lang]}</button>))}
               </div>
-            </div>
-            <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
-              <Slider label={L.pregMyAge} value={manAge} set={setManAge} min={16} max={99} step={1} valueText={`${manAge}`} info={L.pregMyAgeInfo} />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {TYPES.map((meta) => (<PregTypeCard key={meta.key} meta={meta} t={mcfg[meta.key]} setT={(patch) => setMType(meta.key, patch)} lang={lang} L={L} />))}
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 14 }}>
+                {TYPES.map((meta) => (<PregTypeCard key={meta.key} meta={meta} t={mcfg[meta.key]} setT={(patch) => setMType(meta.key, patch)} lang={lang} L={L} />))}
+              </div>
             </div>
           </div>
           <PregChartPanel data={mData} lines={[{ key: "p", label: L.pregLineMan, color: PREG }, { key: "ref", label: L.pregLineIfNoContra, color: C.dim, dash: true }]} years={years} setYears={setYears} yMax={yMax} setYMax={setYMax} lang={lang} L={L} headline={L.pregHeadMan(years, yw, pctVal(mEnd, lang))} />
@@ -2551,16 +2588,8 @@ export default function App() {
     document.querySelectorAll(".hl-ring, .hl-thumb").forEach((e) => e.classList.remove("hl-ring", "hl-thumb"));
   };
   const closeHivPlate = () => { setHivBanner(false); stopHivFx(); }; // закрытие плашки = стоп всей анимации
-  // На мобильном при прокрутке вниз залипающий график сжимается (прячет слайдеры, легенду, строку-итог).
-  const [condensed, setCondensed] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width:879px)");
-    const onScroll = () => { setCondensed(mq.matches && window.scrollY > 60); };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
-  }, []);
+  const condensed = useCondensed(); // мобильное сжатие графика при прокрутке (общий хук с графиком беременности)
+  const [diseaseHintRef, diseaseHint] = useHintOnView(); // разовая подсказка на шевроне первой болезни
   const [mode, setMode] = useState(MODE_FROM_URL);
   // Переключение раздела отражаем в адресной строке: беременность → «#preg» (ссылку можно слать отдельно), ЗППП → чистый URL.
   const switchMode = (m) => {
@@ -2706,6 +2735,14 @@ export default function App() {
         table.inf tbody tr.inf-row:hover { background:#ffffff0a; }
         table.inf tbody tr.inf-row.on { background:#ffffff12; }
         table.inf tbody tr.inf-row.on:hover { background:#ffffff16; }
+        /* лёгкая подсказка «можно раскрыть» — мягкое пульсирующее кольцо на шевроне (5 c, 4 удара) */
+        @keyframes hintRing {
+          0%   { box-shadow:0 0 0 0 var(--hint-glow, rgba(240,165,0,.6)); transform:scale(1); }
+          70%  { box-shadow:0 0 0 7px rgba(255,255,255,0); transform:scale(1.16); }
+          100% { box-shadow:0 0 0 7px rgba(255,255,255,0); transform:scale(1); }
+        }
+        .hint-pulse { animation:hintRing 1.25s ease-out 4; will-change:transform, box-shadow; }
+        @media (prefers-reduced-motion: reduce) { .hint-pulse { animation:none; } }
         .leg-item { transition:background .12s, border-color .12s; }
         .leg-item:hover { background:#ffffff0d; border-color:${C.mid} !important; }
         .rich [data-hi] { color:${C.hi}; }
@@ -2881,7 +2918,7 @@ export default function App() {
             <table className="inf">
               <thead><tr><th>{L.thInfection}</th>{DEV && <th>{L.thRisk(years, yearsWord(years, lang))}</th>}<th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th></tr></thead>
               <tbody>
-                {STIS.flatMap((s) => {
+                {STIS.flatMap((s, si) => {
                   const exp = !!guideOpen[s.key];
                   const accLab = L.acc[s.acc];
                   const rows = [
@@ -2889,7 +2926,7 @@ export default function App() {
                     <td style={{ whiteSpace: "nowrap" }}>
                       <span style={{ color: s.color, marginRight: 7 }}>{s.grounded ? "●" : "◌"}</span>{s.label[lang]}
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note[lang]} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>{L.vaccinated}</span>}
-                      <span aria-hidden style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle" }}>{exp ? "▾" : "▸"}</span>
+                      <span aria-hidden ref={si === 0 ? diseaseHintRef : undefined} className={si === 0 && diseaseHint && !exp ? "hint-pulse" : undefined} style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle", ["--hint-glow"]: `${s.color}aa` }}>{exp ? "▾" : "▸"}</span>
                     </td>
                     {DEV && <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>}
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1), lang)} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e), lang)}</td>
