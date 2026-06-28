@@ -545,6 +545,7 @@ const I18N = {
     pregLineNoContra: "no contraception",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>Over {years} {yw} the chance of getting pregnant ≈ <b data-hi>{pct}</b>{hasContra ? " with the chosen contraception" : " without contraception"}.</>),
     pregBehaviorPreset: "Behavior preset",
+    pregPresetInfo: (<>• <b>No partners</b> — no partners.<br />• <b>Monogamy</b> — one steady partner.<br />• <b>Dating</b> — recurring partners.<br />• <b>Active dating</b> — many recurring + one-night.<br />• <b>One-night</b> — one-night sex, no follow-up.</>),
     pregMyAge: "My age",
     pregMyAgeInfo: "A man's age weakly affects fertility (more noticeable after ~45). Here it's a rough estimate — so the effect is visible on the chart.",
     pregPartnerAge: "Partner's age",
@@ -750,6 +751,7 @@ const I18N = {
     pregLineNoContra: "без контрацепции",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>За {years} {yw} вероятность забеременеть ≈ <b data-hi>{pct}</b>{hasContra ? " с выбранной контрацепцией" : " без контрацепции"}.</>),
     pregBehaviorPreset: "Пресет поведения",
+    pregPresetInfo: (<>• <b>Без партнёрш</b> — нет партнёрш.<br />• <b>Моногамия</b> — одна постоянная партнёрша.<br />• <b>Встречается</b> — приходящие партнёрши.<br />• <b>Активные знакомства</b> — много приходящих + на одну ночь.<br />• <b>На одну ночь</b> — секс на одну ночь, без продолжения.</>),
     pregMyAge: "Мой возраст",
     pregMyAgeInfo: "Возраст мужчины слабо влияет на фертильность (заметнее после ~45). Здесь грубая оценка — чтобы эффект было видно на графике.",
     pregPartnerAge: "Возраст партнёрши",
@@ -952,6 +954,7 @@ const I18N = {
     pregLineNoContra: "bez kontracepcije",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>Za {years} {yw} verovatnoća da se zatrudni ≈ <b data-hi>{pct}</b>{hasContra ? " sa izabranom kontracepcijom" : " bez kontracepcije"}.</>),
     pregBehaviorPreset: "Preset ponašanja",
+    pregPresetInfo: (<>• <b>Bez partnerki</b> — nema partnerki.<br />• <b>Monogamija</b> — jedna stalna partnerka.<br />• <b>Zabavlja se</b> — povremene partnerke.<br />• <b>Aktivna upoznavanja</b> — mnogo povremenih + jedna noć.<br />• <b>Jedna noć</b> — seks za jednu noć, bez nastavka.</>),
     pregMyAge: "Moja starost",
     pregMyAgeInfo: "Starost muškarca slabo utiče na plodnost (uočljivije posle ~45). Ovde je gruba procena — da bi efekat bio vidljiv na grafikonu.",
     pregPartnerAge: "Starost partnerke",
@@ -1799,11 +1802,12 @@ function PregTypeCard({ meta, t, setT, lang, L }) {
       </Collapse>
       <Collapse open={active}>
         <div style={{ background: C.panel, border: `1px solid ${col}55`, borderLeft: `3px solid ${col}`, borderRadius: 12, padding: "13px 16px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-            <span style={{ width: 10, height: 10, borderRadius: "50%", background: col }} />
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 12 }}>
+            <span style={{ width: 10, height: 10, borderRadius: "50%", background: col, flexShrink: 0 }} />
             <span style={{ color: C.hi, fontSize: 14, fontWeight: 600 }}>{meta.label[lang]}</span>
-            <span style={{ color: C.dim, fontSize: 11, marginLeft: "auto" }}>{cap}</span>
-            <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: 6 }}>×</button>
+            <button onClick={() => setT({ count: 0 })} title={L.removeCard} aria-label={L.removeCard} onMouseEnter={(e) => (e.currentTarget.style.color = C.hi)} onMouseLeave={(e) => (e.currentTarget.style.color = C.dim)} style={{ background: "transparent", border: "none", color: C.dim, cursor: "pointer", fontSize: 17, lineHeight: 1, padding: "0 2px", marginLeft: "auto" }}>×</button>
+            {/* подпись на своей строке слева — как в TypeCard (без кривых переносов) */}
+            <span style={{ flexBasis: "100%", display: "inline-flex", alignItems: "center", justifyContent: "flex-start", color: C.dim, fontSize: 11, whiteSpace: "nowrap" }}>{cap}</span>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
             <Slider label={meta.countLab[lang]} value={t.count} set={(v) => setT({ count: floatCount ? Math.round(v * 10) / 10 : Math.round(v) })} min={0} max={meta.countMax} step={floatCount ? 0.1 : 1} valueText={floatCount ? dec(cnt.toString(), lang) : `${cnt}`} />
@@ -1992,7 +1996,7 @@ function Pregnancy({ who, setWho, years, setYears, yMax, setYMax, lang, L, w, se
         <div className="studio">
           <div className="studio-controls">
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 14 }}>
-              <div style={{ fontSize: 11, color: C.dim, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6 }}>{L.pregBehaviorPreset}</div>
+              <div style={{ fontSize: 11, color: C.dim, marginBottom: 10, textTransform: "uppercase", letterSpacing: 0.6, display: "inline-flex", alignItems: "center" }}>{L.pregBehaviorPreset}<Info text={L.pregPresetInfo} /></div>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {PREG_PRESETS.map((pr) => (<button key={pr.key} onClick={() => applyPreg(pr)} className={"pill " + (activePreg === pr.key ? "on" : "")}>{pr.label[lang]}</button>))}
               </div>
