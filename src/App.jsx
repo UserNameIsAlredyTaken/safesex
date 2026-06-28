@@ -69,14 +69,14 @@ const STIS = [
         ru: "Без лечения — СПИД: тяжёлый иммунодефицит, оппортунистические инфекции и опухоли, смерть.",
         sr: "Bez lečenja → SIDA: teška imunodeficijencija, oportunističke infekcije i tumori, smrt." },
       prevent: {
-        en: "Condoms cut the risk ~80% (Cochrane); receptive anal sex is ~17× riskier than vaginal, so be extra careful there. PrEP (pills before possible exposure) and PEP (an emergency course within 72 h after) strongly lower the risk; on treatment, a partner who is «undetectable» does not transmit it (U=U). Test regularly.",
+        en: "Condoms cut the risk ~80% (Cochrane); receptive anal sex is ~17× riskier than vaginal. PrEP (pills before possible exposure) and PEP (an emergency course within 72 h after) strongly lower the risk; on treatment, a partner who is «undetectable» does not transmit it. Test regularly.",
         ru: "Презерватив снижает риск ~80% (Cochrane); рецептивный анальный секс ~в 17 раз опаснее вагинального. PrEP (таблетки до возможного контакта) и PEP (экстренный курс в течение 72 ч после) сильно снижают риск; при лечении партнёр с «неопределяемым» вирусом его не передаёт. Регулярное тестирование.",
-        sr: "Kondom smanjuje rizik ~80% (Cochrane); receptivni analni seks je ~17× rizičniji od vaginalnog — tu poseban oprez. PrEP (tablete pre mogućeg kontakta) i PEP (hitni kurs u roku od 72 h posle) snažno smanjuju rizik; uz lečenje, partner sa „nedetektabilnim“ virusom ga ne prenosi (U=U). Testiraj se redovno." },
+        sr: "Kondom smanjuje rizik ~80% (Cochrane); receptivni analni seks je ~17× rizičniji od vaginalnog. PrEP (tablete pre mogućeg kontakta) i PEP (hitni kurs u roku od 72 h posle) snažno smanjuju rizik; uz lečenje, partner sa „nedetektabilnim“ virusom ga ne prenosi. Testiraj se redovno." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/hiv/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hiv-aids" }] } },
   { key: "hpv", label: { en: "HPV", ru: "ВПЧ", sr: "HPV" }, color: "#ff4d6d", sev: 4, p: 0.25, beta: 0.40, e: 0.40, grounded: false,
     vax: { ve: 0.85, note: { en: "More effective before sexual debut; ~90% of oncogenic types, but not all. Estimate.", ru: "Эффективнее до начала половой жизни; ~90% онкогенных типов, но не все. Оценка.", sr: "Efikasnija pre početka polnog života; ~90% onkogenih tipova, ali ne svi. Procena." } },
     treat: { en: "No drug; oncogenic", ru: "Нет лекарства; онкогенен", sr: "Nema leka; onkogen" },
-    cons: { en: "Cancer (cervix, throat, anus), warts", ru: "Рак, кондиломы", sr: "Rak (grlić, grlo, anus), kondilomi" },
+    cons: { en: "Cancer, warts", ru: "Рак, кондиломы", sr: "Rak, kondilomi" },
     acc: "low",
     src: { en: "Per-act transmission — rough estimate; HPV is highly contagious. Condom ~40% (CDC). Vaccine protects. Prevalence (p=25%): any genital HPV ~42.5% among adults 18–59, high-risk types ~22.7% (NHANES 2013–2014, NCHS Data Brief 280).",
       ru: "Передача за акт — грубая оценка; ВПЧ очень заразен. Презерватив ~40% (CDC). Защищает прививка. Распространённость (p=25%): любой генитальный ВПЧ ~42,5% среди взрослых 18–59 лет, высокоонкогенные типы ~22,7% (NHANES 2013–2014, NCHS Data Brief 280).",
@@ -87,17 +87,17 @@ const STIS = [
         ru: "Чаще всего бессимптомно; в 9 из 10 случаев инфекция уходит сама за ~2 года. Некоторые типы дают генитальные кондиломы (бородавки); онкогенные типы протекают скрыто и выявляются скринингом.",
         sr: "Najčešće bez simptoma; u 9 od 10 slučajeva infekcija prolazi sama za ~2 godine. Neki tipovi izazivaju genitalne kondilome (bradavice); onkogeni tipovi teku skriveno i otkrivaju se skriningom." },
       treatment: {
-        en: "There is no drug against the virus itself — manifestations are treated: warts are removed, precancerous cervical changes are monitored and treated. Reliably prevented by vaccine (best before sexual debut).",
+        en: "There is no drug against the virus itself — manifestations are treated: warts are removed, precancerous cervical changes are monitored and treated.",
         ru: "Лекарства от самого вируса нет — лечат проявления: кондиломы удаляют, предраковые изменения шейки матки наблюдают и лечат.",
-        sr: "Leka protiv samog virusa nema — leče se manifestacije: kondilomi se uklanjaju, predkancerozne promene grlića materice prate se i leče. Pouzdano se sprečava vakcinom (najbolje pre početka polnog života)." },
+        sr: "Leka protiv samog virusa nema — leče se manifestacije: kondilomi se uklanjaju, predkancerozne promene grlića materice prate se i leče." },
       consequences: {
         en: "Oncogenic types cause cervical cancer, as well as cancer of the anus, oropharynx, penis, vulva and vagina.",
         ru: "Онкогенные типы вызывают рак шейки матки, а также рак ануса, ротоглотки, полового члена, вульвы и влагалища.",
         sr: "Onkogeni tipovi izazivaju rak grlića materice, kao i rak anusa, ždrela, penisa, vulve i vagine." },
       prevent: {
-        en: "The vaccine reliably prevents the main oncogenic types and warts (best before sexual debut). Condoms help only partly (~40%) — they don't cover all skin. Cervical screening (Pap/HPV test) catches precancer early.",
+        en: "The vaccine reliably prevents the main oncogenic types and warts (best before sexual debut). Condoms help only partly (~40%), because they don't cover all the skin. Cervical screening (Pap/HPV test) catches precancer early.",
         ru: "Вакцина надёжно защищает от основных онкогенных типов и кондилом (лучше всего до начала половой жизни). Презерватив помогает лишь частично (~40%), так как не закрывает всю кожу. Скрининг шейки матки (Пап-тест/ВПЧ-тест) рано выявляет предрак.",
-        sr: "Vakcina pouzdano štiti od glavnih onkogenih tipova i kondiloma (najbolje pre početka polnog života). Kondom pomaže samo delimično (~40%) — ne pokriva svu kožu. Skrining grlića materice (Pap/HPV test) rano otkriva predrak." },
+        sr: "Vakcina pouzdano štiti od glavnih onkogenih tipova i kondiloma (najbolje pre početka polnog života). Kondom pomaže samo delimično (~40%), jer ne pokriva svu kožu. Skrining grlića materice (Pap/HPV test) rano otkriva predrak." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/sti/about/about-genital-hpv-infection.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/human-papilloma-virus-and-cancer" }, { label: "NCHS Data Brief 280", url: "https://www.cdc.gov/nchs/products/databriefs/db280.htm" }] } },
   { key: "hbv", label: { en: "Hepatitis B", ru: "Гепатит B", sr: "Hepatitis B" }, color: "#94d82d", sev: 4, p: 0.003, beta: 0.03, e: 0.90, grounded: false,
     vax: { ve: 0.95, note: { en: "With an immune response ~95%, infection is nearly ruled out. Estimate.", ru: "При иммунном ответе ~95%, заражение почти исключено. Оценка.", sr: "Uz imuni odgovor ~95%, zaraza je gotovo isključena. Procena." } },
@@ -146,13 +146,13 @@ const STIS = [
         ru: "Без лечения — цирроз, печёночная недостаточность, рак печени.",
         sr: "Bez lečenja → ciroza, otkazivanje jetre, rak jetre." },
       prevent: {
-        en: "No vaccine. Mostly bloodborne — don't share needles, razors or toothbrushes; sexual transmission is low. It's now curable, so testing and treating helps stop spread. Condoms reduce the already-small sexual risk.",
-        ru: "Вакцины нет. Передаётся в основном через кровь — не делить иглы, бритвы, зубные щётки; половым путём редже. Сейчас излечим, поэтому тестирование и лечение останавливают распространение. Презерватив снижает риск.",
-        sr: "Vakcine nema. Prenosi se uglavnom preko krvi — ne deliti igle, brijače ili četkice za zube; polni prenos je redak. Sada je izlečiv, pa testiranje i lečenje zaustavljaju širenje. Kondom smanjuje ionako mali polni rizik." },
+        en: "No vaccine. Mostly bloodborne — don't share needles, razors or toothbrushes; sexual transmission is low. It's now curable, so testing and treating helps stop spread. Condoms reduce the risk.",
+        ru: "Вакцины нет. Передаётся в основном через кровь — не делить иглы, бритвы, зубные щётки; половым путём реже. Сейчас излечим, поэтому тестирование и лечение останавливают распространение. Презерватив снижает риск.",
+        sr: "Vakcine nema. Prenosi se uglavnom preko krvi — ne deliti igle, brijače ili četkice za zube; polni prenos je redak. Sada je izlečiv, pa testiranje i lečenje zaustavljaju širenje. Kondom smanjuje rizik." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/hepatitis-c/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hepatitis-c" }] } },
   { key: "syp", label: { en: "Syphilis", ru: "Сифилис", sr: "Sifilis" }, color: "#cc5de8", sev: 3, p: 0.004, beta: 0.10, e: 0.60, grounded: false,
-    treat: { en: "Curable (penicillin)", ru: "Излечим", sr: "Izlečiv (penicilin)" },
-    cons: { en: "Brain, heart, nervous-system damage (tertiary)", ru: "Поражение мозга, сердца, нервной системы", sr: "Oštećenje mozga, srca, nervnog sistema (tercijarni)" },
+    treat: { en: "Curable", ru: "Излечим", sr: "Izlečiv" },
+    cons: { en: "Brain, heart, nervous-system damage", ru: "Поражение мозга, сердца, нервной системы", sr: "Oštećenje mozga, srca, nervnog sistema" },
     acc: "low-mid",
     src: { en: "Per-act transmission — estimate; the chancre is often outside the condom area. Condom ~50–71% (CDC).",
       ru: "Передача за акт — оценка; шанкр часто вне зоны презерватива. Презерватив ~50–71% (CDC).",
@@ -163,9 +163,9 @@ const STIS = [
         ru: "Стадийное течение. Первичный симптом: безболезненная язва (шанкр) в месте заражения. Вторичные симптомы: сыпь (часто на ладонях и стопах), температура, увеличение лимфоузлов. Затем латентная стадия без симптомов.",
         sr: "Tok po stadijumima. Primarni: bezbolna rana (šankr) na mestu zaraze. Sekundarni: osip (često na dlanovima i tabanima), temperatura, otečeni limfni čvorovi. Zatim latentni stadijum bez simptoma." },
       treatment: {
-        en: "Curable with an antibiotic (penicillin). The earlier treatment starts, the simpler; tertiary-stage damage is irreversible.",
+        en: "Curable with antibiotics. The earlier treatment starts, the simpler; tertiary-stage damage is irreversible.",
         ru: "Излечим антибиотиками. Чем раньше начато лечение, тем проще; повреждения третичной стадии необратимы.",
-        sr: "Izlečiv antibiotikom (penicilin). Što se ranije počne s lečenjem, to je jednostavnije; oštećenja tercijarnog stadijuma su nepovratna." },
+        sr: "Izlečiv antibioticima. Što se ranije počne s lečenjem, to je jednostavnije; oštećenja tercijarnog stadijuma su nepovratna." },
       consequences: {
         en: "Untreated, after years → tertiary syphilis: damage to the heart, brain and nervous system; in pregnancy — congenital syphilis in the baby.",
         ru: "Без лечения через годы наступает третичный сифилис: поражение сердца, мозга и нервной системы; при беременности — врождённый сифилис у ребёнка.",
@@ -196,13 +196,13 @@ const STIS = [
         ru: "Без лечения — воспалительные заболевания органов малого таза (воспаление матки и труб), бесплодие, внематочная беременность; может распространиться в кровь и суставы; повышает риск заражения ВИЧ.",
         sr: "Bez lečenja → zapaljenska bolest male karlice (zapaljenje materice i jajovoda), neplodnost, vanmaterična trudnoća; može se proširiti u krv i zglobove; povećava rizik od zaraze HIV-om." },
       prevent: {
-        en: "Condoms are effective (>90%). It's often symptomless, so test regularly and treat partners. Antibiotic resistance is rising — treat only as prescribed by a doctor.",
-        ru: "Презерватив эффективно предотвращает переачу (>90%). Часто проходит бессимптомно, поэтому регулярно тестируйтесь.",
-        sr: "Kondom je efikasan (>90%). Često je bez simptoma — testiraj se redovno i leči partnere. Raste otpornost na antibiotike — leči se samo po preporuci lekara." },
+        en: "Condoms effectively prevent transmission (>90%). It's often symptomless, so test regularly.",
+        ru: "Презерватив эффективно предотвращает передачу (>90%). Часто проходит бессимптомно, поэтому регулярно тестируйтесь.",
+        sr: "Kondom efikasno sprečava prenos (>90%). Često je bez simptoma, zato se testiraj redovno." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/gonorrhea/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
   { key: "chl", label: { en: "Chlamydia", ru: "Хламидия", sr: "Hlamidija" }, color: "#ffd43b", sev: 2, p: 0.045, beta: 0.10, e: 0.70, grounded: false,
     treat: { en: "Curable with antibiotic", ru: "Излечима антибиотиком", sr: "Izlečiva antibiotikom" },
-    cons: { en: "Infertility, pelvic inflammation (often silent)", ru: "Бесплодие, воспаление малого таза", sr: "Neplodnost, zapaljenje karlice (često skriveno)" },
+    cons: { en: "Infertility, pelvic inflammation", ru: "Бесплодие, воспаление малого таза", sr: "Neplodnost, zapaljenje karlice" },
     acc: "low-mid",
     src: { en: "Per-act transmission — estimate; often asymptomatic. Condom 50–90% (CDC).",
       ru: "Передача за акт — оценка; часто бессимптомна. Презерватив 50–90% (CDC).",
@@ -221,9 +221,9 @@ const STIS = [
         ru: "Без лечения — воспалительные заболевания органов малого таза (воспаление матки и труб), рубцевание маточных труб, бесплодие, внематочная беременность.",
         sr: "Bez lečenja → zapaljenska bolest male karlice (zapaljenje materice i jajovoda), ožiljci na jajovodima, neplodnost, vanmaterična trudnoća." },
       prevent: {
-        en: "Condoms lower the risk (~50–90%). Often symptomless — test regularly and treat partners; it's easily cured with antibiotics.",
+        en: "Condoms lower the risk (~50–90%). It's often symptomless, so test regularly.",
         ru: "Презерватив снижает риск (~50–90%). Часто проходит бессимптомно, поэтому регулярно тестируйтесь.",
-        sr: "Kondom smanjuje rizik (~50–90%). Često je bez simptoma — testiraj se redovno i leči partnere; lako se leči antibioticima." },
+        sr: "Kondom smanjuje rizik (~50–90%). Često je bez simptoma, zato se testiraj redovno." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/chlamydia/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
   { key: "tri", label: { en: "Trichomoniasis", ru: "Трихомониаз", sr: "Trihomonijaza" }, color: "#20c997", sev: 1, p: 0.02, beta: 0.12, e: 0.50, grounded: false,
     treat: { en: "Curable in one course", ru: "Излечим одним курсом", sr: "Izlečiv jednim kursom" },
@@ -246,9 +246,9 @@ const STIS = [
         ru: "Воспаление; повышает риск заражения и передачи других ИППП, включая ВИЧ; при беременности есть риск преждевременных родов.",
         sr: "Upala; povećava rizik od zaraze i prenosa drugih PPI, uključujući HIV; u trudnoći — prevremeni porođaj." },
       prevent: {
-        en: "Condoms lower the risk (~50%). Test if there are symptoms; treat both partners at once to avoid reinfection — cured with a single antibiotic course.",
+        en: "Condoms lower the risk (~50%). It's often symptomless, so test regularly.",
         ru: "Презерватив снижает риск (~50%). Часто проходит бессимптомно, поэтому регулярно тестируйтесь.",
-        sr: "Kondom smanjuje rizik (~50%). Testiraj ako ima simptoma; leči oba partnera istovremeno da bi se izbeglo ponovno zaražavanje — leči se jednim kursom antibiotika." },
+        sr: "Kondom smanjuje rizik (~50%). Često je bez simptoma, zato se testiraj redovno." },
       sources: [{ label: CDC, url: "https://www.cdc.gov/trichomoniasis/about/index.html" }, { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" }] } },
 ];
 
@@ -257,7 +257,7 @@ const STIS = [
 const WHO_STI = "https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)";
 const ENV = {
   hiv: { high: 22, out: 65,
-    note: { en: "Average ~0.2%, but HIV concentrates in networks: in key groups (men who have sex with men, people who inject drugs) and high-burden regions a high-activity partner reaches 15–27%.",
+    note: { en: "Average ~0.2%, but HIV concentrates in networks: in key groups (men who have sex with men; people who inject drugs) and high-burden regions a high-activity partner reaches 15–27%.",
       ru: "В среднем ~0,2%, но ВИЧ концентрируется в сетях: в ключевых группах (мужчины, имеющие секс с мужчинами; люди, употребляющие инъекционные наркотики) и регионах с высоким распространением до 15–27%.",
       sr: "U proseku ~0,2%, ali HIV se koncentriše u mrežama: u ključnim grupama (muškarci koji imaju seks sa muškarcima; ljudi koji koriste injekcione droge) i regionima sa visokim teretom kod aktivnog partnera dostiže 15–27%." },
     src: { label: WHO, url: "https://www.who.int/news-room/fact-sheets/detail/hiv-aids" } },
@@ -288,7 +288,7 @@ const ENV = {
     src: { label: WHO, url: WHO_STI } },
   chl: { high: 1.5, out: 2,
     note: { en: "Already common (~4.5%); in active young networks 10–15%, so the multiplier is modest.",
-      ru: "Уже часто распространён (~4,5%); в активных молодёжных сетях 10–15%, поэтому множитель и риска среды взяты небльшими.",
+      ru: "Уже часто распространён (~4,5%); в активных молодёжных сетях 10–15%, поэтому множитель риска среды взят небольшим.",
       sr: "Već čest (~4,5%); u aktivnim mladim mrežama 10–15%, pa je množilac skroman." },
     src: { label: WHO, url: WHO_STI } },
   tri: { high: 2, out: 5,
@@ -389,7 +389,7 @@ const I18N = {
     badge: "illustrative model",
     intro: "",
     warnTitle: "This is an amateur calculator, not a medical tool.",
-    warnBody: (<>The real probabilities are <b style={{ color: C.accent }}>almost certainly inexact</b>, because the model relies on many assumptions and estimates with wide spreads. The author has no medical training — consult a specialist. The model's main use is comparing how different parameters may affect the chance of infection.</>),
+    warnBody: (<>The real probabilities are <b style={{ color: C.accent }}>almost certainly inexact</b>, because the model relies on many assumptions and estimates with wide spreads. The author has no medical training — don't make medical decisions based on this model and consult a specialist. The model's main use is comparing how different parameters may affect the chance of infection.</>),
     preset: "Behavior preset",
     tourStart: "Tour", tourNext: "Next", tourSkip: "Skip", tourDone: "Done",
     tour1: "Pick a relationship style — it fills the partner cards below.",
@@ -399,7 +399,7 @@ const I18N = {
     tour5: "Your chance depends heavily on the environment you live in.",
     presetInfo: (<>• <b>Celibacy</b> — no sex.<br />• <b>Monogamy</b> — one steady partner.<br />• <b>Serial monogamy</b> — one partner at a time, but they change over the years.<br />• <b>Monogamish</b> — mostly one partner + rare one-night stands.<br />• <b>Open / swing</b> — a steady partner plus sex on the side.<br />• <b>Polyamory</b> — several ongoing relationships at once.<br />• <b>ONS / one-night</b> — one-night stands, no follow-up.<br />• <b>Core group</b> — a tight circle with frequent partner turnover.</>),
     sexActs: "Sex acts",
-    sexActsInfo: "Which practices and in which role. Per-act risk depends on the practice: receptive anal ≈ ×17 vs vaginal, insertive less, oral notably lower (based on HIV data; rough for other infections). For simplicity we assume every selected practice is present in each contact — so each one you add only raises the risk.",
+    sexActsInfo: <>Per-act risk depends on the practice.<br />For example, receptive anal ≈ ×17 likelier to transmit HIV than vaginal.<br /><br />For simplicity we assume every selected practice is present in each contact.</>,
     noActs: "No practice selected — risk is treated as zero.",
     protection: "Protection and immunity",
     vaxHpv: "Vaccinated against HPV",
@@ -433,11 +433,11 @@ const I18N = {
     atLeastOne: "at least one of the enabled",
     envLabel: "Environment",
     envNormal: "safe", envHigh: "high background", envOutbreak: "outbreak",
-    envInfo: (<>Infections cluster in sexual networks, so a partner is likelier infected than the population average. The switch scales each infection's prevalence — its own factor, see the disease card.<br /><br /><b>High background</b> — a more active, higher-risk circle.<br /><b>Outbreak</b> — a concentrated network during an active epidemic.<br /><br />The multiplier estimates are big assumptions, not a prediction.</>),
+    envInfo: (<><b>High background</b> — infection risk is higher in active sexual networks.<br /><b>Outbreak</b> — a concentrated network during an active epidemic. An epidemic can pass unnoticed.<br /><br />The multiplier estimates are chosen with rough assumptions. Each infection has its own multipliers (see the disease card).</>),
     hivBtn: "HIV risk",
-    hivTitle: "HIV risk isn't uniform",
-    hivP1: "In everyday life HIV risk is low, but in a local outbreak inside a sexual network it can become very high. An outbreak flares up unnoticed — you may not know about it until it's too late.",
-    hivP2: "Parallel untreated STIs raise the per-act chance of passing HIV: sores and inflammation open a 'gateway' and bring target cells to the mucosa.",
+    hivTitle: "HIV risk",
+    hivP1: "In a local outbreak inside a sexual network the chance of getting HIV can become very high. An outbreak flares up unnoticed — you may not know about it.",
+    hivP2: "Parallel untreated STIs raise the chance of passing HIV.",
     hivP3: "Barrier contraception (a condom) sharply lowers the chance of infection — especially for HIV.",
     hivChanged: "The scenario set:",
     hivChip1: "Environment → outbreak",
@@ -495,15 +495,15 @@ const I18N = {
     vaccRow: (vePct) => `After the vaccine ×(1 − ${vePct}%)`,
     vaccRowInfo: (<><div><b data-hi>The vaccine protects you the whole time</b>, not separately on each act</div><span data-f>result = risk without the vaccine × (1 − VE)</span><div>so, unlike a condom, it doesn't depend on the number of contacts; more in «Assumptions»</div></>),
     assumTitle: "Assumptions and how this is computed",
-    assumP1: (<>Only for <b data-hi>HIV</b> are per-act transmission and condom effectiveness taken from research (solid line). For the others there are no reliable numbers — these are order-of-magnitude estimates (dashed) based on CDC and WHO; the source for each infection is in the «Source» column of the table.</>),
-    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring and one-night partners. For each you can separately set how often a condom is used and how much you know about partners' test status. The multiplier «how likely the partner is already infected» is relative to an average random partner (from surveillance data): a steady partner ≈ that average (×1), while non-steady ones — both recurring and one-night — are roughly twice as likely to be infected (×2). Direct «casual vs steady» estimates are weak and vary (about ×1.5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>), so we take a conservative ×2. The difference between «several meetings» and «one night» is carried not by this multiplier but by the number of partners and acts with each. The multiplier is relative — the overall community level is set by «Environment», and the two multiply in odds-space without double-counting.</>),
+    assumP1: (<>Only for <b data-hi>HIV</b> are per-act transmission and condom effectiveness taken from research (solid line). For the others there are no reliable numbers — these are order-of-magnitude estimates (dashed) based on CDC and WHO data.</>),
+    assumP2: (<><b data-hi>Partner types.</b> Behavior is set by three types — steady, recurring and one-night partners. For each you can separately set how often a condom is used and how often you know about partners' negative tests. Different partners are differently sexually active. From this we take the assumption that recurring partners and hookups are twice as likely to be infected as a steady partner. Direct «casual vs steady» estimates are weak and vary (about ×1.5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>casual vs steady ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>once-off prevalence ↗</a>), so we take a conservative ×2.</>),
     assumP3: (<><b data-hi>Sex acts add up.</b> We assume every selected practice is present in each contact, so adding one only raises the risk (a simplification — not always true in reality). The risk ratios rely on HIV; for other infections this is a rough approximation.</>),
     assumP4: (<><b data-hi>Tested share.</b> A test has a «window» between infection and a positive result, so even 100% tested does not guarantee zero — it's an estimate.</>),
     assumP5: (<><b data-hi>Partner pool.</b> Estimates how much more active this type's circle is, and therefore how much likelier the partner is already infected. Relative multipliers (steady &lt; recurring &lt; hookups), not exact values.</>),
     assumP6: (<><b data-hi>How it's computed.</b> Per type the number of contacts is <span data-f>k = frequency × duration</span> (one-night = 1). The chance of catching it from a partner grows with k and is multiplied by the chance the partner is infected. The contributions of all types multiply → cumulative risk rises over time. The exact per-column formulas are in the breakdown tooltips.</>),
-    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the baseline of the whole community: safe / high background / outbreak — its own multiplier on each infection's prevalence (values and sources on the disease cards). The type picks the partner's circle, the environment sets the overall level. Both multipliers are odds ratios and are applied to prevalence <b data-hi>in odds-space</b>: <span data-f>odds = p/(1−p)</span>, multiply by environment and activity, convert back <span data-f>p = o/(1+o)</span>. So the «chance the partner is infected» never exceeds 100%: for common infections it saturates gently, for rare ones it's almost like plain multiplication. Example (HIV): in an outbreak, core-group prevalence is roughly 130× the average; part of that is already carried by the partner-type multiplier (non-steady ×2), so for the environment we use ×65 — together <span data-f>×65 × 2 = ×130</span> in odds-space (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>). This is essentially a form of Bayes' theorem: odds × likelihood ratio.</>),
+    assumPEnv: (<><b data-hi>Environment.</b> The partner-type multiplier reflects the circle of a specific partner, while «Environment» shifts the baseline of the whole community: safe / high background / outbreak set their own multiplier on each infection's prevalence (values and sources in the disease table). The partner type (steady/recurring/hookup) picks the partner's circle, and the environment sets the overall level. Both multipliers are odds ratios and are applied to prevalence <b data-hi>in odds-space</b>: <span data-f>odds = p/(1−p)</span>. Example (HIV): in an outbreak, core-group prevalence is roughly 130× the average; the partner-type multiplier (non-steady ×2) is already included in the environment multiplier, so for the environment we take ×65 — together <span data-f>×65 × 2 = ×130</span> in odds-space (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>WHO ↗</a>).</>),
     assumCof: (<><b data-hi>Untreated STIs (HIV cofactor).</b> An active untreated infection (sores/inflammation) raises the chance of acquiring HIV. The multiplier differs by infection — from meta-analyses: herpes ~2.7×, gonorrhea ~2.8×, syphilis ~1.7×, chlamydia and trichomoniasis ~1.5×. We use a single <span data-f>×2.5</span>, applied to HIV only (uniquely susceptible to this). Accuracy is low — estimates come mostly from women but are applied to everyone. Sources: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
-    assumVacc: (<><b data-hi>Vaccine (HPV / hepatitis B).</b> Lowers the final risk by its efficacy — we multiply the result by <span data-f>1 − efficacy</span> (85% removes 85%). We take it off the whole result, not each act: the vaccine neutralizes the virus with antibodies at the entry point, so protection doesn't weaken with the amount of sex, unlike a condom. The share of risk removed is the same with one partner or a hundred — but the absolute risk still grows with the number of partners.<br /><br />A simplification: the HPV vaccine covers only some virus types, protection is strongest before sexual debut, and in some people (especially for hepatitis B) the response is weaker — so 85% / 95% are average estimates, not a personal guarantee.</>),
+    assumVacc: (<><b data-hi>Vaccine (HPV / hepatitis B).</b> Lowers the final risk by its efficacy — we multiply the result by <span data-f>1 − efficacy</span> (85% removes 85%). We take it off the whole result, not each act: the vaccine neutralizes the virus with antibodies at the entry point, so protection doesn't weaken with the amount of sex, unlike a condom. The share of risk removed is the same with one partner or a hundred — but the absolute risk still grows with the number of partners.<br /><br />A simplification: the HPV vaccine covers only some virus types, protection is strongest before sexual debut, and in some people (especially for hepatitis B) the response is weaker — so 85% / 95% are estimates, not a personal guarantee.</>),
     assumExTitle: "Example: how environment and pool combine",
     assumExFormula: (<>Chance a partner is already infected = prevalence multiplied by environment and pool <span data-f>in odds-space (odds × environment × pool)</span>.</>),
     assumSources: (<>Sources: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>casual vs steady ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>once-off prevalence ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>assortative mixing ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>condom by partnership (NATSAL, Britain) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>WHO ↗</a></>),
@@ -532,15 +532,15 @@ const I18N = {
     pregTitle: "Probability of pregnancy over time",
     pregIntro: "",
     pregWarnTitle: "This is an amateur calculator, not a medical tool.",
-    pregWarnBody: "The model mixes rough approximations with reliable data. Don't use it for pregnancy planning, choosing contraception, or fertility problems — consult a specialist.",
+    pregWarnBody: "The model mixes rough approximations with reliable data. Don't use it for pregnancy planning, choosing contraception or fertility problems. The author has no medical training — consult a specialist.",
     pregWoman: "👩 Woman / couple",
     pregMan: "👨 Man",
     pregWomanExpl: (<><b data-hi>The «Woman» model is equivalent to the «Couple» model.</b> You can get pregnant at most once per cycle. Partners <b>do not add up</b>: only the total amount of sex and contraception matter, not the number of partners.</>),
     pregManExpl: (<>We count «at least one pregnancy among partners»: here partners <b>do add up</b> (more partners/acts → higher chance of ≥1 event).</>),
     pregProfile: "Profile",
     pregWomanAge: "Woman's age",
-    pregWomanAgeInfo: "The main fertility factor; a sharp drop after 35. Age values are a trend estimate (ASRM/Dunson/NICE).",
-    pregFreqInfo: "Frequency matters through hitting the fertile window; a plateau ~every other day. The shape of the dependence is an estimate.",
+    pregWomanAgeInfo: "The main fertility factor. In the model used there is a sharp drop after 35. (ASRM/Dunson/NICE).",
+    pregFreqInfo: "Frequency matters through the chance of hitting the fertile window. A plateau ~every other day.",
     pregLineWoman: "Probability of pregnancy",
     pregLineNoContra: "no contraception",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>Over {years} {yw} the chance of getting pregnant ≈ <b data-hi>{pct}</b>{hasContra ? " with the chosen contraception" : " without contraception"}.</>),
@@ -559,7 +559,7 @@ const I18N = {
     pregNoPartnersF: "No partners — add some in the cards on the left.",
     // ── Контрацепция / WomanMethods ──
     contraLabel: "Contraception",
-    contraInfo: "Add the methods you use — as many as you like and combine them. For «per-act» methods (condom etc.) the slider sets the share of acts. Details and sources — in the reference below.",
+    contraInfo: "When you add methods, the model assumes they are all used at once, every act. Methods that must be applied each act have a usage-frequency slider.",
     addMethod: "+ add method",
     allMethodsAdded: "All methods added",
     sevTitle: "side-effect severity (estimate)",
@@ -606,7 +606,7 @@ const I18N = {
     tour5: "Шанс сильно зависит от среды, в которой ты живёшь.",
     presetInfo: (<>• <b>Целибат</b> — без секса.<br />• <b>Моногамия</b> — один постоянный партнёр.<br />• <b>Серийная моногамия</b> — один партнёр, но со временем они меняются.<br />• <b>Monogamish</b> — постоянный партнёр + редкие связи на одну ночь.<br />• <b>Открытые / свинг</b> — постоянный партнёр плюс секс на стороне.<br />• <b>Полиамория</b> — несколько постоянных связей одновременно.<br />• <b>ONS / на одну ночь</b> — секс на одну ночь, без продолжения.<br />• <b>Core group</b> — тесный круг с частой сменой партнёров.</>),
     sexActs: "Виды секса",
-    sexActsInfo: <>Риск за акт зависит от практики.<br />Например рецептивный анальный ≈ ×17 вероятнее передаёт ВИЧ чем вагинальноый. <br /><br />Для упрощения считаем, что в каждом контакте присутствуют все выбранные практики.</>,
+    sexActsInfo: <>Риск за акт зависит от практики.<br />Например рецептивный анальный ≈ ×17 вероятнее передаёт ВИЧ, чем вагинальный.<br /><br />Для упрощения считаем, что в каждом контакте присутствуют все выбранные практики.</>,
     noActs: "Не выбрано ни одной практики — риск считается нулевым.",
     protection: "Защита и иммунитет",
     vaxHpv: "Привит от ВПЧ",
@@ -640,7 +640,7 @@ const I18N = {
     atLeastOne: "хотя бы одна из включённых",
     envLabel: "Среда",
     envNormal: "безопасная", envHigh: "высокий фон", envOutbreak: "вспышка",
-    envInfo: (<><b>Высокий фон</b> — риск инфекции выше в активных сексуальных сетях.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии. Эпидемия может проходить не заметно.<br /><br />Оценки множителей выбраны с грубыми допущениями. У каждой инфекции — свои множители (см. карточку болезни).</>),
+    envInfo: (<><b>Высокий фон</b> — риск инфекции выше в активных сексуальных сетях.<br /><b>Вспышка</b> — концентрированная сеть во время активной эпидемии. Эпидемия может проходить незаметно.<br /><br />Оценки множителей выбраны с грубыми допущениями. У каждой инфекции — свои множители (см. карточку болезни).</>),
     hivBtn: "Риск ВИЧ",
     hivTitle: "Риск ВИЧ",
     hivP1: "В локальной вспышке внутри сексуальной сети шанс заразиться ВИЧ может стать очень высоким. Вспышка разгорается незаметно — ты можешь о ней не знать.",
@@ -702,13 +702,13 @@ const I18N = {
     vaccRow: (vePct) => `После прививки ×(1 − ${vePct}%)`,
     vaccRowInfo: (<><div><b data-hi>Прививка защищает постоянно</b>, а не отдельно в каждом акте</div><span data-f>итог = риск без прививки × (1 − VE)</span><div>поэтому, в отличие от презерватива, она не зависит от числа контактов; подробнее — в «Допущениях»</div></>),
     assumTitle: "Допущения и логика",
-    assumP1: (<>Только для <b data-hi>ВИЧ</b> передача за акт и эффективность презерватива взяты из исследований (сплошная линия). Для остальных инфекций надёжных чисел нет — это правдоподобные оценки по порядку величины (пунктир) на основе данных CDC и ВОЗ;</>),
-    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие и партнёры на одну ночь. У каждого можно отдельно настроить, как часто используется презерватив и как часто ты знаешь о негативных анализах партнёров. Разные партнёры по разному сексуально активны. Из этого взято допущение что преходищие партнёры и хукапы имеют в 2 раза больше вероятности быть заразными чем постоянный партнёр. Прямые оценки «казуальный vs постоянный» слабые и разнятся (примерно ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>), поэтому берём консервативную ×2.</>),
+    assumP1: (<>Только для <b data-hi>ВИЧ</b> передача за акт и эффективность презерватива взяты из исследований (сплошная линия). Для остальных инфекций надёжных чисел нет — это правдоподобные оценки по порядку величины (пунктир) на основе данных CDC и ВОЗ.</>),
+    assumP2: (<><b data-hi>Типы партнёров.</b> Поведение задаётся тремя типами — постоянные, приходящие и партнёры на одну ночь. У каждого можно отдельно настроить, как часто используется презерватив и как часто ты знаешь о негативных анализах партнёров. Разные партнёры по-разному сексуально активны. Из этого взято допущение, что приходящие партнёры и хукапы имеют в 2 раза больше вероятности быть заразными, чем постоянный партнёр. Прямые оценки «казуальный vs постоянный» слабые и разнятся (примерно ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>казуальные vs постоянные ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>распространённость у разовых ↗</a>), поэтому берём консервативную ×2.</>),
     assumP3: (<><b data-hi>Виды секса складываются.</b> Считаем, что в каждом контакте присутствуют все выбранные практики, поэтому каждая добавленная только повышает риск (упрощение — в реальности не всегда так). Соотношения рисков опираются на исследования ВИЧ; для остальных инфекций это грубое приближение.</>),
     assumP4: (<><b data-hi>Проверенность.</b> У теста есть «окно» между заражением и положительным результатом, поэтому даже 100% проверенных не гарантируют ноль — это оценка.</>),
     assumP5: (<><b data-hi>Пул партнёров.</b> Оценивает, насколько активнее круг этого типа и потому вероятнее уже заражён партнёр. Относительные множители (постоянные &lt; приходящие &lt; хукапы), не точные величины.</>),
     assumP6: (<><b data-hi>Как считается.</b> Для типа число контактов <span data-f>k = частота × длительность</span> (на одну ночь = 1). Шанс заразиться от партнёра растёт с k и умножается на шанс, что партнёр заражён. Вклады всех типов перемножаются → кумулятивный риск растёт во времени. Точные формулы по столбцам — в подсказках таблицы разбора.</>),
-    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: безопасная / высокий фон / вспышка задают свой множитель к распространённости каждой инфекции (значения и источники — в таблице с информацией по болезням). Тип партнёра (постоянный/приходящий/хукап) выбирает круг партнёра, а среда задаёт общий уровень. Оба множителя — это отношения шансов (odds ratio) и применяются к распространённости <b data-hi>в пространстве шансов</b>: <span data-f>odds = p/(1−p)</span>. Пример (ВИЧ): во время вспышки распространённость в «кор-группе» примерно в 130 раз выше; множитель типа партнёра (непостоянный ×2) уже учитывается в множители среды, поэтому для среды берём ×65 — вместе <span data-f>×65 × 2 = ×130</span> в odds-пространстве (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>).</>),
+    assumPEnv: (<><b data-hi>Среда.</b> Множитель типа партнёра отражает круг конкретного партнёра, а «Среда» сдвигает фон всего сообщества: безопасная / высокий фон / вспышка задают свой множитель к распространённости каждой инфекции (значения и источники — в таблице с информацией по болезням). Тип партнёра (постоянный/приходящий/хукап) выбирает круг партнёра, а среда задаёт общий уровень. Оба множителя — это отношения шансов (odds ratio) и применяются к распространённости <b data-hi>в пространстве шансов</b>: <span data-f>odds = p/(1−p)</span>. Пример (ВИЧ): во время вспышки распространённость в «кор-группе» примерно в 130 раз выше; множитель типа партнёра (непостоянный ×2) уже учтён в множителе среды, поэтому для среды берём ×65 — вместе <span data-f>×65 × 2 = ×130</span> в odds-пространстве (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>ВОЗ ↗</a>).</>),
     assumCof: (<><b data-hi>Не пролеченные ЗППП (кофактор ВИЧ).</b> Активная нелеченая инфекция (язвы/воспаление) повышает шанс заразиться ВИЧ. Множитель разный у разных инфекций. По мета-анализам: герпес ~2,7×, гонорея ~2,8×, сифилис ~1,7×, хламидия и трихомониаз ~1,5×. Берём единый множитель <span data-f>×2,5</span> — множитель действует только на ВИЧ (он уникально чувствителен к этому). Точность оценки низкая: оценки в основном по женщинам, но применяются ко всем. Источники: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
     assumVacc: (<><b data-hi>Прививка (ВПЧ / гепатит B).</b> Снижает итоговый риск на свою эффективность — умножаем итог на <span data-f>1 − эффективность</span> (85% убирают 85%). Считаем из всего итога, а не из каждого акта: вакцина гасит вирус антителами на входе, поэтому защита не слабеет от количества секса, в отличие от презерватива. Доля убранного риска одинакова при одном партнёре и при сотне — но абсолютный риск с числом партнёров всё равно растёт.<br /><br />Упрощение: вакцина от ВПЧ покрывает не все типы вируса, защита надёжнее всего до начала половой жизни, у части людей (особенно к гепатиту B) ответ слабее — так что 85% / 95% это оценки, а не личная гарантия.</>),
     assumExTitle: "Пример: как комбинируются среда и активность",
@@ -745,7 +745,7 @@ const I18N = {
     pregManExpl: (<>Считаем «хотя бы одна беременность среди партнёрш»: здесь партнёрши <b>суммируются</b> (больше партнёрш/актов → выше шанс ≥1 события).</>),
     pregProfile: "Профиль",
     pregWomanAge: "Возраст женщины",
-    pregWomanAgeInfo: "Главный фактор фертильности. В изспользуемой модели резкий спад после 35. (ASRM/Dunson/NICE).",
+    pregWomanAgeInfo: "Главный фактор фертильности. В используемой модели резкий спад после 35. (ASRM/Dunson/NICE).",
     pregFreqInfo: "Частота влияет через вероятность попадания в фертильное окно. Плато ~через день.",
     pregLineWoman: "Вероятность беременности",
     pregLineNoContra: "без контрацепции",
@@ -764,7 +764,7 @@ const I18N = {
     pregRelCap: (d) => `связь ${d}`,
     pregNoPartnersF: "Нет партнёрш — добавь в карточках слева.",
     contraLabel: "Контрацепция",
-    contraInfo: "При добавлении методов в модели считается что все они используются одновременно каждый акт. У методов которые нужно применять каждый акт есть ползунок частоты использования.",
+    contraInfo: "При добавлении методов в модели считается, что все они используются одновременно каждый акт. У методов, которые нужно применять каждый акт, есть ползунок частоты использования.",
     addMethod: "+ добавить метод",
     allMethodsAdded: "Все методы добавлены",
     sevTitle: "серьёзность побочек (оценка)",
@@ -788,7 +788,7 @@ const I18N = {
     pregAssum3: (<><b data-hi>Только зачатие.</b> Модель оценивает вероятность зачатия, а не рождения ребёнка: выкидыши, внематочную беременность и прочие исходы не учитывает.</>),
     pregAssum4: (<><b data-hi>Случайный день цикла.</b> Если фертильное окно не отслеживается, считаем, что акты происходят в случайные дни — базовая фертильность в модели усредняется по всему циклу.</>),
     pregAssum5: (<><b data-hi>Контрацепция.</b> Берётся таблица типичного использования (<a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: "#a78bfa", textDecoration: "none" }}>CDC/Trussell ↗</a>). Несколько методов сочетаются перемножением эффективности.</>),
-    pregAssum6: (<><b data-hi>Девушка и парень.</b> В модели рассчитывающей веростность забеременеть девушки партнёры не суммируются, а в каждый цикл возможно только одно зачатие. У парня модель считает «хотя бы одну беременность среди всех партнёрш». Тоесть больше партнёрш и секса без контрацепции → выше шанс что хоть одна из них забеременеет.</>),
+    pregAssum6: (<><b data-hi>Девушка и парень.</b> В модели рассчитывающей вероятность забеременеть девушки партнёры не суммируются, а в каждый цикл возможно только одно зачатие. У парня модель считает «хотя бы одну беременность среди всех партнёрш». То есть больше партнёрш и секса без контрацепции → выше шанс, что хоть одна из них забеременеет.</>),
     pregAssum7: (<><b data-hi>Парень = ЗППП-логика.</b> «Хотя бы одна беременность среди партнёрш»: вклад каждого типа перемножается. Постоянные — по циклам весь период; приходящие — связь длительностью dur, обновляется за год; хукапы — один акт (per-act ≈ ⅕ от цикловой f — грубая оценка).</>),
     pregAssum8: (<><b data-hi>Почему у парня важно число партнёрш.</b> Каждая партнёрша — отдельный «розыгрыш»: забеременеть она может независимо от других, поэтому считаем не «сколько всего детей», а шанс, что произойдёт <b>хотя бы одна</b> беременность. Чем больше партнёрш и чем больше с каждой секса без надёжной контрацепции — тем выше этот шанс, потому что независимые возможности складываются. Для каждой партнёрши берём вероятность «не забеременела» и перемножаем их; единица минус это произведение и есть «хотя бы одна». У девушки наоборот: партнёры не складываются, потому что её цикл — общее узкое место (одно зачатие за цикл).</>),
     pregAssumSources: (<>Источники: <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>CDC / Trussell (контрацепция) ↗</a> · <a href="https://www.nice.org.uk/guidance/cg156" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NICE (фертильность и возраст) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/infertility" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>ВОЗ (бесплодие) ↗</a></>),
@@ -799,7 +799,7 @@ const I18N = {
     badge: "ilustrativni model",
     intro: "",
     warnTitle: "Ovo je amaterski kalkulator, a ne medicinski alat.",
-    warnBody: (<>Stvarne verovatnoće su <b style={{ color: C.accent }}>gotovo sigurno netačne</b>, jer model koristi mnogo pretpostavki i procena sa velikim rasponima. Autor nema medicinsko obrazovanje — posavetuj se sa stručnjakom. Glavna korist modela je poređenje kako različiti parametri mogu uticati na verovatnoću zaraze.</>),
+    warnBody: (<>Stvarne verovatnoće su <b style={{ color: C.accent }}>gotovo sigurno netačne</b>, jer model koristi mnogo pretpostavki i procena sa velikim rasponima. Autor nema medicinsko obrazovanje — ne donosi medicinske odluke na osnovu ovog modela i posavetuj se sa stručnjakom. Glavna korist modela je poređenje kako različiti parametri mogu uticati na verovatnoću zaraze.</>),
     preset: "Preset ponašanja",
     tourStart: "Tura", tourNext: "Dalje", tourSkip: "Preskoči", tourDone: "Gotovo",
     tour1: "Izaberi stil odnosa — popuniće kartice partnera ispod.",
@@ -809,7 +809,7 @@ const I18N = {
     tour5: "Šansa mnogo zavisi od sredine u kojoj živiš.",
     presetInfo: (<>• <b>Celibat</b> — bez seksa.<br />• <b>Monogamija</b> — jedan stalni partner.<br />• <b>Serijska monogamija</b> — jedan partner, ali se vremenom menjaju.<br />• <b>Monogamish</b> — uglavnom jedan + retke veze za jednu noć.<br />• <b>Otvorene / sving</b> — stalni partner plus seks sa strane.<br />• <b>Poliamorija</b> — nekoliko stalnih veza istovremeno.<br />• <b>ONS / jedna noć</b> — seks za jednu noć, bez nastavka.<br />• <b>Core group</b> — uzak krug sa čestom izmenom partnera.</>),
     sexActs: "Vrste seksa",
-    sexActsInfo: "Koje prakse i u kojoj ulozi. Rizik po aktu zavisi od prakse: receptivni analni ≈ ×17 u odnosu na vaginalni, insertivni manje, oralni znatno niže (po podacima o HIV-u; grubo za ostale infekcije). Radi jednostavnosti smatramo da su u svakom kontaktu prisutne sve izabrane prakse — pa svaka dodata samo povećava rizik.",
+    sexActsInfo: <>Rizik po aktu zavisi od prakse.<br />Na primer, receptivni analni ≈ ×17 verovatnije prenosi HIV nego vaginalni.<br /><br />Radi jednostavnosti smatramo da su u svakom kontaktu prisutne sve izabrane prakse.</>,
     noActs: "Nijedna praksa nije izabrana — rizik se računa kao nula.",
     protection: "Zaštita i imunitet",
     vaxHpv: "Vakcinisan/a protiv HPV-a",
@@ -843,11 +843,11 @@ const I18N = {
     atLeastOne: "bar jedna od uključenih",
     envLabel: "Sredina",
     envNormal: "bezbedna", envHigh: "visok fon", envOutbreak: "epidemija",
-    envInfo: (<>Infekcije se koncentrišu u seksualnim mrežama, pa je partner zaražen češće nego po prosečnoj rasprostranjenosti. Prekidač množi rasprostranjenost svake infekcije — sopstveni množilac, vidi karticu bolesti.<br /><br /><b>Visok fon</b> — aktivniji, rizičniji krug.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije.<br /><br />Procene množilaca su velike pretpostavke, a ne predviđanje.</>),
+    envInfo: (<><b>Visok fon</b> — rizik od infekcije je veći u aktivnim seksualnim mrežama.<br /><b>Epidemija</b> — koncentrisana mreža tokom aktivne epidemije. Epidemija može proći neprimetno.<br /><br />Procene množilaca su izabrane sa grubim pretpostavkama. Svaka infekcija ima svoje množioce (vidi karticu bolesti).</>),
     hivBtn: "Rizik od HIV-a",
-    hivTitle: "Rizik od HIV-a nije ravnomeran",
-    hivP1: "U svakodnevnom životu rizik od HIV-a je nizak, ali u lokalnoj epidemiji unutar seksualne mreže može postati vrlo visok. Epidemija se razbukti neprimetno — možda nećeš znati za nju dok ne bude kasno.",
-    hivP2: "Paralelne nelečene PPI povećavaju šansu prenosa HIV-a po aktu: rane i upala otvaraju „vrata“ i dovode ciljne ćelije do sluzokože.",
+    hivTitle: "Rizik od HIV-a",
+    hivP1: "U lokalnoj epidemiji unutar seksualne mreže šansa da se zaraziš HIV-om može postati vrlo visoka. Epidemija se razbukti neprimetno — možda nećeš znati za nju.",
+    hivP2: "Paralelne nelečene PPI povećavaju šansu prenosa HIV-a.",
     hivP3: "Barijerna kontracepcija (kondom) snažno smanjuje šansu zaražavanja — naročito za HIV.",
     hivChanged: "Scenario je postavio:",
     hivChip1: "Sredina → epidemija",
@@ -905,15 +905,15 @@ const I18N = {
     vaccRow: (vePct) => `Posle vakcine ×(1 − ${vePct}%)`,
     vaccRowInfo: (<><div><b data-hi>Vakcina štiti sve vreme</b>, a ne posebno u svakom aktu</div><span data-f>ukupno = rizik bez vakcine × (1 − VE)</span><div>zato, za razliku od kondoma, ne zavisi od broja kontakata; više u „Pretpostavkama“</div></>),
     assumTitle: "Pretpostavke i kako se ovo računa",
-    assumP1: (<>Samo za <b data-hi>HIV</b> su prenos po aktu i efikasnost kondoma uzeti iz istraživanja (puna linija). Za ostale infekcije nema pouzdanih brojeva — to su procene reda veličine (isprekidana) na osnovu CDC i SZO; izvor za svaku infekciju je u koloni „Izvor“ tabele.</>),
-    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni i partneri za jednu noć. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko znaš o testovima partnera. Množilac „koliko je verovatno da je partner već zaražen“ računa se u odnosu na prosečnog slučajnog partnera (iz podataka nadzora): stalni ≈ taj prosek (×1), dok su nestalni — i povremeni i za jednu noć — otprilike dvostruko verovatnije zaraženi (×2). Direktne procene „povremeni vs stalni“ su slabe i variraju (oko ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>), pa uzimamo konzervativnih ×2. Razliku između „nekoliko susreta“ i „jedne noći“ ne nosi ovaj množilac, već broj partnera i akata sa svakim. Množilac je relativan — opšti nivo zajednice zadaje „Sredina“, i množe se u prostoru šansi, bez dvostrukog brojanja.</>),
+    assumP1: (<>Samo za <b data-hi>HIV</b> su prenos po aktu i efikasnost kondoma uzeti iz istraživanja (puna linija). Za ostale infekcije nema pouzdanih brojeva — to su procene reda veličine (isprekidana) na osnovu podataka CDC i SZO.</>),
+    assumP2: (<><b data-hi>Tipovi partnera.</b> Ponašanje se zadaje sa tri tipa — stalni, povremeni i partneri za jednu noć. Za svaki posebno možeš podesiti koliko se često koristi kondom i koliko često znaš o negativnim testovima partnera. Različiti partneri su različito seksualno aktivni. Iz toga je uzeta pretpostavka da su povremeni partneri i avanture dvostruko verovatnije zaraženi nego stalni partner. Direktne procene „povremeni vs stalni“ su slabe i variraju (oko ×1,5–2; <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>povremeni vs stalni ↗</a>, <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>prevalencija kod jednokratnih ↗</a>), pa uzimamo konzervativnih ×2.</>),
     assumP3: (<><b data-hi>Vrste seksa se sabiraju.</b> Smatramo da je u svakom kontaktu prisutna svaka izabrana praksa, pa dodavanje samo povećava rizik (pojednostavljenje — u stvarnosti nije uvek tako). Odnosi rizika oslanjaju se na HIV; za ostale infekcije to je gruba aproksimacija.</>),
     assumP4: (<><b data-hi>Udeo testiranih.</b> Test ima „prozor“ između zaraze i pozitivnog rezultata, pa čak ni 100% testiranih ne garantuje nulu — to je procena.</>),
     assumP5: (<><b data-hi>Pul partnera.</b> Procenjuje koliko je aktivniji krug ovog tipa i zato verovatnije da je partner već zaražen. Relativni množioci (stalni &lt; povremeni &lt; avanture), ne tačne vrednosti.</>),
     assumP6: (<><b data-hi>Kako se računa.</b> Po tipu broj kontakata je <span data-f>k = učestalost × trajanje</span> (jedna noć = 1). Šansa za zarazu od partnera raste sa k i množi se šansom da je partner zaražen. Doprinosi svih tipova se množe → kumulativni rizik raste tokom vremena. Tačne formule po kolonama su u podsetnicima tabele razrade.</>),
-    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: bezbedna / visok fon / epidemija — sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori na karticama bolesti). Tip bira krug partnera, sredina zadaje opšti nivo. Oba množioca su odnosi šansi (odds ratio) i primenjuju se na rasprostranjenost <b data-hi>u prostoru šansi</b>: <span data-f>odds = p/(1−p)</span>, množimo sredinom i aktivnošću, vraćamo nazad <span data-f>p = o/(1+o)</span>. Zato „šansa da je partner zaražen“ nikada ne prelazi 100%: za česte infekcije se blago zasiti, za retke je skoro kao obično množenje. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 130× viša od proseka; deo toga već nosi množilac tipa partnera (nestalni ×2), pa za sredinu uzimamo ×65 — zajedno <span data-f>×65 × 2 = ×130</span> u prostoru šansi (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>). To je u suštini oblik Bajesove teoreme: šanse × odnos verodostojnosti.</>),
+    assumPEnv: (<><b data-hi>Sredina.</b> Množilac tipa partnera odražava krug konkretnog partnera, a „Sredina“ pomera osnovu cele zajednice: bezbedna / visok fon / epidemija zadaju sopstveni množilac na rasprostranjenost svake infekcije (vrednosti i izvori u tabeli bolesti). Tip partnera (stalni/povremeni/avantura) bira krug partnera, a sredina zadaje opšti nivo. Oba množioca su odnosi šansi (odds ratio) i primenjuju se na rasprostranjenost <b data-hi>u prostoru šansi</b>: <span data-f>odds = p/(1−p)</span>. Primer (HIV): u epidemiji je prevalencija u „core-grupi“ otprilike 130× viša od proseka; množilac tipa partnera (nestalni ×2) već je uračunat u množilac sredine, pa za sredinu uzimamo ×65 — zajedno <span data-f>×65 × 2 = ×130</span> u prostoru šansi (<a href="https://www.who.int/news-room/fact-sheets/detail/hiv-aids" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>SZO ↗</a>).</>),
     assumCof: (<><b data-hi>Nelečene PPI (kofaktor HIV-a).</b> Aktivna nelečena infekcija (rane/upala) povećava šansu zaražavanja HIV-om. Množilac se razlikuje po infekciji — po meta-analizama: herpes ~2,7×, gonoreja ~2,8×, sifilis ~1,7×, hlamidija i trihomonijaza ~1,5×. Uzimamo jedinstven <span data-f>×2,5</span> — deluje samo na HIV (jedinstveno osetljiv na ovo). Tačnost je niska: procene su uglavnom iz podataka o ženama, ali se primenjuju na sve. Izvori: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5700807/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Looker 2017 ↗</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/35034049/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid, textDecoration: "underline" }}>Barker 2022 ↗</a>.</>),
-    assumVacc: (<><b data-hi>Vakcina (HPV / hepatitis B).</b> Smanjuje konačni rizik za svoju efikasnost — množimo ukupno sa <span data-f>1 − efikasnost</span> (85% uklanja 85%). Računamo od celog rezultata, a ne od svakog akta: vakcina gasi virus antitelima na ulazu, pa zaštita ne slabi od količine seksa, za razliku od kondoma. Udeo uklonjenog rizika je isti i sa jednim partnerom i sa sto — ali apsolutni rizik ipak raste sa brojem partnera.<br /><br />Uprošćenje: vakcina protiv HPV-a pokriva samo neke tipove virusa, zaštita je najpouzdanija pre početka polnog života, a kod nekih ljudi (naročito za hepatitis B) odgovor je slabiji — pa su 85% / 95% prosečne procene, a ne lična garancija.</>),
+    assumVacc: (<><b data-hi>Vakcina (HPV / hepatitis B).</b> Smanjuje konačni rizik za svoju efikasnost — množimo ukupno sa <span data-f>1 − efikasnost</span> (85% uklanja 85%). Računamo od celog rezultata, a ne od svakog akta: vakcina gasi virus antitelima na ulazu, pa zaštita ne slabi od količine seksa, za razliku od kondoma. Udeo uklonjenog rizika je isti i sa jednim partnerom i sa sto — ali apsolutni rizik ipak raste sa brojem partnera.<br /><br />Uprošćenje: vakcina protiv HPV-a pokriva samo neke tipove virusa, zaštita je najpouzdanija pre početka polnog života, a kod nekih ljudi (naročito za hepatitis B) odgovor je slabiji — pa su 85% / 95% procene, a ne lična garancija.</>),
     assumExTitle: "Primer: kako se kombinuju sredina i pul",
     assumExFormula: (<>Šansa da je partner već zaražen = rasprostranjenost pomnožena sredinom i pulom <span data-f>u prostoru šansi (odds × sredina × pul)</span>.</>),
     assumSources: (<>Izvori: <a href="https://pubmed.ncbi.nlm.nih.gov/1411843/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>povremeni vs stalni ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5737755/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>prevalencija kod jednokratnih ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5431278/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>asortativno mešanje ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6380304/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>NATSAL-3 ↗</a> · <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC2563886/" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>kondom po tipu veze (NATSAL, Britanija) ↗</a> · <a href="https://www.who.int/news-room/fact-sheets/detail/sexually-transmitted-infections-(stis)" target="_blank" rel="noopener noreferrer" style={{ color: C.mid }}>SZO ↗</a></>),
@@ -941,15 +941,15 @@ const I18N = {
     pregTitle: "Verovatnoća trudnoće tokom vremena",
     pregIntro: "",
     pregWarnTitle: "Ovo je amaterski kalkulator, a ne medicinski alat.",
-    pregWarnBody: "Model meša grube aproksimacije sa pouzdanim podacima. Ne koristi ga za planiranje trudnoće, izbor kontracepcije ili kod problema sa začećem — obrati se stručnjaku.",
+    pregWarnBody: "Model meša grube aproksimacije sa pouzdanim podacima. Ne koristi ga za planiranje trudnoće, izbor kontracepcije ili kod problema sa začećem. Autor nema medicinsko obrazovanje — obrati se stručnjaku.",
     pregWoman: "👩 Devojka / par",
     pregMan: "👨 Mladić",
     pregWomanExpl: (<><b data-hi>Model „Devojka“ je ekvivalentan modelu „Par“.</b> Trudnoća je moguća najviše jednom po ciklusu. Partneri se <b>ne sabiraju</b>: bitna je samo ukupna količina seksa i kontracepcija, a ne broj partnera.</>),
     pregManExpl: (<>Računamo „bar jednu trudnoću među partnerkama“: ovde se partnerke <b>sabiraju</b> (više partnerki/akata → veća šansa za ≥1 događaj).</>),
     pregProfile: "Profil",
     pregWomanAge: "Starost žene",
-    pregWomanAgeInfo: "Glavni faktor plodnosti; nagli pad posle 35. Vrednosti po starosti su procena trenda (ASRM/Dunson/NICE).",
-    pregFreqInfo: "Učestalost utiče preko pogađanja plodnog prozora; plato ~svaki drugi dan. Oblik zavisnosti je procena.",
+    pregWomanAgeInfo: "Glavni faktor plodnosti. U korišćenom modelu postoji nagli pad posle 35. (ASRM/Dunson/NICE).",
+    pregFreqInfo: "Učestalost utiče preko verovatnoće pogađanja plodnog prozora. Plato ~svaki drugi dan.",
     pregLineWoman: "Verovatnoća trudnoće",
     pregLineNoContra: "bez kontracepcije",
     pregHeadWoman: (years, yw, pct, hasContra) => (<>Za {years} {yw} verovatnoća da se zatrudni ≈ <b data-hi>{pct}</b>{hasContra ? " sa izabranom kontracepcijom" : " bez kontracepcije"}.</>),
@@ -967,7 +967,7 @@ const I18N = {
     pregRelCap: (d) => `veza ${d}`,
     pregNoPartnersF: "Nema partnerki — dodaj u karticama levo.",
     contraLabel: "Kontracepcija",
-    contraInfo: "Dodaj metode koje koristiš — koliko god želiš i kombinuj ih. Kod metoda „po aktu“ (kondom itd.) klizač zadaje udeo akata. Detalji i izvori — u referenci ispod.",
+    contraInfo: "Kada dodaš metode, model smatra da se sve koriste istovremeno, svaki akt. Metodi koje treba primeniti svaki akt imaju klizač učestalosti korišćenja.",
     addMethod: "+ dodaj metod",
     allMethodsAdded: "Svi metodi su dodati",
     sevTitle: "ozbiljnost neželjenih efekata (procena)",
@@ -1613,59 +1613,59 @@ const CONTRA = [
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "fam", label: { en: "Calendar / fertile window", ru: "Календарь / фертильное окно", sr: "Kalendar / plodni prozor" }, perfect: 0.004, typical: 0.24, sev: 1, control: "perAct",
     side: { en: "No side effects; needs discipline, the gap between perfect and typical is huge.", ru: "Без побочек; нужна дисциплина, разрыв идеальной и типичной эффективности огромен.", sr: "Bez neželjenih efekata; potrebna disciplina, jaz između idealnog i tipičnog je ogroman." },
-    guide: { how: { en: "Tracking fertility signs (temperature, mucus, calendar) and abstinence/barrier on fertile days.", ru: "Отслеживание признаков фертильности (температура, слизь, календарь) и воздержание/барьер в фертильные дни.", sr: "Praćenje znakova plodnosti (temperatura, sluz, kalendar) i uzdržavanje/barijera u plodnim danima." }, side: { en: "No harm; self-discipline and abstinence are needed. Errors in recognizing the window lead to pregnancy.", ru: "Вреда нет, необходимы самодисциплина и воздержание. Ошибки распознавания окна ведут к беременности.", sr: "Nema štete; potrebni su samodisciplina i uzdržavanje. Greške u prepoznavanju prozora vode trudnoći." } },
+    guide: { how: { en: "Tracking fertility signs (temperature, mucus, calendar) and abstinence/barrier on fertile days.", ru: "Отслеживание признаков фертильности (температура, слизь, календарь) и воздержание/барьер в фертильные дни.", sr: "Praćenje znakova plodnosti (temperatura, sluz, kalendar) i uzdržavanje/barijera u plodnim danima." }, side: { en: "No harm, self-discipline and abstinence are needed. Errors in recognizing the window lead to pregnancy.", ru: "Вреда нет, необходимы самодисциплина и воздержание. Ошибки распознавания окна ведут к беременности.", sr: "Nema štete, potrebni su samodisciplina i uzdržavanje. Greške u prepoznavanju prozora vode trudnoći." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "condom_m", label: { en: "Condom (male)", ru: "Презерватив (муж.)", sr: "Kondom (muški)" }, perfect: 0.02, typical: 0.13, sev: 1, control: "perAct",
-    side: { en: "Occasional latex allergy; may tear/slip. Protects from STIs.", ru: "Изредка аллергия на латекс, может порваться или соскользнуть. Снижает риск ИППП.", sr: "Ponekad alergija na lateks; može pući/skliznuti. Štiti od PPI." },
-    guide: { how: { en: "A barrier on the penis that holds sperm. Also lowers STI risk.", ru: "Барьер на половом члене, удерживающий сперму. Снижает и риск ИППП.", sr: "Barijera na penisu koja zadržava spermu. Smanjuje i rizik od PPI." }, side: { en: "Possible latex allergy (polyurethane exists); risk of tearing/slipping. Suits almost everyone, no prescription. Lowers STI risk.", ru: "Возможна аллергия на латекс (есть полиуретановые). Риск разрыва или соскальзывания. Подходит почти всем, без рецепта. Снижает риск ИППП.", sr: "Moguća alergija na lateks (postoje poliuretanski); rizik od pucanja/klizanja. Odgovara skoro svima, bez recepta. Smanjuje rizik od PPI." } },
+    side: { en: "Occasional latex allergy, may tear or slip. Reduces STI risk.", ru: "Изредка аллергия на латекс, может порваться или соскользнуть. Снижает риск ИППП.", sr: "Ponekad alergija na lateks, može pući ili skliznuti. Smanjuje rizik od PPI." },
+    guide: { how: { en: "A barrier on the penis that holds sperm. Also lowers STI risk.", ru: "Барьер на половом члене, удерживающий сперму. Снижает и риск ИППП.", sr: "Barijera na penisu koja zadržava spermu. Smanjuje i rizik od PPI." }, side: { en: "Possible latex allergy (polyurethane exists). Risk of tearing or slipping. Suits almost everyone, no prescription. Lowers STI risk.", ru: "Возможна аллергия на латекс (есть полиуретановые). Риск разрыва или соскальзывания. Подходит почти всем, без рецепта. Снижает риск ИППП.", sr: "Moguća alergija na lateks (postoje poliuretanski). Rizik od pucanja ili klizanja. Odgovara skoro svima, bez recepta. Smanjuje rizik od PPI." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }, { label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }] },
   { key: "condom_f", label: { en: "Condom (female)", ru: "Презерватив (жен.)", sr: "Kondom (ženski)" }, perfect: 0.05, typical: 0.21, sev: 1, control: "perAct",
-    side: { en: "May shift/be noisy; protects from STIs.", ru: "Может смещаться или шуметь. Снижает риск ИППП.", sr: "Može se pomerati/biti bučan; štiti od PPI." },
-    guide: { how: { en: "A soft sleeve in the vagina with rings that holds sperm.", ru: "Мягкий рукав во влагалище с кольцами, задерживает сперму.", sr: "Mekani rukav u vagini sa prstenovima koji zadržava spermu." }, side: { en: "Sometimes shifts or causes discomfort; irritation is rare. Lowers STI risk. An alternative to the male condom — gives the woman control over contraception. No prescription.", ru: "Иногда смещается или вызывает дискомфорт. Редко бывают раздражения. Снижает риск ИППП. Альтернатива мужскому презервативу — даёт женщине контроль над контрацепцией. Рецепта не требует.", sr: "Ponekad se pomera ili izaziva nelagodnost; iritacije su retke. Smanjuje rizik od PPI. Alternativa muškom kondomu — daje ženi kontrolu nad kontracepcijom. Bez recepta." } },
+    side: { en: "May shift or be noisy. Reduces STI risk.", ru: "Может смещаться или шуметь. Снижает риск ИППП.", sr: "Može se pomerati ili biti bučan. Smanjuje rizik od PPI." },
+    guide: { how: { en: "A soft sleeve in the vagina with rings that holds sperm.", ru: "Мягкий рукав во влагалище с кольцами, задерживает сперму.", sr: "Mekani rukav u vagini sa prstenovima koji zadržava spermu." }, side: { en: "Sometimes shifts or causes discomfort. Irritation is rare. Lowers STI risk. An alternative to the male condom — gives the woman control over contraception. No prescription.", ru: "Иногда смещается или вызывает дискомфорт. Редко бывают раздражения. Снижает риск ИППП. Альтернатива мужскому презервативу — даёт женщине контроль над контрацепцией. Рецепта не требует.", sr: "Ponekad se pomera ili izaziva nelagodnost. Iritacije su retke. Smanjuje rizik od PPI. Alternativa muškom kondomu — daje ženi kontrolu nad kontracepcijom. Bez recepta." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "diaphragm", label: { en: "Diaphragm / cap", ru: "Диафрагма / колпачок", sr: "Dijafragma / kapica" }, perfect: 0.06, typical: 0.12, sev: 1, control: "perAct",
-    side: { en: "Needs fitting by size; slightly higher cystitis risk.", ru: "Нужен подбор по размеру. Чуть выше риск цистита.", sr: "Potrebno biranje po veličini. Malo veći rizik od cistitisa." },
-    guide: { how: { en: "A cup with spermicide covering the cervix; inserted before the act.", ru: "Чашечка со спермицидом, закрывающая шейку матки. Вводится перед актом.", sr: "Čašica sa spermicidom koja pokriva grlić materice; uvodi se pre akta." }, side: { en: "More frequent cystitis, irritation from spermicide; needs fitting and training. An option when hormones are contraindicated. For women who have given birth (and for the cap) effectiveness is notably lower.", ru: "Учащённый цистит, раздражение от спермицида. Нужен подбор и обучение. Вариант при противопоказаниях к гормонам. У рожавших эффективность заметно ниже.", sr: "Češći cistitisi, iritacija od spermicida; potrebno biranje i obuka. Opcija pri kontraindikacijama na hormone. Kod žena koje su rađale (i za kapicu) efikasnost je znatno niža." } },
+    side: { en: "Needs fitting by size. Slightly higher cystitis risk.", ru: "Нужен подбор по размеру. Чуть выше риск цистита.", sr: "Potrebno biranje po veličini. Malo veći rizik od cistitisa." },
+    guide: { how: { en: "A cup with spermicide covering the cervix. Inserted before the act.", ru: "Чашечка со спермицидом, закрывающая шейку матки. Вводится перед актом.", sr: "Čašica sa spermicidom koja pokriva grlić materice. Uvodi se pre akta." }, side: { en: "More frequent cystitis, irritation from spermicide. Needs fitting and training. An option when hormones are contraindicated. Effectiveness is notably lower in women who have given birth.", ru: "Учащённый цистит, раздражение от спермицида. Нужен подбор и обучение. Вариант при противопоказаниях к гормонам. У рожавших эффективность заметно ниже.", sr: "Češći cistitisi, iritacija od spermicida. Potrebno biranje i obuka. Opcija pri kontraindikacijama na hormone. Kod žena koje su rađale efikasnost je znatno niža." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "spermicide", label: { en: "Spermicides", ru: "Спермициды", sr: "Spermicidi" }, perfect: 0.18, typical: 0.28, sev: 1, control: "perAct",
-    side: { en: "Mucosal irritation; may raise STI risk.", ru: "Раздражение слизистой, может повышать риск ИППП.", sr: "Iritacija sluznice; može povećati rizik od PPI." },
-    guide: { how: { en: "Gel/foam/suppositories with a substance that kills sperm; inserted before the act.", ru: "Гель/пена/свечи с веществом, убивающим сперматозоиды. Вводятся перед актом.", sr: "Gel/pena/supozitorije sa supstancom koja ubija spermatozoide; uvode se pre akta." }, side: { en: "Irritation; with frequent use nonoxynol-9 damages the mucosa and may RAISE STI risk. One of the least reliable alone; usually combined with a barrier. No prescription.", ru: "Раздражение. При частом применении ноноксинол-9 повреждает слизистую и может ПОВЫШАТЬ риск ИППП. Один из наименее надёжных и обычно сочетают с барьером. Рецепт не требуется.", sr: "Iritacija; pri čestom korišćenju nonoksinol-9 oštećuje sluznicu i može POVEĆATI rizik od PPI. Jedan od najmanje pouzdanih samostalno; obično se kombinuje sa barijerom. Bez recepta." } },
+    side: { en: "Mucosal irritation, may raise STI risk.", ru: "Раздражение слизистой, может повышать риск ИППП.", sr: "Iritacija sluznice, može povećati rizik od PPI." },
+    guide: { how: { en: "Gel/foam/suppositories with a substance that kills sperm. Inserted before the act.", ru: "Гель/пена/свечи с веществом, убивающим сперматозоиды. Вводятся перед актом.", sr: "Gel/pena/supozitorije sa supstancom koja ubija spermatozoide. Uvode se pre akta." }, side: { en: "Irritation. With frequent use nonoxynol-9 damages the mucosa and may RAISE STI risk. One of the least reliable and usually combined with a barrier. No prescription.", ru: "Раздражение. При частом применении ноноксинол-9 повреждает слизистую и может ПОВЫШАТЬ риск ИППП. Один из наименее надёжных и обычно сочетают с барьером. Рецепт не требуется.", sr: "Iritacija. Pri čestom korišćenju nonoksinol-9 oštećuje sluznicu i može POVEĆATI rizik od PPI. Jedan od najmanje pouzdanih i obično se kombinuje sa barijerom. Bez recepta." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "cok", label: { en: "Combined pill (COC)", ru: "КОК (таблетки)", sr: "Kombinovana pilula (KOK)" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
     side: { en: "Nausea, mood changes, weight fluctuations, rarely thrombosis. Consultation with a doctor required.", ru: "Тошнота, изменения настроения, колебания веса, редко тромбозы. Требуется консультация с врачом.", sr: "Mučnina, promene raspoloženja, kolebanja težine, retko tromboze. Potrebna konsultacija sa lekarom." },
-    guide: { how: { en: "Estrogen + progestin daily: suppress ovulation, thicken mucus.", ru: "Приём эстрогена и прогестина ежедневно: подавляет овуляцию и сгущает слизь.", sr: "Estrogen + progestin dnevno: potiskuju ovulaciju, zgušnjavaju sluz." }, side: { en: "Nausea, breast tenderness, mood/libido changes, spotting. A rare but serious risk — venous thrombosis (higher in smokers 35+). Contraindicated in migraine with aura, thrombosis, smoking after 35, severe hypertension. Prescription required and a mandatory consultation with a doctor.", ru: "Тошнота, болезненность груди, изменения настроения/либидо, мажущие выделения. Редкий, но серьёзный риск — венозный тромбоз (выше у курящих 35+). Противопоказаны при мигрени с аурой, тромбозах, курении после 35, тяжёлой гипертензии. Нужен рецепт и обязательная консультация с врачом.", sr: "Mučnina, osetljivost grudi, promene raspoloženja/libida, krvarenje. Redak ali ozbiljan rizik — venska tromboza (veći kod pušača 35+). Kontraindikovane kod migrene sa aurom, tromboze, pušenja posle 35, teške hipertenzije. Potreban recept i obavezna konsultacija sa lekarom." } },
+    guide: { how: { en: "Estrogen + progestin daily: suppress ovulation, thicken mucus.", ru: "Приём эстрогена и прогестина ежедневно: подавляет овуляцию и сгущает слизь.", sr: "Estrogen + progestin dnevno: potiskuju ovulaciju, zgušnjavaju sluz." }, side: { en: "Nausea, breast tenderness, mood/libido changes, spotting. A rare but serious risk — venous thrombosis (higher in smokers 35+). Contraindicated in migraine with aura, thrombosis, smoking after 35, severe hypertension. Prescription required and a mandatory consultation with a doctor.", ru: "Тошнота, болезненность груди, изменения настроения/либидо, мажущие выделения. Редкий, но серьёзный риск — венозный тромбоз (выше у курящих 35+). Противопоказаны при мигрени с аурой, тромбозах, курении после 35, тяжёлой гипертензии. Нужен рецепт и обязательная консультация с врачом.", sr: "Mučnina, osetljivost grudi, promene raspoloženja/libida, krvarenje. Redak, ali ozbiljan rizik — venska tromboza (veći kod pušača 35+). Kontraindikovane kod migrene sa aurom, tromboze, pušenja posle 35, teške hipertenzije. Potreban recept i obavezna konsultacija sa lekarom." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }, { label: "CDC", url: "https://www.cdc.gov/contraception/about/index.html" }] },
   { key: "minipill", label: { en: "Mini-pill (progestin)", ru: "Мини-пили (прогестин)", sr: "Mini-pilula (progestin)" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
     side: { en: "Require strict dosing timing. May cause irregular bleeding.", ru: "Требуют строгого времени приёма. Могут вызывать нерегулярные кровотечения.", sr: "Zahtevaju strogo vreme uzimanja. Mogu izazvati nepravilna krvarenja." },
     guide: { how: { en: "Progestin only daily; thickens mucus, partially suppresses ovulation. Strictly tied to dosing time.", ru: "Прогестин ежедневно. Сгущают слизь, частично подавляют овуляцию. Жёстко привязаны ко времени приёма.", sr: "Samo progestin dnevno; zgušnjava sluz, delimično potiskuje ovulaciju. Strogo vezana za vreme uzimanja." }, side: { en: "Irregular/spotting bleeding — the most common effect. Contains no estrogen, so the chance of thrombosis is lower. An option when estrogen is contraindicated (breastfeeding, migraine with aura, smoking 35+). Available by prescription.", ru: "Нерегулярные/мажущие кровотечения — самый частый эффект. Не содержит эстрогена, поэтому ниже шанс тромбозов. Вариант при противопоказаниях к эстрогену (ГВ, мигрень с аурой, курение 35+). Отпускаются по рецепту.", sr: "Nepravilna/oskudna krvarenja — najčešći efekat. Ne sadrži estrogen, pa je šansa za trombozu niža. Opcija pri kontraindikacijama na estrogen (dojenje, migrena sa aurom, pušenje 35+). Izdaju se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "patch", label: { en: "Patch", ru: "Пластырь", sr: "Flaster" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
-    side: { en: "Like COC (estrogen); skin irritation under the patch.", ru: "Побочки как у КОК (эстроген). Раздражение кожи под пластырем.", sr: "Kao KOK (estrogen); iritacija kože ispod flastera." },
-    guide: { how: { en: "A skin patch with estrogen + progestin; changed once a week.", ru: "Накожный пластырь с эстрогеном + прогестином. Меняется раз в неделю.", sr: "Flaster na koži sa estrogenom + progestinom; menja se jednom nedeljno." }, side: { en: "Profile like COC; skin irritation, risk of detaching. At ≥90 kg effectiveness may drop. Same contraindications as COC. Convenient for those who forget daily pills. Available by prescription.", ru: "Побочки как у КОК. Раздражение кожи, риск отклеивания. При весе ≥90 кг эффективность может снижаться. Те же противопоказания, что у КОК. Удобен забывающим ежедневные таблетки. Отпускается по рецепту.", sr: "Profil kao KOK; iritacija kože, rizik od odlepljivanja. Pri težini ≥90 kg efikasnost može opasti. Iste kontraindikacije kao KOK. Pogodan za one koji zaboravljaju dnevne pilule. Izdaje se na recept." } },
+    side: { en: "Like COC (estrogen). Skin irritation under the patch.", ru: "Побочки как у КОК (эстроген). Раздражение кожи под пластырем.", sr: "Kao KOK (estrogen). Iritacija kože ispod flastera." },
+    guide: { how: { en: "A skin patch with estrogen + progestin; changed once a week.", ru: "Накожный пластырь с эстрогеном + прогестином. Меняется раз в неделю.", sr: "Flaster na koži sa estrogenom + progestinom; menja se jednom nedeljno." }, side: { en: "Profile like COC. Skin irritation, risk of detaching. At ≥90 kg effectiveness may drop. Same contraindications as COC. Convenient for those who forget daily pills. Available by prescription.", ru: "Побочки как у КОК. Раздражение кожи, риск отклеивания. При весе ≥90 кг эффективность может снижаться. Те же противопоказания, что у КОК. Удобен забывающим ежедневные таблетки. Отпускается по рецепту.", sr: "Profil kao KOK. Iritacija kože, rizik od odlepljivanja. Pri težini ≥90 kg efikasnost može opasti. Iste kontraindikacije kao KOK. Pogodan za one koji zaboravljaju dnevne pilule. Izdaje se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "ring", label: { en: "Vaginal ring", ru: "Вагинальное кольцо", sr: "Vaginalni prsten" }, perfect: 0.003, typical: 0.09, sev: 2, control: "toggle",
     side: { en: "Like COC; sometimes discharge/irritation, may fall out.", ru: "Как у КОК; иногда выделения/раздражение, может выпадать.", sr: "Kao KOK; ponekad sekret/iritacija, može ispasti." },
-    guide: { how: { en: "A flexible ring in the vagina with estrogen + progestin; stays 3 weeks.", ru: "Гибкое кольцо во влагалище с эстрогеном + прогестином. Стоит 3 недели.", sr: "Fleksibilni prsten u vagini sa estrogenom + progestinom; stoji 3 nedelje." }, side: { en: "Profile like COC; locally — discharge, irritation, rarely falling out. Same contraindications as COC. Convenient, since it is changed once a month. Available by prescription.", ru: "Побочки как у КОК. Выделения, раздражение, изредка выпадение. Те же противопоказания, что у КОК. Удобно, так как меняется раз в месяц. Отпускается по рецепту.", sr: "Profil kao KOK; lokalno — sekret, iritacija, retko ispadanje. Iste kontraindikacije kao KOK. Pogodno, jer se menja jednom mesečno. Izdaje se na recept." } },
+    guide: { how: { en: "A flexible ring in the vagina with estrogen + progestin; stays 3 weeks.", ru: "Гибкое кольцо во влагалище с эстрогеном + прогестином. Стоит 3 недели.", sr: "Fleksibilni prsten u vagini sa estrogenom + progestinom; stoji 3 nedelje." }, side: { en: "Profile like COC. Discharge, irritation, rarely falling out. Same contraindications as COC. Convenient, since it is changed once a month. Available by prescription.", ru: "Побочки как у КОК. Выделения, раздражение, изредка выпадение. Те же противопоказания, что у КОК. Удобно, так как меняется раз в месяц. Отпускается по рецепту.", sr: "Profil kao KOK. Sekret, iritacija, retko ispadanje. Iste kontraindikacije kao KOK. Pogodno, jer se menja jednom mesečno. Izdaje se na recept." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "depo", label: { en: "Injection (Depo)", ru: "Инъекции (Депо)", sr: "Injekcija (Depo)" }, perfect: 0.002, typical: 0.06, sev: 3, control: "toggle",
-    side: { en: "Reversible bone-mass loss; irregular bleeding; slow return of fertility.", ru: "Обратимая потеря костной массы, нерегулярные кровотечения, долгий возврат фертильности.", sr: "Reverzibilni gubitak koštane mase; nepravilna krvarenja; spor povratak plodnosti." },
+    side: { en: "Reversible bone-mass loss, irregular bleeding, slow return of fertility.", ru: "Обратимая потеря костной массы, нерегулярные кровотечения, долгий возврат фертильности.", sr: "Reverzibilni gubitak koštane mase, nepravilna krvarenja, spor povratak plodnosti." },
     guide: { how: { en: "A progestin injection every ~3 months: suppresses ovulation.", ru: "Инъекция прогестина каждые ~3 месяца: подавляет овуляцию.", sr: "Injekcija progestina svaka ~3 meseca: potiskuje ovulaciju." }, side: { en: "Irregular bleeding (often amenorrhea), weight gain, reversible drop in bone density. Return of fertility — up to 9–12 mo after stopping. Convenient for those suited by a quarterly shot. Caution with osteoporosis risk and near-term pregnancy planning. Available by prescription, the injection is given by a doctor.", ru: "Нерегулярные кровотечения (часто аменорея), набор веса, обратимое снижение костной плотности. Возврат фертильности — до 9–12 мес после отмены. Удобно тем, кому подходит укол раз в квартал. Использовать с осторожностью при риске остеопороза и скором планировании беременности. Отпускается по рецепту, инъекцию делает врач.", sr: "Nepravilna krvarenja (često amenoreja), dobijanje na težini, reverzibilno smanjenje koštane gustine. Povratak plodnosti — do 9–12 mes. nakon prestanka. Pogodno onima kojima odgovara injekcija jednom kvartalno. Oprez kod rizika od osteoporoze i skorog planiranja trudnoće. Izdaje se na recept, injekciju daje lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
-  { key: "iud_cu", label: { en: "Copper IUD", ru: "Медная ВМС (внутриматочная спираль)", sr: "Bakarna spirala" }, perfect: 0.006, typical: 0.008, sev: 2, control: "toggle",
-    side: { en: "Heavier/more painful periods; insertion risk (rarely perforation).", ru: "Более обильные/болезненные месячные. Редкая перфорация при установке.", sr: "Obilnije/bolnije menstruacije; rizik pri postavljanju (retko perforacija)." },
+  { key: "iud_cu", label: { en: "Copper IUD (intrauterine device)", ru: "Медная ВМС (внутриматочная спираль)", sr: "Bakarna spirala (intrauterini uložak)" }, perfect: 0.006, typical: 0.008, sev: 2, control: "toggle",
+    side: { en: "Heavier/more painful periods. Rare perforation on insertion.", ru: "Более обильные/болезненные месячные. Редкая перфорация при установке.", sr: "Obilnije/bolnije menstruacije. Retka perforacija pri postavljanju." },
     guide: { how: { en: "A T-shaped device in the uterus; copper is toxic to sperm. Hormone-free. Works 5–10 years. Effectiveness does not depend on user error — fit and forget.", ru: "Т-образное устройство в матке. Медь токсична для сперматозоидов. Не использует гормоны. Работает 5–10 лет. Эффективность не зависит от ошибок пользователя — можно поставить и забыть.", sr: "Uređaj u obliku slova T u materici; bakar je toksičan za spermatozoide. Bez hormona. Radi 5–10 godina. Efikasnost ne zavisi od grešaka korisnika — postavi i zaboravi." }, side: { en: "Heavier and more painful periods, especially the first months. On insertion — pain, rarely perforation. Spontaneous expulsion of the device. A hormone-free long-term method. Can be used as emergency contraception within the first 5 days. Inserted and removed by a doctor.", ru: "Более обильные и болезненные менструации, особенно в первые месяцы. Риск при установке — боль и редко перфорация. Самопроизвольное выпадение спирали. Негормональный и долгосрочный метод. Можно использовать как экстренную контрацепцию в первые 5 дней. Устанавливает и удаляет врач.", sr: "Obilnije i bolnije menstruacije, naročito prvih meseci. Rizik pri postavljanju — bol, retko perforacija. Spontano ispadanje spirale. Nehormonski dugotrajni metod. Može se koristiti kao hitna kontracepcija u prvih 5 dana. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
-  { key: "iud_lng", label: { en: "Hormonal IUD", ru: "Гормональная ВМС (внутриматочная спираль)", sr: "Hormonska spirala" }, perfect: 0.002, typical: 0.002, sev: 2, control: "toggle",
-    side: { en: "Irregular/scant bleeding the first months; insertion risks.", ru: "Нерегулярные/скудные кровотечения в первые месяцы и риски при установке.", sr: "Nepravilna/oskudna krvarenja prvih meseci; rizici pri postavljanju." },
+  { key: "iud_lng", label: { en: "Hormonal IUD (intrauterine device)", ru: "Гормональная ВМС (внутриматочная спираль)", sr: "Hormonska spirala (intrauterini uložak)" }, perfect: 0.002, typical: 0.002, sev: 2, control: "toggle",
+    side: { en: "Irregular/scant bleeding the first months and insertion risks.", ru: "Нерегулярные/скудные кровотечения в первые месяцы и риски при установке.", sr: "Nepravilna/oskudna krvarenja prvih meseci i rizici pri postavljanju." },
     guide: { how: { en: "A T-shaped device releases progestin: thickens mucus, thins the endometrium. Works 3–8 years. A very reliable method of contraception that does not depend on user error. Fit and forget.", ru: "Т-образное устройство выделяет прогестин: сгущает слизь, истончает эндометрий. Работает 3–8 лет. Очень надёжное средство контрацепции и не зависит от ошибок пользователя. Можно поставить и забыть.", sr: "Uređaj u obliku slova T oslobađa progestin: zgušnjava sluz, istanjuje endometrijum. Radi 3–8 godina. Veoma pouzdano sredstvo kontracepcije koje ne zavisi od grešaka korisnika. Postavi i zaboravi." }, side: { en: "Irregular spotting the first months, then often scant periods or no menstruation. On insertion — pain, rarely perforation. Inserted and removed by a doctor.", ru: "Нерегулярные мажущие выделения в первые месяцы, затем часто скудные месячные или отсутствие менструаций. Риск при установке — боль и редко перфорация. Устанавливает и удаляет врач.", sr: "Nepravilna oskudna krvarenja prvih meseci, zatim često oskudne menstruacije ili izostanak menstruacija. Rizik pri postavljanju — bol, retko perforacija. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "implant", label: { en: "Implant", ru: "Имплант", sr: "Implant" }, perfect: 0.0005, typical: 0.0005, sev: 2, control: "toggle",
-    side: { en: "Unpredictable bleeding; insertion/removal — a minor subcutaneous procedure.", ru: "Непредсказуемые кровотечения. Установка/удаление требуют малой процедуры под кожей.", sr: "Nepredvidiva krvarenja; postavljanje/uklanjanje — mala potkožna procedura." },
+    side: { en: "Unpredictable bleeding. Insertion/removal require a minor procedure under the skin.", ru: "Непредсказуемые кровотечения. Установка/удаление требуют малой процедуры под кожей.", sr: "Nepredvidiva krvarenja. Postavljanje/uklanjanje zahtevaju malu proceduru pod kožom." },
     guide: { how: { en: "A flexible rod with progestin under the upper-arm skin; suppresses ovulation. Works ~3–5 years. The most effective reversible method that does not depend on user error. Fit and forget.", ru: "Гибкий стержень с прогестином под кожей плеча, подавляет овуляцию. Работает ~3–5 лет. Самый эффективный обратимый метод и не зависит от ошибок пользователя. Можно поставить и забыть.", sr: "Fleksibilni štapić sa progestinom ispod kože nadlaktice; potiskuje ovulaciju. Radi ~3–5 godina. Najefikasniji reverzibilni metod koji ne zavisi od grešaka korisnika. Postavi i zaboravi." }, side: { en: "Unpredictable bleeding, possible acne, headaches. Insertion and removal need a minor procedure under the skin. Inserted and removed by a doctor.", ru: "Непредсказуемые кровотечения, возможны акне, головные боли. Для введения и удаления нужна мелкая процедура под кожей. Ставит и удаляет врач.", sr: "Nepredvidiva krvarenja, mogući akne, glavobolje. Za postavljanje i uklanjanje potrebna je mala procedura ispod kože. Postavlja i uklanja lekar." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "steril_f", label: { en: "Female sterilization", ru: "Женская стерилизация", sr: "Ženska sterilizacija" }, perfect: 0.005, typical: 0.005, sev: 4, control: "toggle",
-    side: { en: "Surgery and anesthesia; considered irreversible; small ectopic risk on failure.", ru: "Хирургия и наркоз. Считается необратимой. Существует малый риск внематочной беременности.", sr: "Hirurgija i anestezija; smatra se nepovratnom; mali rizik od vanmaterične pri neuspehu." },
-    guide: { how: { en: "Surgical blocking/removal of the fallopian tubes.", ru: "Хирургическое перекрытие/удаление маточных труб.", sr: "Hirurško zatvaranje/uklanjanje jajovoda." }, side: { en: "Surgical risks (anesthesia, bleeding, infection); on a rare failure a higher share of ectopic pregnancy. Hormones unchanged. The method is IRREVERSIBLE, so the decision must be weighed carefully in advance.", ru: "Операционные риски (наркоз, кровотечение, инфекция), при редкой неудаче выше доля внематочной беременности. Гормоны не меняются. Метод НЕОБРАТИМЫЙ, поэтому решение нужно тщательно взвешивать заранее.", sr: "Hirurški rizici (anestezija, krvarenje, infekcija); pri retkom neuspehu veći udeo vanmaterične trudnoće. Hormoni se ne menjaju. Metod je NEPOVRATAN, pa odluku treba pažljivo odvagati unapred." } },
+    side: { en: "Surgery and anesthesia. Considered irreversible. Small ectopic risk on failure.", ru: "Хирургия и наркоз. Считается необратимой. Существует малый риск внематочной беременности.", sr: "Hirurgija i anestezija. Smatra se nepovratnom. Mali rizik od vanmaterične pri neuspehu." },
+    guide: { how: { en: "Surgical blocking/removal of the fallopian tubes.", ru: "Хирургическое перекрытие/удаление маточных труб.", sr: "Hirurško zatvaranje/uklanjanje jajovoda." }, side: { en: "Surgical risks (anesthesia, bleeding, infection), on a rare failure a higher share of ectopic pregnancy. Hormones unchanged. The method is IRREVERSIBLE, so the decision must be weighed carefully in advance.", ru: "Операционные риски (наркоз, кровотечение, инфекция), при редкой неудаче выше доля внематочной беременности. Гормоны не меняются. Метод НЕОБРАТИМЫЙ, поэтому решение нужно тщательно взвешивать заранее.", sr: "Hirurški rizici (anestezija, krvarenje, infekcija), pri retkom neuspehu veći udeo vanmaterične trudnoće. Hormoni se ne menjaju. Metod je NEPOVRATAN, pa odluku treba pažljivo odvagati unapred." } },
     sources: [{ label: "CDC Appendix D", url: "https://www.cdc.gov/mmwr/preview/mmwrhtml/rr6304a5.htm" }] },
   { key: "vasectomy", label: { en: "Vasectomy", ru: "Вазэктомия", sr: "Vazektomija" }, perfect: 0.001, typical: 0.0015, sev: 4, control: "toggle",
     side: { en: "Minor surgery. Not effective immediately. Reversibility is not guaranteed.", ru: "Малая операция. Не сразу эффективна. Обратимость не гарантирована.", sr: "Mala operacija. Nije odmah efikasna. Reverzibilnost nije zagarantovana." },
@@ -1749,19 +1749,26 @@ function PregTip({ active, payload, label, lang }) {
     </div>
   );
 }
-// На мобильном при прокрутке вниз залипающий график сжимается (прячет .chart-extra: слайдеры,
-// легенду, строку-итог). Общий хук — используется и в графике ЗППП, и в графике беременности.
+// На мобильном залипающий график сжимается (прячет .chart-extra: слайдеры, легенду, строку-итог)
+// РОВНО когда он упирается в верх страницы (sticky top:0), а не по произвольному порогу прокрутки.
+// Возвращает [ref, condensed]: ref вешается на сам .studio-chart. Общий хук — ЗППП и беременность.
 function useCondensed() {
+  const ref = useRef(null);
   const [condensed, setCondensed] = useState(false);
   useEffect(() => {
     const mq = window.matchMedia("(max-width:879px)");
-    const onScroll = () => { setCondensed(mq.matches && window.scrollY > 60); };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => { window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    const update = () => {
+      const el = ref.current;
+      // график «доехал» до верха экрана, когда его верхний край ≤ 0 (sticky прижал его к top:0)
+      const stuck = !!el && el.getBoundingClientRect().top <= 0;
+      setCondensed(mq.matches && stuck);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => { window.removeEventListener("scroll", update); window.removeEventListener("resize", update); };
   }, []);
-  return condensed;
+  return [ref, condensed];
 }
 
 // Лёгкая разовая подсказка-анимация: включается, когда элемент впервые попадает на экран,
@@ -1787,7 +1794,7 @@ function useHintOnView(ms = 5000) {
 }
 
 function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline, lang, L }) {
-  const condensed = useCondensed();
+  const [chartRef, condensed] = useCondensed();
   const horizonM = years * 12;
   const ts = years <= 12 ? 1 : years <= 30 ? 5 : 10;
   const ticks = []; for (let y = 0; y <= years; y += ts) ticks.push(y * 12);
@@ -1802,7 +1809,7 @@ function PregChartPanel({ data, lines, years, setYears, yMax, setYMax, headline,
     return () => { document.removeEventListener("input", onInput, true); document.removeEventListener("click", onClick, true); };
   }, []);
   return (
-    <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
+    <div ref={chartRef} className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
       <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
         <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
         <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={`${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%`} hint={L.scaleHint} subtle />
@@ -2588,7 +2595,7 @@ export default function App() {
     document.querySelectorAll(".hl-ring, .hl-thumb").forEach((e) => e.classList.remove("hl-ring", "hl-thumb"));
   };
   const closeHivPlate = () => { setHivBanner(false); stopHivFx(); }; // закрытие плашки = стоп всей анимации
-  const condensed = useCondensed(); // мобильное сжатие графика при прокрутке (общий хук с графиком беременности)
+  const [chartRef, condensed] = useCondensed(); // мобильное сжатие графика при прокрутке (общий хук с графиком беременности)
   const [diseaseHintRef, diseaseHint] = useHintOnView(); // разовая подсказка на шевроне первой болезни
   const [mode, setMode] = useState(MODE_FROM_URL);
   // Переключение раздела отражаем в адресной строке: беременность → «#preg» (ссылку можно слать отдельно), ЗППП → чистый URL.
@@ -2694,6 +2701,8 @@ export default function App() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.hi, fontFamily: "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif", padding: "28px 18px 48px" }}>
       <style>{`
+        /* Сжатие графика меняет его высоту; без этого браузерное scroll-anchoring дёргало бы прокрутку у порога залипания */
+        body { overflow-anchor:none; }
         .rng { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:4px; background:${C.border}; outline:none; }
         .rng::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:18px; height:18px; border-radius:50%; background:${C.accent}; cursor:grab; border:3px solid ${C.bg}; box-shadow:0 0 0 1px ${C.accent}; }
         .rng::-webkit-slider-thumb:active { cursor:grabbing; }
@@ -2845,7 +2854,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
+          <div ref={chartRef} className={"studio-chart" + (condensed ? " condensed" : "")} style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 16px 12px" }}>
             <div className="chart-extra" style={{ display: "flex", gap: 26, flexWrap: "wrap", marginBottom: 16 }}>
               <Slider label={L.horizon} value={years} set={setYears} min={1} max={50} step={1} valueText={`${years} ${yearsWord(years, lang)}`} hint={L.horizonHint} subtle />
               <Slider label={L.scale} value={yMax} set={setYMax} min={1} max={100} step={1} valueText={DEV ? `${lang === "en" ? "to" : lang === "sr" ? "do" : "до"} ${yMax}%` : ""} hint={L.scaleHint} subtle />
