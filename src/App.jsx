@@ -2743,6 +2743,29 @@ export default function App() {
     ? [...STIS].filter((s) => !hidden[s.key]).sort((a, b) => riskPct(b, horizonM) - riskPct(a, horizonM))
     : []), [hidden, horizonM, cfg, env, stiCof, actSel, vaxHpv, vaxHbv]);
 
+  // ЭКСПЕРИМЕНТ (UNC): полосу показываем только у болезни, к кривой которой курсор
+  // сейчас ближе всего. Пиксель→значение считаем по РЕАЛЬНОЙ области построения
+  // (bbox сетки recharts), чтобы не завязываться на высоту/отступы осей.
+  const [uncFocus, setUncFocus] = useState(null);
+  const chartBoxRef = useRef(null);
+  const onChartMove = (st) => {
+    if (!UNC.on) return;
+    if (!st || st.chartY == null || !st.activePayload) return setUncFocus(null);
+    const grid = chartBoxRef.current?.querySelector(".recharts-cartesian-grid");
+    if (!grid) return setUncFocus(null);
+    const bb = grid.getBBox();
+    if (!bb.height) return setUncFocus(null);
+    const cursorVal = yMax * (1 - (st.chartY - bb.y) / bb.height); // % под курсором
+    let best = null, bestD = Infinity;
+    st.activePayload.forEach((e) => {
+      const k = String(e.dataKey);
+      if (k.includes("__u") || hidden[k] || typeof e.value !== "number") return;
+      const d = Math.abs(e.value - cursorVal);
+      if (d < bestD) { bestD = d; best = k; }
+    });
+    setUncFocus(best);
+  };
+
   const built = useMemo(() => buildPartnersTyped(cfg, horizonM), [cfg, horizonM]);
   const packed = useMemo(() => packLanes(built.list), [built]);
   const avgWeek = cfg.steady.count * cfg.steady.perWeek + cfg.casual.count * cfg.casual.dur / 12 * cfg.casual.perWeek + cfg.hookup.count / 52;
@@ -2822,6 +2845,9 @@ export default function App() {
         button { transition: background-color .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease, box-shadow .16s ease, filter .16s ease; border-radius:6px; }
         button:active { transform: scale(0.97); }
         .rng::-webkit-slider-thumb { transition: transform .12s ease, box-shadow .16s ease; }
+        /* ЭКСПЕРИМЕНТ (UNC): плавное появление полосы разброса у болезни под курсором.
+           fill-opacity — CSS-свойство, поэтому смена атрибута анимируется переходом. */
+        .recharts-area-area { transition: fill-opacity .28s ease; }
         /* ── Ховер-состояния интерактивных элементов ──────────────────────────────
            ВАЖНО: у большинства кнопок стили инлайновые (background/border/color),
            а инлайн выигрывает у CSS. Поэтому подсветку даём свойствами, которых в
@@ -2944,15 +2970,14 @@ export default function App() {
                 </span>
               ); })}
             </div>
-            <div className="chartbox" data-tour="chart">
+            <div className="chartbox" data-tour="chart" ref={chartBoxRef}>
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }}>
+                <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }} onMouseMove={onChartMove} onMouseLeave={() => setUncFocus(null)}>
                   {DEV && !UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
                   {DEV
                     ? <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
                     : <YAxis hide domain={[0, yMax]} allowDataOverflow />}
-                  <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
                   {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуем ДО линий, чтобы линии были сверху.
                       Слои вложены друг в друга и полупрозрачны, поэтому в центре они
                       складываются, а к краям остаётся один → градиент от центра к краям. */}
@@ -2965,13 +2990,17 @@ export default function App() {
                   {UNC.on && Array.from({ length: UNC.shells }, (_, li) => {
                     const shell = UNC.shells - li; // 6 → 1: от края к центру
                     return uncOrder.map((s) => (
-                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={1} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
+                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={uncFocus === s.key ? 1 : 0} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
                     ));
                   })}
                   {/* сетка поверх непрозрачных полос — иначе она под ними пропадает.
                       При UNC.on = false рисуется на прежнем месте (см. выше), вид не меняется. */}
                   {DEV && UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
+                  {/* Tooltip ПОСЛЕДНИМ ребёнком: в SVG нет z-index, порядок отрисовки =
+                      порядок в DOM, поэтому только так вертикальная линия-курсор
+                      оказывается поверх полос и кривых, а не под ними. */}
+                  <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
