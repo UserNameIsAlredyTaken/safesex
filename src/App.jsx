@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useLayoutEffect, useRef } from "react";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  ComposedChart, Area, // ← только для эксперимента с полосами разброса (см. блок UNC)
 } from "recharts";
 
 /*
@@ -1088,6 +1089,39 @@ function survivalAt(s, t, cfg, betaMul, actSel = [1], vaccVe = 0) {
   return vaccVe > 0 ? 1 - (1 - vaccVe) * (1 - S) : S;
 }
 
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║ ЭКСПЕРИМЕНТ: полосы разброса (uncertainty bands). Временно, для примерки. ║
+// ║ ОТКАТ одной строкой: UNC.on = false — полосы не считаются и не рисуются,  ║
+// ║ график возвращается ровно к прежнему виду.                               ║
+// ║ Полное удаление: снести этот блок + 1 строку в chartData + блок <Area> в  ║
+// ║ графике ЗППП (там же ComposedChart → LineChart) + импорт ComposedChart/Area.
+// ╚══════════════════════════════════════════════════════════════════════════╝
+const UNC = {
+  on: true,
+  z: 1.2816,          // 80%. ЭТО «ДИАПАЗОН ПРАВДОПОДОБИЯ», А НЕ СТАТИСТИЧЕСКИЙ ДИ
+  shells: 5,          // вложенные слои: их наложение и даёт градиент от центра к краям
+  shellOpacity: 0.07, // непрозрачность ОДНОГО слоя; в центре они складываются
+  // Лог-СКО кумулятивного хазарда по уровню точности данных (поле acc у болезни).
+  // ВНИМАНИЕ: сами эти числа — тоже оценка, а не измерение. Для не-ВИЧ это
+  // грубая калибровка «мы не знаем в пределах ×N», см. «Допущения».
+  sigma: { "high": 0.35, "low-mid": 0.75, "low": 1.05 },
+};
+const uncSigmaOf = (s) => UNC.sigma[s.acc] ?? UNC.sigma.low;
+// Считаем разброс в пространстве кумулятивного хазарда H = -ln S: там неопределённость
+// параметров мультипликативна (H ~ сумма контактов*p*beta), а обратный переход 1-e^-H сам
+// держит границы в 0..100% и сжимает полосу у насыщения. f - доля полной sigma (слой), 0..1.
+const uncPair = (sv, sigma, f) => {
+  const H = -Math.log(Math.max(1e-12, sv));
+  const m = Math.exp(UNC.z * sigma * f);
+  return [(1 - Math.exp(-H / m)) * 100, (1 - Math.exp(-H * m)) * 100];
+};
+const uncKey = (key, i) => `${key}__u${i}`;
+// Дописывает в строку данных пары [низ, верх] по всем слоям одной болезни.
+const uncBandRow = (row, s, sv) => {
+  const sigma = uncSigmaOf(s);
+  for (let i = 1; i <= UNC.shells; i++) row[uncKey(s.key, i)] = uncPair(sv, sigma, i / UNC.shells);
+};
+
 function Info({ text, dn }) {
   return (
     <span className={"src" + (dn ? " dn" : "")} tabIndex={0} style={{ marginLeft: 6, verticalAlign: "middle" }}>
@@ -1315,7 +1349,9 @@ function Timeline({ packed, horizonM, years, lang }) {
 function ChartTooltip({ active, payload, label, hidden, lang, L }) {
   if (!active || !payload?.length) return null;
   const yrs = Math.floor(label / 12), mos = label % 12;
-  const rows = payload.filter((e) => !hidden[e.dataKey]).sort((a, b) => b.value - a.value);
+  // ЭКСПЕРИМЕНТ (UNC): служебные ключи полос разброса в тултип не пускаем.
+  // Строка безвредна и при UNC.on = false — таких ключей просто не бывает.
+  const rows = payload.filter((e) => !hidden[e.dataKey] && !String(e.dataKey).includes("__u")).sort((a, b) => b.value - a.value);
   return (
     <div style={{ background: C.panel2, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 12px", fontSize: 12 }}>
       <div style={{ color: C.mid, marginBottom: 6 }}>{yrs > 0 ? yrs + " " + yrShort(lang) + " " : ""}{mos} {moWord(lang)}</div>
@@ -2683,6 +2719,7 @@ export default function App() {
       STIS.forEach((s) => {
         const sv = survivalAt(withEnv(s, env), t, cfg, cofMulOf(s, stiCof), actSel, vaccVeOf(s, vaxHpv, vaxHbv));
         row[s.key] = (1 - sv) * 100;
+        if (UNC.on) uncBandRow(row, s, sv); // ← эксперимент: полосы разброса
       });
       pts.push(row);
     }
@@ -2892,15 +2929,21 @@ export default function App() {
             </div>
             <div className="chartbox" data-tour="chart">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }}>
+                <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }}>
                   {DEV && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
                   {DEV
                     ? <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
                     : <YAxis hide domain={[0, yMax]} allowDataOverflow />}
                   <Tooltip content={(p) => <ChartTooltip {...p} hidden={hidden} lang={lang} L={L} />} />
+                  {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуем ДО линий, чтобы линии были сверху.
+                      Слои вложены друг в друга и полупрозрачны, поэтому в центре они
+                      складываются, а к краям остаётся один → градиент от центра к краям. */}
+                  {UNC.on && STIS.map((s) => (hidden[s.key] ? null : Array.from({ length: UNC.shells }, (_, i) => (
+                    <Area key={uncKey(s.key, i + 1)} type="monotone" dataKey={uncKey(s.key, i + 1)} stroke="none" fill={s.color} fillOpacity={UNC.shellOpacity} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
+                  ))))}
                   {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
-                </LineChart>
+                </ComposedChart>
               </ResponsiveContainer>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10, marginTop: 8 }}>
