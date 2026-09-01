@@ -1103,8 +1103,8 @@ const UNC = {
                       // шаг цвета получается ~2 уровня на канал, ступени не различимы.
                       // Дёшево, потому что слои считаются и монтируются только для
                       // болезни под курсором (и предыдущей — на время перехода).
-  maxMix: 0.55,       // насыщенность ЦЕНТРАЛЬНОГО слоя (доля цвета болезни к фону).
-                      // Меньше 1, чтобы центральная линия читалась поверх своей же полосы.
+  centerAlpha: 0.55,  // накопленная непрозрачность В ЦЕНТРЕ. Край уходит в НОЛЬ альфы
+                      // (а не в цвет фона), поэтому полоса не «чернит» сетку под собой.
   // Лог-СКО кумулятивного хазарда по уровню точности данных (поле acc у болезни).
   // ВНИМАНИЕ: сами эти числа — тоже оценка, а не измерение. Для не-ВИЧ это
   // грубая калибровка «мы не знаем в пределах ×N», см. «Допущения».
@@ -1120,15 +1120,13 @@ const uncPair = (sv, sigma, f) => {
   return [(1 - Math.exp(-H / m)) * 100, (1 - Math.exp(-H * m)) * 100];
 };
 const uncKey = (key, i) => `${key}__u${i}`;
-// Полосы рисуем НЕПРОЗРАЧНЫМИ, иначе восемь болезней неизбежно смешиваются в кашу.
-// Поэтому градиент делаем не альфой, а подмешиванием цвета болезни к фону: центр —
-// самый насыщенный, край почти сливается с фоном. Слой i: 1 = центральный.
+// Градиент даёт САМО НАЛОЖЕНИЕ вложенных слоёв: у всех одна и та же слабая альфа,
+// но точку у центра перекрывает больше слоёв, чем у края. Накопление к глубине k —
+// 1-(1-a)^k, поэтому край честно уходит В НОЛЬ АЛЬФЫ, а не в цвет фона.
+// Альфу одного слоя подбираем так, чтобы в центре накопилось ровно centerAlpha.
 const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
-const mixHex = (a, b, t) => {
-  const A = hex2rgb(a), B = hex2rgb(b);
-  return "#" + [0, 1, 2].map((i) => Math.round(A[i] + (B[i] - A[i]) * t).toString(16).padStart(2, "0")).join("");
-};
-const uncShellColor = (color, i) => mixHex(C.bg, color, UNC.maxMix * (1 - (i - 1) / UNC.shells));
+const uncShellAlpha = () => 1 - Math.pow(1 - UNC.centerAlpha, 1 / UNC.shells);
+const uncShellFill = (color) => `rgba(${hex2rgb(color).join(",")},${uncShellAlpha().toFixed(4)})`;
 // Дописывает в строку данных пары [низ, верх] по всем слоям одной болезни.
 const uncBandRow = (row, s, sv) => {
   const sigma = uncSigmaOf(s);
@@ -2727,7 +2725,18 @@ export default function App() {
   // cur — болезнь под курсором, prev — предыдущая: её слои остаются смонтированными,
   // пока доигрывает затухание (иначе полоса пропадала бы рывком).
   const [uncF, setUncF] = useState({ cur: null, prev: null });
-  const [uncShown, setUncShown] = useState(false); // включаем на следующий кадр → CSS-переход проявления
+  // Если включена ровно одна болезнь, выбирать не из чего — показываем её градиент всегда.
+  const uncOnly = useMemo(() => {
+    if (!UNC.on) return null;
+    const vis = STIS.filter((s) => !hidden[s.key]);
+    return vis.length === 1 ? vis[0].key : null;
+  }, [hidden]);
+  const uncCur = uncOnly || uncF.cur;              // что показываем сейчас
+  const uncPrev = uncOnly ? null : uncF.prev;      // что доугасает
+  // Храним КЛЮЧ проявленной болезни, а не флаг: иначе слои новой болезни монтируются
+  // с прозрачностью, унаследованной от предыдущей (=1) — она вспыхивает мгновенно,
+  // а потом дёргается. С ключом новая всегда монтируется с 0 и плавно проявляется.
+  const [uncShownKey, setUncShownKey] = useState(null);
   const chartBoxRef = useRef(null);
   const chartData = useMemo(() => {
     const st = Math.max(1, Math.ceil(horizonM / 170));
@@ -2737,38 +2746,38 @@ export default function App() {
       STIS.forEach((s) => {
         const sv = survivalAt(withEnv(s, env), t, cfg, cofMulOf(s, stiCof), actSel, vaccVeOf(s, vaxHpv, vaxHbv));
         row[s.key] = (1 - sv) * 100;
-        if (UNC.on && (uncF.cur === s.key || uncF.prev === s.key)) uncBandRow(row, s, sv); // ← эксперимент
+        if (UNC.on && (uncCur === s.key || uncPrev === s.key)) uncBandRow(row, s, sv); // ← эксперимент
       });
       pts.push(row);
     }
     return pts;
-  }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env, uncF]);
+  }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env, uncCur, uncPrev]);
 
   // ЭКСПЕРИМЕНТ (UNC): порядок отрисовки полос — сначала САМАЯ вероятная болезнь
   // (она уходит вниз стопки), поверх неё непрозрачно ложатся менее вероятные.
   // Так полосы перекрывают друг друга, а не смешиваются в общую кашу.
   const uncOrder = useMemo(() => (UNC.on
-    ? STIS.filter((s) => !hidden[s.key] && (uncF.cur === s.key || uncF.prev === s.key))
+    ? STIS.filter((s) => !hidden[s.key] && (uncCur === s.key || uncPrev === s.key))
         .sort((a, b) => riskPct(b, horizonM) - riskPct(a, horizonM))
-    : []), [hidden, horizonM, cfg, env, stiCof, actSel, vaxHpv, vaxHbv, uncF]);
+    : []), [hidden, horizonM, cfg, env, stiCof, actSel, vaxHpv, vaxHbv, uncCur, uncPrev]);
 
   // ЭКСПЕРИМЕНТ (UNC): полосу показываем только у болезни, к кривой которой курсор
   // сейчас ближе всего. Пиксель→значение считаем по РЕАЛЬНОЙ области построения
   // (bbox сетки recharts), чтобы не завязываться на высоту/отступы осей.
   const focusTo = (k) => setUncF((f) => (f.cur === k ? f : { cur: k, prev: f.cur }));
   useEffect(() => {
-    if (!uncF.cur) return setUncShown(false);
-    setUncShown(false); // слои только что смонтированы с прозрачностью 0…
-    const id = requestAnimationFrame(() => setUncShown(true)); // …и на следующем кадре проявляются
+    if (!uncCur) { setUncShownKey(null); return; }
+    if (uncShownKey === uncCur) return;                        // уже проявлена
+    const id = requestAnimationFrame(() => setUncShownKey(uncCur)); // кадр спустя → CSS-переход
     return () => cancelAnimationFrame(id);
-  }, [uncF.cur]);
+  }, [uncCur, uncShownKey]);
   const onChartMove = (st) => {
     if (!UNC.on) return;
-    if (!st || st.chartY == null || !st.activePayload) return focusTo(null);
+    if (!st || st.chartY == null || !st.activePayload) return; // курсор ушёл — оставляем как было
     const grid = chartBoxRef.current?.querySelector(".recharts-cartesian-grid");
-    if (!grid) return focusTo(null);
+    if (!grid) return;
     const bb = grid.getBBox();
-    if (!bb.height) return focusTo(null);
+    if (!bb.height) return;
     const cursorVal = yMax * (1 - (st.chartY - bb.y) / bb.height); // % под курсором
     let best = null, bestD = Infinity;
     st.activePayload.forEach((e) => {
@@ -2777,7 +2786,7 @@ export default function App() {
       const d = Math.abs(e.value - cursorVal);
       if (d < bestD) { bestD = d; best = k; }
     });
-    focusTo(best);
+    if (best) focusTo(best); // не нашли — оставляем прежнюю, а не гасим
   };
 
   const built = useMemo(() => buildPartnersTyped(cfg, horizonM), [cfg, horizonM]);
@@ -2986,7 +2995,7 @@ export default function App() {
             </div>
             <div className="chartbox" data-tour="chart" ref={chartBoxRef}>
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }} onMouseMove={onChartMove} onMouseLeave={() => focusTo(null)}>
+                <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }} onMouseMove={onChartMove}>
                   {DEV && !UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
                   {DEV
@@ -3004,7 +3013,7 @@ export default function App() {
                   {UNC.on && Array.from({ length: UNC.shells }, (_, li) => {
                     const shell = UNC.shells - li; // 6 → 1: от края к центру
                     return uncOrder.map((s) => (
-                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={uncF.cur === s.key && uncShown ? 1 : 0} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
+                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellFill(s.color)} fillOpacity={uncCur === s.key && (uncOnly === s.key || uncShownKey === s.key) ? 1 : 0} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
                     ));
                   })}
                   {/* сетка поверх непрозрачных полос — иначе она под ними пропадает.
