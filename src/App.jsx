@@ -2246,7 +2246,7 @@ function ShareButton({ snapshot, L }) {
       onMouseDown={(e) => { e.currentTarget.style.opacity = "0.7"; }}
       onMouseUp={(e) => { e.currentTarget.style.opacity = ""; }}
       onMouseLeave={(e) => { e.currentTarget.style.opacity = ""; }}
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, background: copied ? "#2ea043" : C.panel2, color: copied ? "#fff" : C.hi, border: `1px solid ${copied ? "#2ea043" : C.border}`, borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "background .15s, border-color .15s, opacity .1s" }}>
+      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 7, background: copied ? "#2ea043" : C.panel2, color: copied ? "#fff" : C.hi, border: `1px solid ${copied ? "#2ea043" : C.border}`, borderRadius: 8, padding: "7px 14px", fontSize: 13, fontWeight: 600, cursor: "pointer", whiteSpace: "nowrap", transition: "background .15s, border-color .15s, opacity .1s, box-shadow .16s" }}>
       <span aria-hidden style={{ fontSize: 14, lineHeight: 1 }}>{copied ? "✓" : "🔗"}</span>
       {copied ? L.shareDone : L.shareBtn}
     </button>
@@ -2765,9 +2765,33 @@ export default function App() {
         /* шаг иерархической формулы: подпись вплотную к своей формуле, шаги — с отступом друг от друга */
         .box .fstep { margin-top:8px; }
         .box .fstep > [data-f] { margin:2px 0 0; }
-        button { transition: background-color .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease, box-shadow .16s ease; }
+        button { transition: background-color .16s ease, border-color .16s ease, color .16s ease, opacity .16s ease, box-shadow .16s ease, filter .16s ease; border-radius:6px; }
         button:active { transform: scale(0.97); }
         .rng::-webkit-slider-thumb { transition: transform .12s ease, box-shadow .16s ease; }
+        /* ── Ховер-состояния интерактивных элементов ──────────────────────────────
+           ВАЖНО: у большинства кнопок стили инлайновые (background/border/color),
+           а инлайн выигрывает у CSS. Поэтому подсветку даём свойствами, которых в
+           инлайне нет: inset-тень (заливка поверх любого фона) и filter. */
+        button:hover:not(:disabled):not(.pill):not(.hiv-btn-pill) { box-shadow: inset 0 0 0 999px rgba(255,255,255,.07); }
+        button:disabled { cursor: default; }
+        /* видимый фокус с клавиатуры — тот же аффорданс для доступности */
+        button:focus-visible, .pill:focus-visible, summary:focus-visible, .inf-row:focus-visible { outline:2px solid ${C.accent}; outline-offset:2px; }
+        /* пилюли (пресеты, среда, добавление метода) — стили из CSS, инлайна нет */
+        .pill { transition: background-color .16s ease, border-color .16s ease, color .16s ease, filter .16s ease; }
+        .pill:hover { background:${C.border}; border-color:${C.mid}; color:${C.hi}; }
+        .pill.on:hover { filter: brightness(1.1); }
+        /* ручка основного слайдера (у .rng-mini свой ховер выше) */
+        .rng::-webkit-slider-thumb:hover { transform: scale(1.12); box-shadow:0 0 0 1px ${C.accent}, 0 0 0 6px ${C.accent}33; }
+        .rng::-moz-range-thumb:hover { box-shadow:0 0 0 6px ${C.accent}33; }
+        /* иконка «i» — подсвечивается вместе с всплывашкой */
+        .src .ic { transition: color .16s ease, border-color .16s ease, opacity .16s ease; }
+        .src:hover .ic, .src:focus-within .ic { color:${C.hi}; border-color:${C.hi}; opacity:1; }
+        /* раскрывающиеся секции («Разбор расчёта», «Допущения») — цвет инлайновый, поэтому фон */
+        summary { transition: background-color .16s ease; border-radius:8px; padding:2px 6px; margin:-2px -6px; }
+        summary:hover { background:#ffffff0d; }
+        /* ссылки — цвет задан инлайн, поэтому яркость */
+        a { transition: filter .16s ease; }
+        a:hover { filter: brightness(1.3); }
         @keyframes fadeIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:none; } }
         .fade-in { animation: fadeIn .42s ease both; }
         @keyframes fadeSoft { from { opacity:0; } to { opacity:1; } }
