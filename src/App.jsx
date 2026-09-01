@@ -1110,27 +1110,39 @@ const UNC = {
   // грубая калибровка «мы не знаем в пределах ×N», см. «Допущения».
   sigma: { "high": 0.35, "low-mid": 0.75, "low": 1.05 },
 };
-const uncSigmaOf = (s) => UNC.sigma[s.acc] ?? UNC.sigma.low;
-// Считаем разброс в пространстве кумулятивного хазарда H = -ln S: там неопределённость
-// параметров мультипликативна (H ~ сумма контактов*p*beta), а обратный переход 1-e^-H сам
-// держит границы в 0..100% и сжимает полосу у насыщения. f - доля полной sigma (слой), 0..1.
-const uncPair = (sv, sigma, f) => {
-  const H = -Math.log(Math.max(1e-12, sv));
-  const m = Math.exp(UNC.z * sigma * f);
-  return [(1 - Math.exp(-H / m)) * 100, (1 - Math.exp(-H * m)) * 100];
-};
+// Множители полуширины по слоям — не зависят от t, поэтому считаем один раз на уровень
+// точности. Разброс живёт в пространстве кумулятивного хазарда H = -ln S: там
+// неопределённость параметров мультипликативна, а обратный переход 1-e^-H сам держит
+// границы в 0..100% и сжимает полосу у насыщения.
+const UNC_M = Object.fromEntries(Object.entries(UNC.sigma).map(([k, sg]) => [k,
+  Array.from({ length: UNC.shells + 1 }, (_, i) => Math.exp(UNC.z * sg * (i / UNC.shells)))]));
 const uncKey = (key, i) => `${key}__u${i}`;
-// Градиент даёт САМО НАЛОЖЕНИЕ вложенных слоёв: у всех одна и та же слабая альфа,
-// но точку у центра перекрывает больше слоёв, чем у края. Накопление к глубине k —
-// 1-(1-a)^k, поэтому край честно уходит В НОЛЬ АЛЬФЫ, а не в цвет фона.
-// Альфу одного слоя подбираем так, чтобы в центре накопилось ровно centerAlpha.
 const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
-const uncShellAlpha = () => 1 - Math.pow(1 - UNC.centerAlpha, 1 / UNC.shells);
-const uncShellFill = (color) => `rgba(${hex2rgb(color).join(",")},${uncShellAlpha().toFixed(4)})`;
+
+// Накопленная альфа как функция ГЛУБИНЫ (сколько слоёв перекрывает точку), t = глубина/N.
+// Берём smoothstep: производная равна нулю И у края, И в центре. У края это убирает
+// широкую бледную дымку по всему графику (из-за неё края казались белёсыми), в центре —
+// делает ступени незаметными. Равномерная альфа давала линейный профиль и дымку.
+const uncProfile = (t) => UNC.centerAlpha * t * t * (3 - 2 * t);
+// Альфа ОТДЕЛЬНОГО слоя, подобранная так, чтобы наложение дало ровно uncProfile:
+// произведение (1-a) по слоям от края до глубины d телескопируется в (1-A(d)).
+const UNC_A = (() => {
+  const N = UNC.shells, out = new Array(N + 1).fill(0);
+  for (let i = 1; i <= N; i++) {
+    const d = N - i + 1; // глубина точки, лежащей внутри слоя i (1 = самый край)
+    out[i] = 1 - (1 - uncProfile(d / N)) / (1 - uncProfile((d - 1) / N));
+  }
+  return out;
+})();
+const uncShellFill = (color, i) => `rgba(${hex2rgb(color).join(",")},${UNC_A[i].toFixed(4)})`;
 // Дописывает в строку данных пары [низ, верх] по всем слоям одной болезни.
 const uncBandRow = (row, s, sv) => {
-  const sigma = uncSigmaOf(s);
-  for (let i = 1; i <= UNC.shells; i++) row[uncKey(s.key, i)] = uncPair(sv, sigma, i / UNC.shells);
+  const H = -Math.log(Math.max(1e-12, sv));
+  const M = UNC_M[s.acc] || UNC_M.low;
+  for (let i = 1; i <= UNC.shells; i++) {
+    const m = M[i];
+    row[uncKey(s.key, i)] = [(1 - Math.exp(-H / m)) * 100, (1 - Math.exp(-H * m)) * 100];
+  }
 };
 
 function Info({ text, dn }) {
@@ -2724,19 +2736,23 @@ export default function App() {
 
   // cur — болезнь под курсором, prev — предыдущая: её слои остаются смонтированными,
   // пока доигрывает затухание (иначе полоса пропадала бы рывком).
-  const [uncF, setUncF] = useState({ cur: null, prev: null });
-  // Если включена ровно одна болезнь, выбирать не из чего — показываем её градиент всегда.
+  // ДВА СЛОТА («двойная буферизация»). Слои обоих слотов смонтированы ВСЕГДА, поэтому
+  // набор детей графика постоянен: при смене болезни recharts ничего не пересобирает и
+  // линии не переанимируются — раньше именно это давало дёрганье. Новая болезнь всегда
+  // попадает в НЕАКТИВНЫЙ (невидимый) слот и лишь потом проявляется, так что вспышки нет.
+  const [uncSlots, setUncSlots] = useState({ a: null, b: null, act: "a" });
+  const focusTo = (k) => setUncSlots((st) => {
+    if (st[st.act] === k) return st;                    // уже показываем её
+    const next = st.act === "a" ? "b" : "a";            // пинг-понг между слотами
+    return { ...st, [next]: k, act: next };
+  });
+  // Если включена ровно одна болезнь, выбирать не из чего — показываем её всегда.
   const uncOnly = useMemo(() => {
     if (!UNC.on) return null;
     const vis = STIS.filter((s) => !hidden[s.key]);
     return vis.length === 1 ? vis[0].key : null;
   }, [hidden]);
-  const uncCur = uncOnly || uncF.cur;              // что показываем сейчас
-  const uncPrev = uncOnly ? null : uncF.prev;      // что доугасает
-  // Храним КЛЮЧ проявленной болезни, а не флаг: иначе слои новой болезни монтируются
-  // с прозрачностью, унаследованной от предыдущей (=1) — она вспыхивает мгновенно,
-  // а потом дёргается. С ключом новая всегда монтируется с 0 и плавно проявляется.
-  const [uncShownKey, setUncShownKey] = useState(null);
+  useEffect(() => { if (uncOnly) focusTo(uncOnly); }, [uncOnly]);
   const chartBoxRef = useRef(null);
   const chartData = useMemo(() => {
     const st = Math.max(1, Math.ceil(horizonM / 170));
@@ -2746,31 +2762,16 @@ export default function App() {
       STIS.forEach((s) => {
         const sv = survivalAt(withEnv(s, env), t, cfg, cofMulOf(s, stiCof), actSel, vaccVeOf(s, vaxHpv, vaxHbv));
         row[s.key] = (1 - sv) * 100;
-        if (UNC.on && (uncCur === s.key || uncPrev === s.key)) uncBandRow(row, s, sv); // ← эксперимент
+        if (UNC.on) uncBandRow(row, s, sv); // ← эксперимент: полосы разброса
       });
       pts.push(row);
     }
     return pts;
-  }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env, uncCur, uncPrev]);
-
-  // ЭКСПЕРИМЕНТ (UNC): порядок отрисовки полос — сначала САМАЯ вероятная болезнь
-  // (она уходит вниз стопки), поверх неё непрозрачно ложатся менее вероятные.
-  // Так полосы перекрывают друг друга, а не смешиваются в общую кашу.
-  const uncOrder = useMemo(() => (UNC.on
-    ? STIS.filter((s) => !hidden[s.key] && (uncCur === s.key || uncPrev === s.key))
-        .sort((a, b) => riskPct(b, horizonM) - riskPct(a, horizonM))
-    : []), [hidden, horizonM, cfg, env, stiCof, actSel, vaxHpv, vaxHbv, uncCur, uncPrev]);
+  }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env]); // без фокуса: наведение НЕ пересобирает данные
 
   // ЭКСПЕРИМЕНТ (UNC): полосу показываем только у болезни, к кривой которой курсор
   // сейчас ближе всего. Пиксель→значение считаем по РЕАЛЬНОЙ области построения
   // (bbox сетки recharts), чтобы не завязываться на высоту/отступы осей.
-  const focusTo = (k) => setUncF((f) => (f.cur === k ? f : { cur: k, prev: f.cur }));
-  useEffect(() => {
-    if (!uncCur) { setUncShownKey(null); return; }
-    if (uncShownKey === uncCur) return;                        // уже проявлена
-    const id = requestAnimationFrame(() => setUncShownKey(uncCur)); // кадр спустя → CSS-переход
-    return () => cancelAnimationFrame(id);
-  }, [uncCur, uncShownKey]);
   const onChartMove = (st) => {
     if (!UNC.on) return;
     if (!st || st.chartY == null || !st.activePayload) return; // курсор ушёл — оставляем как было
@@ -3001,20 +3002,26 @@ export default function App() {
                   {DEV
                     ? <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
                     : <YAxis hide domain={[0, yMax]} allowDataOverflow />}
-                  {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуем ДО линий, чтобы линии были сверху.
-                      Слои вложены друг в друга и полупрозрачны, поэтому в центре они
-                      складываются, а к краям остаётся один → градиент от центра к краям. */}
-                  {/* Порядок — ПО ГЛУБИНЕ СЛОЯ, а не по болезням. Если рисовать болезнь
-                      целиком, её широкий тёмный край закрашивает яркие сердцевины уже
-                      нарисованных — цвета выглядят перемешанными. Поэтому сначала внешние
-                      ореолы ВСЕХ болезней, затем всё более центральные слои: ядро всегда
-                      оказывается поверх любого ореола. Внутри слоя — от самой вероятной
-                      болезни к наименее вероятной, чтобы мелкие полосы не пропадали. */}
-                  {UNC.on && Array.from({ length: UNC.shells }, (_, li) => {
-                    const shell = UNC.shells - li; // 6 → 1: от края к центру
-                    return uncOrder.map((s) => (
-                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellFill(s.color)} fillOpacity={uncCur === s.key && (uncOnly === s.key || uncShownKey === s.key) ? 1 : 0} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
-                    ));
+                  {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуются ДО линий, чтобы линии были сверху.
+                      Два слота смонтированы всегда (даже пустые), в фиксированном порядке и с
+                      фиксированными ключами: набор детей графика неизменен, поэтому смена
+                      болезни не заставляет recharts пересобирать и переанимировать кривые.
+                      Внутри слота слои идут от внешнего к центральному — их наложение и даёт
+                      градиент, а профиль альфы (UNC_A) уводит край в ноль. */}
+                  {UNC.on && ["a", "b"].map((slot) => {
+                    const key = uncSlots[slot];
+                    const sti = key && !hidden[key] ? STIS.find((x) => x.key === key) : null;
+                    const on = uncSlots.act === slot && !!sti;
+                    return Array.from({ length: UNC.shells }, (_, li) => {
+                      const shell = UNC.shells - li; // от края к центру
+                      return (
+                        <Area key={`unc-${slot}-${shell}`} type="monotone"
+                          dataKey={sti ? uncKey(sti.key, shell) : "__unc_empty"}
+                          stroke="none" fill={sti ? uncShellFill(sti.color, shell) : "none"}
+                          fillOpacity={on ? 1 : 0}
+                          isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
+                      );
+                    });
                   })}
                   {/* сетка поверх непрозрачных полос — иначе она под ними пропадает.
                       При UNC.on = false рисуется на прежнем месте (см. выше), вид не меняется. */}
