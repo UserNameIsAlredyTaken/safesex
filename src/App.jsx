@@ -1099,8 +1099,9 @@ function survivalAt(s, t, cfg, betaMul, actSel = [1], vaccVe = 0) {
 const UNC = {
   on: true,
   z: 1.2816,          // 80%. ЭТО «ДИАПАЗОН ПРАВДОПОДОБИЯ», А НЕ СТАТИСТИЧЕСКИЙ ДИ
-  shells: 5,          // вложенные слои: их наложение и даёт градиент от центра к краям
-  shellOpacity: 0.07, // непрозрачность ОДНОГО слоя; в центре они складываются
+  shells: 6,          // вложенные слои: ступени градиента от центра к краям
+  maxMix: 0.55,       // насыщенность ЦЕНТРАЛЬНОГО слоя (доля цвета болезни к фону).
+                      // Меньше 1, чтобы центральная линия читалась поверх своей же полосы.
   // Лог-СКО кумулятивного хазарда по уровню точности данных (поле acc у болезни).
   // ВНИМАНИЕ: сами эти числа — тоже оценка, а не измерение. Для не-ВИЧ это
   // грубая калибровка «мы не знаем в пределах ×N», см. «Допущения».
@@ -1116,6 +1117,15 @@ const uncPair = (sv, sigma, f) => {
   return [(1 - Math.exp(-H / m)) * 100, (1 - Math.exp(-H * m)) * 100];
 };
 const uncKey = (key, i) => `${key}__u${i}`;
+// Полосы рисуем НЕПРОЗРАЧНЫМИ, иначе восемь болезней неизбежно смешиваются в кашу.
+// Поэтому градиент делаем не альфой, а подмешиванием цвета болезни к фону: центр —
+// самый насыщенный, край почти сливается с фоном. Слой i: 1 = центральный.
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const mixHex = (a, b, t) => {
+  const A = hex2rgb(a), B = hex2rgb(b);
+  return "#" + [0, 1, 2].map((i) => Math.round(A[i] + (B[i] - A[i]) * t).toString(16).padStart(2, "0")).join("");
+};
+const uncShellColor = (color, i) => mixHex(C.bg, color, UNC.maxMix * (1 - (i - 1) / UNC.shells));
 // Дописывает в строку данных пары [низ, верх] по всем слоям одной болезни.
 const uncBandRow = (row, s, sv) => {
   const sigma = uncSigmaOf(s);
@@ -2726,6 +2736,13 @@ export default function App() {
     return pts;
   }, [cfg, years, vaxHpv, vaxHbv, stiCof, actSel, env]);
 
+  // ЭКСПЕРИМЕНТ (UNC): порядок отрисовки полос — сначала САМАЯ вероятная болезнь
+  // (она уходит вниз стопки), поверх неё непрозрачно ложатся менее вероятные.
+  // Так полосы перекрывают друг друга, а не смешиваются в общую кашу.
+  const uncOrder = useMemo(() => (UNC.on
+    ? [...STIS].filter((s) => !hidden[s.key]).sort((a, b) => riskPct(b, horizonM) - riskPct(a, horizonM))
+    : []), [hidden, horizonM, cfg, env, stiCof, actSel, vaxHpv, vaxHbv]);
+
   const built = useMemo(() => buildPartnersTyped(cfg, horizonM), [cfg, horizonM]);
   const packed = useMemo(() => packLanes(built.list), [built]);
   const avgWeek = cfg.steady.count * cfg.steady.perWeek + cfg.casual.count * cfg.casual.dur / 12 * cfg.casual.perWeek + cfg.hookup.count / 52;
@@ -2930,7 +2947,7 @@ export default function App() {
             <div className="chartbox" data-tour="chart">
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={chartData} margin={{ top: 8, right: 16, bottom: 4, left: DEV ? 0 : 8 }}>
-                  {DEV && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
+                  {DEV && !UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   <XAxis dataKey="t" type="number" domain={[0, horizonM]} ticks={ticks} interval={0} stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(t) => (t === 0 ? "0" : `${t / 12}${L.yrAxis}`)} />
                   {DEV
                     ? <YAxis domain={[0, yMax]} allowDataOverflow stroke={C.dim} tick={{ fontSize: 12, fill: C.dim }} tickFormatter={(v) => `${v}%`} width={46} />
@@ -2939,9 +2956,13 @@ export default function App() {
                   {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуем ДО линий, чтобы линии были сверху.
                       Слои вложены друг в друга и полупрозрачны, поэтому в центре они
                       складываются, а к краям остаётся один → градиент от центра к краям. */}
-                  {UNC.on && STIS.map((s) => (hidden[s.key] ? null : Array.from({ length: UNC.shells }, (_, i) => (
-                    <Area key={uncKey(s.key, i + 1)} type="monotone" dataKey={uncKey(s.key, i + 1)} stroke="none" fill={s.color} fillOpacity={UNC.shellOpacity} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
-                  ))))}
+                  {UNC.on && uncOrder.map((s) => Array.from({ length: UNC.shells }, (_, i) => {
+                    const shell = UNC.shells - i; // внутри болезни: от широкого края к центру
+                    return <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={1} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />;
+                  }))}
+                  {/* сетка поверх непрозрачных полос — иначе она под ними пропадает.
+                      При UNC.on = false рисуется на прежнем месте (см. выше), вид не меняется. */}
+                  {DEV && UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
                   {STIS.map((s) => (hidden[s.key] ? null : <Line key={s.key} type="monotone" dataKey={s.key} stroke={s.color} strokeWidth={2.2} dot={false} strokeDasharray={s.grounded ? "0" : "6 4"} isAnimationActive={chartAnim} animationDuration={320} animationEasing="ease" />))}
                 </ComposedChart>
               </ResponsiveContainer>
