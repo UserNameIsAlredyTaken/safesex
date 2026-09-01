@@ -2956,10 +2956,18 @@ export default function App() {
                   {/* ЭКСПЕРИМЕНТ: полосы разброса — рисуем ДО линий, чтобы линии были сверху.
                       Слои вложены друг в друга и полупрозрачны, поэтому в центре они
                       складываются, а к краям остаётся один → градиент от центра к краям. */}
-                  {UNC.on && uncOrder.map((s) => Array.from({ length: UNC.shells }, (_, i) => {
-                    const shell = UNC.shells - i; // внутри болезни: от широкого края к центру
-                    return <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={1} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />;
-                  }))}
+                  {/* Порядок — ПО ГЛУБИНЕ СЛОЯ, а не по болезням. Если рисовать болезнь
+                      целиком, её широкий тёмный край закрашивает яркие сердцевины уже
+                      нарисованных — цвета выглядят перемешанными. Поэтому сначала внешние
+                      ореолы ВСЕХ болезней, затем всё более центральные слои: ядро всегда
+                      оказывается поверх любого ореола. Внутри слоя — от самой вероятной
+                      болезни к наименее вероятной, чтобы мелкие полосы не пропадали. */}
+                  {UNC.on && Array.from({ length: UNC.shells }, (_, li) => {
+                    const shell = UNC.shells - li; // 6 → 1: от края к центру
+                    return uncOrder.map((s) => (
+                      <Area key={uncKey(s.key, shell)} type="monotone" dataKey={uncKey(s.key, shell)} stroke="none" fill={uncShellColor(s.color, shell)} fillOpacity={1} isAnimationActive={false} tooltipType="none" legendType="none" activeDot={false} />
+                    ));
+                  })}
                   {/* сетка поверх непрозрачных полос — иначе она под ними пропадает.
                       При UNC.on = false рисуется на прежнем месте (см. выше), вид не меняется. */}
                   {DEV && UNC.on && <CartesianGrid stroke={C.border} strokeDasharray="2 4" vertical={false} />}
