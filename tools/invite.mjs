@@ -25,7 +25,7 @@ const code = Array.from(randomBytes(20), (b) => ALPHABET[b % 32]).join("");
 const hash = createHash("sha256").update(code).digest("hex");
 const exp = new Date(Date.now() + days * 86400000).toISOString().slice(0, 10);
 
-const site = process.env.SITE || "https://usernameisalredytaken.github.io/safesex/";
+const site = process.env.SITE || "https://sexhealth.info/"; // канонический домен (github.io на него редиректит)
 const link = `${site}${site.includes("?") ? "&" : "?"}k=${code}`;
 
 console.log(`\nСсылка (отдать получателю):\n  ${link}`);
