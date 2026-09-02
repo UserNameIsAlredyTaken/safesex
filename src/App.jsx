@@ -528,8 +528,8 @@ const I18N = {
     contactClose: "Close",
     yrAxis: "y",
     // ── Режим / Mode switcher ──
-    wipTitle: "Section under construction",
-    wipBody: "The STI calculator is still being finished and is temporarily closed. The pregnancy section is available for now.",
+    wipTitle: "The risk calculator is under construction",
+    wipBody: "STI risk calculation is still being finished and is temporarily closed. The infection reference below is fully available.",
     wipToPreg: "Open the pregnancy section",
     modeSti: "🦠 STIs",
     modePreg: "🤰 Pregnancy",
@@ -737,8 +737,8 @@ const I18N = {
     donateGithub: (<>Через <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Закрыть",
     yrAxis: "г",
-    wipTitle: "Раздел в разработке",
-    wipBody: "Калькулятор ЗППП ещё дорабатывается и временно закрыт. Пока доступен раздел про беременность.",
+    wipTitle: "Калькулятор риска в разработке",
+    wipBody: "Расчёт риска ЗППП ещё дорабатывается и временно закрыт. Справочник по инфекциям ниже доступен полностью.",
     wipToPreg: "Открыть раздел про беременность",
     modeSti: "🦠 ЗППП",
     modePreg: "🤰 Беременность",
@@ -943,8 +943,8 @@ const I18N = {
     donateGithub: (<>Preko <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Zatvori",
     yrAxis: "g",
-    wipTitle: "Odeljak je u izradi",
-    wipBody: "Kalkulator PPI se još dorađuje i privremeno je zatvoren. Za sada je dostupan odeljak o trudnoći.",
+    wipTitle: "Kalkulator rizika je u izradi",
+    wipBody: "Računanje rizika od PPI se još dorađuje i privremeno je zatvoreno. Priručnik o infekcijama ispod je potpuno dostupan.",
     wipToPreg: "Otvori odeljak o trudnoći",
     modeSti: "🦠 PPI",
     modePreg: "🤰 Trudnoća",
@@ -2713,6 +2713,9 @@ export default function App() {
     return () => { alive = false; };
   }, []);
   const stiLocked = mode === "sti" && !stiUnlocked;
+  // Под замком только СИСТЕМА РАСЧЁТА. Справочник по инфекциям остаётся открытым,
+  // но из него убираются посчитанные величины: колонка риска и множители среды.
+  const showRiskCol = DEV && !stiLocked;
   // Переключение раздела отражаем в адресной строке: беременность → «#preg» (ссылку можно слать отдельно), ЗППП → чистый URL.
   const switchMode = (m) => {
     setMode(m);
@@ -2998,15 +3001,15 @@ export default function App() {
           {(mode === "sti" ? L.intro : L.pregIntro) && <p style={{ color: C.mid, fontSize: 14, margin: 0, lineHeight: 1.5 }}>{mode === "sti" ? L.intro : L.pregIntro}</p>}
         </div>
 
-        {!stiLocked && <div style={{ background: `${C.accent}1a`, border: `1px solid ${C.accent}`, borderRadius: 12, padding: "14px 16px", marginBottom: 18, display: "flex", gap: 12, alignItems: "flex-start" }}>
+        <div style={{ background: `${C.accent}1a`, border: `1px solid ${C.accent}`, borderRadius: 12, padding: "14px 16px", marginBottom: 18, display: "flex", gap: 12, alignItems: "flex-start" }}>
           <span style={{ flex: "0 0 24px", width: 24, height: 24, borderRadius: "50%", background: C.accent, color: C.bg, fontWeight: 800, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center" }}>!</span>
           <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.55 }}><b style={{ color: C.hi }}>{mode === "sti" ? L.warnTitle : L.pregWarnTitle}</b> {mode === "sti" ? L.warnBody : L.pregWarnBody}</div>
-        </div>}
+        </div>
 
         {/* Заглушка закрытого раздела ЗППП. Пока идёт асинхронная проверка кода
             приглашения — не рисуем ничего, чтобы заглушка не мелькала зря. */}
         {stiLocked && !inviteChecking && (
-          <div className="fade-in" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "34px 26px", textAlign: "center" }}>
+          <div className="fade-in" style={{ background: C.panel, border: `1px dashed ${C.border}`, borderRadius: 14, padding: "22px 20px", textAlign: "center", marginBottom: 14 }}>
             <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 12 }} aria-hidden>🚧</div>
             <div style={{ color: C.hi, fontSize: 17, fontWeight: 600, marginBottom: 8 }}>{L.wipTitle}</div>
             <div style={{ color: C.mid, fontSize: 13.5, lineHeight: 1.6, maxWidth: 460, margin: "0 auto 18px" }}>{L.wipBody}</div>
@@ -3014,7 +3017,10 @@ export default function App() {
           </div>
         )}
 
-        {mode === "sti" && !stiLocked && (<>
+        {mode === "sti" && (<>
+
+        {/* Калькулятор (студия, график, таймлайн связей) — целиком под замком. */}
+        {!stiLocked && (<>
         <div className="studio">
           <div className="studio-controls">
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 14 }}>
@@ -3143,11 +3149,13 @@ export default function App() {
           </p>
           {packed.list.length === 0 ? <div style={{ color: C.mid, fontSize: 13, padding: "20px 0", textAlign: "center" }}>{L.noPartners}</div> : <><Timeline packed={packed} horizonM={horizonM} years={years} lang={lang} />{built.total > packed.list.length && <div style={{ fontSize: 10, color: C.dim, marginTop: 4 }}>{L.shownPart(built.total)}</div>}</>}
         </div>
+        </>)}
 
+        {/* Справочник по инфекциям — открыт всегда, в том числе под замком. */}
         <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "6px 6px", marginBottom: 14 }}>
           <div className="tbl-wrap">
             <table className="inf">
-              <thead><tr><th>{L.thInfection}</th>{DEV && <th>{L.thRisk(years, yearsWord(years, lang))}</th>}<th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th></tr></thead>
+              <thead><tr><th>{L.thInfection}</th>{showRiskCol && <th>{L.thRisk(years, yearsWord(years, lang))}</th>}<th>{L.thPerAct}</th><th>{L.thTreatment}</th><th>{L.thConsequences}</th></tr></thead>
               <tbody>
                 {STIS.flatMap((s, si) => {
                   const exp = !!guideOpen[s.key];
@@ -3159,7 +3167,7 @@ export default function App() {
                       {((s.key === "hpv" && vaxHpv) || (s.key === "hbv" && vaxHbv)) && <span title={s.vax.note[lang]} style={{ marginLeft: 8, fontSize: 11, color: "#38d9a9", background: "#38d9a922", border: "1px solid #38d9a955", padding: "1px 7px", borderRadius: 6 }}>{L.vaccinated}</span>}
                       <span aria-hidden ref={si === 0 ? diseaseHintRef : undefined} className={si === 0 && diseaseHint && !exp ? "hint-pulse" : undefined} style={{ marginLeft: 8, display: "inline-flex", alignItems: "center", justifyContent: "center", width: 18, height: 18, borderRadius: 5, background: exp ? `${s.color}22` : C.panel2, border: `1px solid ${exp ? s.color : C.border}`, color: exp ? s.color : C.mid, fontSize: 11, verticalAlign: "middle", ["--hint-glow"]: `${s.color}aa` }}>{exp ? "▾" : "▸"}</span>
                     </td>
-                    {DEV && <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>}
+                    {showRiskCol && <td className="num" style={{ color: C.hi, fontWeight: 600 }}>{pctVal(riskPct(s, horizonM), lang)}</td>}
                     <td className="num" style={{ color: C.mid, whiteSpace: "nowrap" }}>{pctAct(1 - encSurvOf(s, actSel, 1), lang)} <span style={{ color: C.dim }}>→</span> {pctAct(1 - encSurvOf(s, actSel, 1 - s.e), lang)}</td>
                     <td><span style={{ background: `${SEV[s.sev]}22`, color: SEV[s.sev], padding: "3px 8px", borderRadius: 6, fontSize: 12, fontWeight: 500, display: "inline-block" }}>{s.treat[lang]}</span></td>
                     <td style={{ color: C.mid, fontSize: 12.5 }}>{s.cons[lang]}</td>
@@ -3167,7 +3175,7 @@ export default function App() {
                   ];
                   rows.push(
                     <tr key={s.key + "-g"} style={{ borderLeft: `3px solid ${s.color}` }}>
-                      <td colSpan={DEV ? 5 : 4} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
+                      <td colSpan={showRiskCol ? 5 : 4} style={{ background: C.panel2, padding: 0, borderBottom: "none" }}>
                        <Collapse open={exp} style={{ position: "sticky", left: 0, width: "calc(100vw - 84px)", maxWidth: 860, boxSizing: "border-box" }}>
                        <div style={{ padding: "14px 16px" }}>
                         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
@@ -3179,7 +3187,7 @@ export default function App() {
                         {ENV[s.key] && (
                           <div style={{ marginTop: 14 }}>
                             <div className="ghd">{L.envGuideLabel}</div>
-                            {DEV && (
+                            {showRiskCol && (
                               <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "7px 0 9px" }}>
                                 {[[L.envNormal, 1], [L.envHigh, ENV[s.key].high], [L.envOutbreak, ENV[s.key].out]].map(([lab, mul], i) => (
                                   <span key={i} style={{ display: "inline-flex", alignItems: "baseline", gap: 6, background: C.panel, border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 10px" }}>
@@ -3205,6 +3213,7 @@ export default function App() {
           </div>
         </div>
 
+        {!stiLocked && (<>
         <details style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: 18, marginBottom: 14 }}>
           <summary style={{ color: C.hi, fontSize: 15, fontWeight: 600 }}>{L.breakdownTitle}</summary>
           {L.breakdownIntro && <p style={{ color: C.mid, fontSize: 13, lineHeight: 1.6, margin: "12px 0 12px" }}>{L.breakdownIntro}</p>}
@@ -3223,6 +3232,7 @@ export default function App() {
             <div style={{ fontSize: 12, color: C.dim }}>{L.assumSources}</div>
           </div>
         </details>
+        </>)}
         </>)}
 
         {mode === "preg" && <Pregnancy who={pregWho} setWho={setPregWho} years={years} setYears={setYears} yMax={yMax} setYMax={setYMax} lang={lang} L={L} w={w} setW={setW} meth={meth} setMeth={setMeth} mcfg={mcfg} setMcfg={setMcfg} manAge={manAge} setManAge={setManAge} activePreg={activePreg} setActivePreg={setActivePreg} />}
