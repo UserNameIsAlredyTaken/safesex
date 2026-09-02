@@ -528,6 +528,9 @@ const I18N = {
     contactClose: "Close",
     yrAxis: "y",
     // ── Режим / Mode switcher ──
+    wipTitle: "Section under construction",
+    wipBody: "The STI calculator is still being finished and is temporarily closed. The pregnancy section is available for now.",
+    wipToPreg: "Open the pregnancy section",
     modeSti: "🦠 STIs",
     modePreg: "🤰 Pregnancy",
     pregTitle: "Probability of pregnancy over time",
@@ -734,6 +737,9 @@ const I18N = {
     donateGithub: (<>Через <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Закрыть",
     yrAxis: "г",
+    wipTitle: "Раздел в разработке",
+    wipBody: "Калькулятор ЗППП ещё дорабатывается и временно закрыт. Пока доступен раздел про беременность.",
+    wipToPreg: "Открыть раздел про беременность",
     modeSti: "🦠 ЗППП",
     modePreg: "🤰 Беременность",
     pregTitle: "Вероятность беременности во времени",
@@ -937,6 +943,9 @@ const I18N = {
     donateGithub: (<>Preko <a href="https://github.com/sponsors/UserNameIsAlredyTaken" target="_blank" rel="noopener noreferrer" style={{ color: C.accent, textDecoration: "underline" }}>GitHub Sponsors</a></>),
     contactClose: "Zatvori",
     yrAxis: "g",
+    wipTitle: "Odeljak je u izradi",
+    wipBody: "Kalkulator PPI se još dorađuje i privremeno je zatvoren. Za sada je dostupan odeljak o trudnoći.",
+    wipToPreg: "Otvori odeljak o trudnoći",
     modeSti: "🦠 PPI",
     modePreg: "🤰 Trudnoća",
     pregTitle: "Verovatnoća trudnoće tokom vremena",
@@ -2270,14 +2279,43 @@ const mergeTypes = (base, over) => over ? {
 const SHARE_INIT = decodeShare();
 // Прямая ссылка на раздел: «#preg» (или ?preg / ?mode=preg) открывает подсайт беременности сразу,
 // без полного профиля. Полный шэр (#c=…) и так несёт режим (o.m) — у него приоритет.
+// ── Раздел ЗППП временно закрыт заглушкой ────────────────────────────────────
+// Открывает его пригласительная ссылка вида ?k=<код>. В сборку попадают ТОЛЬКО
+// SHA-256 отпечатки кодов, поэтому по исходникам сам код не восстановить.
+// Отозвать приглашение = удалить его строку отсюда и передеплоить.
+// Новую ссылку выдаёт `node tools/invite.mjs "кому" [дней]`.
+//
+// ВАЖНО И ЧЕСТНО: это ширма от случайного посетителя, а НЕ защита. Сайт целиком
+// клиентский и с открытым исходным кодом — кто угодно может открыть devtools и
+// снять флаг вручную. Ничего секретного за этой дверью держать нельзя.
+const STI_INVITES = [
+  // { hash: "…64 hex…", exp: "2026-12-31", note: "кому выдана" },
+];
+const inviteCode = () => {
+  try { return new URLSearchParams(window.location.search).get("k") || ""; } catch { return ""; }
+};
+// Асинхронно: SubtleCrypto есть только в защищённом контексте (https и localhost).
+async function checkInvite() {
+  const code = inviteCode();
+  if (!code || !STI_INVITES.length) return false;
+  try {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(code));
+    const hex = [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    const now = Date.now();
+    return STI_INVITES.some((i) => i.hash === hex && (!i.exp || now <= Date.parse(i.exp + "T23:59:59Z")));
+  } catch { return false; }
+}
+
 const MODE_FROM_URL = (() => {
   if (SHARE_INIT && SHARE_INIT.mode) return SHARE_INIT.mode;
   try {
     const h = (window.location.hash || "").toLowerCase();
     const s = (window.location.search || "").toLowerCase();
     if (h === "#preg" || h === "#pregnancy" || /[?&](preg|mode=preg)(=1)?(&|$)/.test(s)) return "preg";
+    // Пригласительная ссылка сразу открывает ЗППП; явный #sti — тоже.
+    if (inviteCode() || h === "#sti" || /[?&]mode=sti(&|$)/.test(s)) return "sti";
   } catch {}
-  return "sti";
+  return "preg"; // раздел по умолчанию — беременность
 })();
 
 // Кнопка «Поделиться»: копирует ссылку с текущими настройками в буфер, с явным визуальным фидбеком.
@@ -2286,7 +2324,15 @@ function ShareButton({ snapshot, L }) {
   const tRef = useRef(null);
   useEffect(() => () => clearTimeout(tRef.current), []);
   const copy = async () => {
-    const url = window.location.href.split("#")[0] + "#c=" + encodeShare(snapshot());
+    // Код приглашения (?k=) из ссылки вырезаем: иначе тестер, поделившись профилем,
+    // разошлёт вместе с ним и доступ к закрытому разделу.
+    let base;
+    try {
+      const u = new URL(window.location.href);
+      u.hash = ""; u.searchParams.delete("k");
+      base = u.toString().replace(/\?$/, "");
+    } catch { base = window.location.href.split("#")[0]; }
+    const url = base + "#c=" + encodeShare(snapshot());
     let ok = false;
     try { await navigator.clipboard.writeText(url); ok = true; } catch {}
     if (!ok) {
@@ -2656,12 +2702,22 @@ export default function App() {
   const [chartRef, condensed] = useCondensed(); // мобильное сжатие графика при прокрутке (общий хук с графиком беременности)
   const [diseaseHintRef, diseaseHint] = useHintOnView(); // разовая подсказка на шевроне первой болезни
   const [mode, setMode] = useState(MODE_FROM_URL);
+  // Проверка приглашения асинхронная, поэтому пока она идёт — не мигаем заглушкой.
+  const [stiUnlocked, setStiUnlocked] = useState(false);
+  const [inviteChecking, setInviteChecking] = useState(() => !!inviteCode());
+  useEffect(() => {
+    if (!inviteCode()) return;
+    let alive = true;
+    checkInvite().then((ok) => { if (alive) { setStiUnlocked(ok); setInviteChecking(false); } });
+    return () => { alive = false; };
+  }, []);
+  const stiLocked = mode === "sti" && !stiUnlocked;
   // Переключение раздела отражаем в адресной строке: беременность → «#preg» (ссылку можно слать отдельно), ЗППП → чистый URL.
   const switchMode = (m) => {
     setMode(m);
     try {
-      const base = window.location.href.split("#")[0].split("?")[0];
-      window.history.replaceState(null, "", m === "preg" ? base + "#preg" : base);
+      const base = window.location.href.split("#")[0]; // сохраняем ?k= — иначе приглашение теряется
+      window.history.replaceState(null, "", m === "sti" ? base + "#sti" : base);
     } catch {}
   };
   const [pregWho, setPregWho] = useState(SHARE_INIT?.who ?? "woman");
@@ -2923,7 +2979,7 @@ export default function App() {
       `}</style>
 
       <div style={{ maxWidth: 940, margin: "0 auto", position: "relative" }}>
-        {TOUR_ENABLED && mode === "sti" && <Tour step={tourStep} setStep={setTourStep} L={L} />}
+        {TOUR_ENABLED && mode === "sti" && !stiLocked && <Tour step={tourStep} setStep={setTourStep} L={L} />}
         <LangSwitch lang={lang} setLang={setLang} />
         <div style={{ display: "flex", gap: 8, marginBottom: 18, flexWrap: "wrap" }}>
           <button onClick={() => switchMode("sti")} style={SEG(mode === "sti")}>{L.modeSti}</button>
@@ -2941,12 +2997,23 @@ export default function App() {
           {(mode === "sti" ? L.intro : L.pregIntro) && <p style={{ color: C.mid, fontSize: 14, margin: 0, lineHeight: 1.5 }}>{mode === "sti" ? L.intro : L.pregIntro}</p>}
         </div>
 
-        <div style={{ background: `${C.accent}1a`, border: `1px solid ${C.accent}`, borderRadius: 12, padding: "14px 16px", marginBottom: 18, display: "flex", gap: 12, alignItems: "flex-start" }}>
+        {!stiLocked && <div style={{ background: `${C.accent}1a`, border: `1px solid ${C.accent}`, borderRadius: 12, padding: "14px 16px", marginBottom: 18, display: "flex", gap: 12, alignItems: "flex-start" }}>
           <span style={{ flex: "0 0 24px", width: 24, height: 24, borderRadius: "50%", background: C.accent, color: C.bg, fontWeight: 800, fontSize: 15, display: "flex", alignItems: "center", justifyContent: "center" }}>!</span>
           <div style={{ fontSize: 13, color: C.mid, lineHeight: 1.55 }}><b style={{ color: C.hi }}>{mode === "sti" ? L.warnTitle : L.pregWarnTitle}</b> {mode === "sti" ? L.warnBody : L.pregWarnBody}</div>
-        </div>
+        </div>}
 
-        {mode === "sti" && (<>
+        {/* Заглушка закрытого раздела ЗППП. Пока идёт асинхронная проверка кода
+            приглашения — не рисуем ничего, чтобы заглушка не мелькала зря. */}
+        {stiLocked && !inviteChecking && (
+          <div className="fade-in" style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "34px 26px", textAlign: "center" }}>
+            <div style={{ fontSize: 34, lineHeight: 1, marginBottom: 12 }} aria-hidden>🚧</div>
+            <div style={{ color: C.hi, fontSize: 17, fontWeight: 600, marginBottom: 8 }}>{L.wipTitle}</div>
+            <div style={{ color: C.mid, fontSize: 13.5, lineHeight: 1.6, maxWidth: 460, margin: "0 auto 18px" }}>{L.wipBody}</div>
+            <button onClick={() => switchMode("preg")} style={{ background: C.accent, color: C.bg, border: "none", borderRadius: 10, padding: "9px 18px", fontSize: 13.5, fontWeight: 600, cursor: "pointer" }}>{L.wipToPreg}</button>
+          </div>
+        )}
+
+        {mode === "sti" && !stiLocked && (<>
         <div className="studio">
           <div className="studio-controls">
             <div style={{ background: C.panel, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 18px", marginBottom: 14 }}>
