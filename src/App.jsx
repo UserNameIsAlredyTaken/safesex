@@ -2290,6 +2290,7 @@ const SHARE_INIT = decodeShare();
 // снять флаг вручную. Ничего секретного за этой дверью держать нельзя.
 const STI_INVITES = [
   // { hash: "…64 hex…", exp: "2026-12-31", note: "кому выдана" },
+  { hash: "385620828cdb9df84320d7029c4e4f5c44790659a5241e0285605d7b686b9bd9", exp: "2027-09-02", note: "владелец проекта" },
 ];
 const inviteCode = () => {
   try { return new URLSearchParams(window.location.search).get("k") || ""; } catch { return ""; }
